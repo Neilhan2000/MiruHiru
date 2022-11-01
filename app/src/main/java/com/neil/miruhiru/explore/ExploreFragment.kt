@@ -1,8 +1,13 @@
 package com.neil.miruhiru.explore
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.navigation.ui.AppBarConfiguration
@@ -45,6 +51,10 @@ import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.Plugin
 import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
@@ -56,10 +66,12 @@ import com.mapbox.navigation.base.TimeFormat
 import com.mapbox.navigation.base.extensions.applyDefaultNavigationOptions
 import com.mapbox.navigation.base.options.NavigationOptions
 import com.mapbox.navigation.base.route.*
+import com.mapbox.navigation.base.trip.model.RouteLegProgress
 import com.mapbox.navigation.base.trip.model.RouteProgress
 import com.mapbox.navigation.base.trip.model.RouteProgressState
 import com.mapbox.navigation.core.MapboxNavigation
 import com.mapbox.navigation.core.MapboxNavigationProvider
+import com.mapbox.navigation.core.arrival.ArrivalObserver
 import com.mapbox.navigation.core.directions.session.RoutesObserver
 import com.mapbox.navigation.core.formatter.MapboxDistanceFormatter
 import com.mapbox.navigation.core.replay.MapboxReplayer
@@ -95,8 +107,22 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
 
     private lateinit var permissionManager: PermissionsManager
+    private lateinit var pointAnnotationManager: PointAnnotationManager
+
+    var mapView: MapView? = null
+    var mapBoxMap: MapboxMap? = null
+    var routeLineApi: MapboxRouteLineApi? = null
+    var routeLineView: MapboxRouteLineView? = null
+    var mapboxNavigation: MapboxNavigation? = null
+    var stage: Int = 1
+
+    val point1 = Point.fromLngLat(121.53072919899932, 25.037852973613866)
+    val point2 = Point.fromLngLat(121.53262336348956, 25.03739848088037)
+    val point3 = Point.fromLngLat(121.53337585264387, 25.03863570426337)
+    val challengeLocations = listOf<Point>(point1, point2, point3)
 
 
+    // listeners and observers
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
         mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().bearing(it).build())
     }
@@ -118,12 +144,43 @@ class ExploreFragment : Fragment(), PermissionsListener {
         override fun onMoveEnd(detector: MoveGestureDetector) {}
     }
 
-    var mapView: MapView? = null
-    var mapBoxMap: MapboxMap? = null
-    var routeLineApi: MapboxRouteLineApi? = null
-    var routeLineView: MapboxRouteLineView? = null
-    private lateinit var mapboxNavigationGlobal: MapboxNavigation
-//    val arrivalObserver = object : ArrivalObserver()
+    // route progress observer
+    val routeProgressObserver = object : RouteProgressObserver {
+        override fun onRouteProgressChanged(routeProgress: RouteProgress) {
+            routeProgress.currentState?.let { currentState ->
+                Log.i("neil", "fetch route state = $currentState")
+            }
+        }
+    }
+    // arrival observer
+    val arrivalObserver = object : ArrivalObserver {
+
+        override fun onWaypointArrival(routeProgress: RouteProgress) {
+            Toast.makeText(this@ExploreFragment.context, "arrive waypoint", Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onNextRouteLegStart(routeLegProgress: RouteLegProgress) {
+            Toast.makeText(this@ExploreFragment.context, "go to next waypoint", Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onFinalDestinationArrival(routeProgress: RouteProgress) {
+            Toast.makeText(this@ExploreFragment.context, "arrive destination", Toast.LENGTH_SHORT).show()
+            Log.i("neil", "stage $stage completed")
+            Toast.makeText(this@ExploreFragment.context, "stage ${stage++} completed", Toast.LENGTH_SHORT).show()
+            mapboxNavigation?.unregisterRouteProgressObserver(routeProgressObserver)
+            val secondWaypoint = Point.fromLngLat(121.532658603193, 24.038928111026806)
+
+            startNavigation(secondWaypoint)
+
+
+//            removeMarkerFromMap(point1)
+//            removeMarkerFromMap(point2)
+//            removeMarkerFromMap(point3)
+            for (annotation in pointAnnotationManager.annotations) {
+                Log.i("neil", "new annotation id = ${annotation}")
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -136,126 +193,34 @@ class ExploreFragment : Fragment(), PermissionsListener {
         mapBoxMap = mapView?.getMapboxMap()
         enableLocation()
 
-        binding.button.setOnClickListener {
-
-            val routeProgressObserver = object : RouteProgressObserver {
-                override fun onRouteProgressChanged(routeProgress: RouteProgress) {
-                    routeProgress.currentState?.let { currentState ->
-                        Log.i("neil", "fetch route state = $currentState")
-                    }
-                }
-            }
-
-            val routeLineOptions = this.context?.let { it1 -> MapboxRouteLineOptions.Builder(it1).build() }
-            routeLineApi = routeLineOptions?.let { it1 -> MapboxRouteLineApi(it1) }
-            routeLineView = routeLineOptions?.let { it1 -> MapboxRouteLineView(it1) }
-
-            val mapboxNavigation by lazy {
-                if (MapboxNavigationProvider.isCreated()) {
-                    MapboxNavigationProvider.retrieve()
-                } else {
-                    this.context?.let { it1 ->
-                        NavigationOptions.Builder(it1)
-                            .accessToken(getString(R.string.mapbox_access_token))
-                            .build()
-                    }?.let { it2 ->
-                        MapboxNavigationProvider.create(
-                            it2
-                        )
-                    }
-                }
-            }
-
-            val originLocation = Location("test").apply {
-                longitude = 121.53231116772025
-                latitude = 25.038436316242397
-                bearing = 10f
-            }
-
-            val destination = Point.fromLngLat(121.53234019230837, 25.03844419092961)
-
-            val originPoint = Point.fromLngLat(
-                originLocation.longitude,
-                originLocation.latitude
-            )
-            mapboxNavigation?.requestRoutes(
-                RouteOptions.builder()
-                    .applyDefaultNavigationOptions()
-                    .coordinatesList(listOf(originPoint, destination))
-                    .bearingsList(
-                        listOf(
-                            Bearing.builder()
-                                .angle(originLocation.bearing.toDouble())
-                                .degrees(45.0)
-                                .build(),
-                            null
-                        )
+        mapboxNavigation =
+            if (MapboxNavigationProvider.isCreated()) {
+                MapboxNavigationProvider.retrieve()
+            } else {
+                this.context?.let { it1 ->
+                    NavigationOptions.Builder(it1)
+                        .accessToken(getString(R.string.mapbox_access_token))
+                        .build()
+                }?.let { it2 ->
+                    MapboxNavigationProvider.create(
+                        it2
                     )
-                    .build(),
-                object : NavigationRouterCallback {
-                    override fun onCanceled(
-                        routeOptions: RouteOptions,
-                        routerOrigin: RouterOrigin
-                    ) {
-                        Log.i("neil", "fetch route cancel")
-                    }
-
-                    override fun onFailure(
-                        reasons: List<RouterFailure>,
-                        routeOptions: RouteOptions
-                    ) {
-                        Log.i("neil", "fetch route failure $reasons")
-                    }
-
-                    @SuppressLint("MissingPermission")
-                    override fun onRoutesReady(
-                        routes: List<NavigationRoute>,
-                        routerOrigin: RouterOrigin
-                    ) {
-                        Log.i("neil", "fetch route ready")
-                        routeLineApi?.setNavigationRoutes(routes) { value ->
-                            routeLineView?.renderRouteDrawData(mapBoxMap?.getStyle()!!, value)
-                        }
-                        mapboxNavigation!!.setNavigationRoutes(routes)
-                        mapboxNavigation!!.registerRouteProgressObserver(routeProgressObserver)
-                        mapboxNavigation!!.startTripSession()
-
-                    }
-
                 }
-//                object : RouterCallback {
-//                    override fun onCanceled(
-//                        routeOptions: RouteOptions,
-//                        routerOrigin: RouterOrigin
-//                    ) {
-//                        val gson = GsonBuilder().setPrettyPrinting().create()
-//                        Log.i("neil", "fetch route cancel")
-//
-//                    }
-//
-//                    override fun onFailure(
-//                        reasons: List<RouterFailure>,
-//                        routeOptions: RouteOptions
-//                    ) {
-//                        Log.i("neil", "fetch route failure $reasons")
-//                    }
-//
-//                    override fun onRoutesReady(
-//                        routes: List<DirectionsRoute>,
-//                        routerOrigin: RouterOrigin
-//                    ) {
-//                        Log.i("neil", "fetch route ready $routes")
-//
-//                    }
-//                }
-            )
+            }
+        val routeLineOptions = this.context?.let { it1 -> MapboxRouteLineOptions.Builder(it1).build() }
+        routeLineApi = routeLineOptions?.let { it1 -> MapboxRouteLineApi(it1) }
+        routeLineView = routeLineOptions?.let { it1 -> MapboxRouteLineView(it1) }
+
+        binding.button.setOnClickListener {
+            val destination = Point.fromLngLat(121.53234019230837, 25.03844419092961)
+            startNavigation(destination)
         }
 
 
         return binding.root
     }
 
-
+    // set up map
     private fun onMapReady() {
         mapView?.getMapboxMap()?.setCamera(
             CameraOptions.Builder()
@@ -267,6 +232,9 @@ class ExploreFragment : Fragment(), PermissionsListener {
         ) {
             initLocationComponent()
             setupGesturesListener()
+            for (point in challengeLocations) {
+                addAnnotationToMap(point)
+            }
         }
 
         // add map click listener
@@ -275,6 +243,74 @@ class ExploreFragment : Fragment(), PermissionsListener {
             true
         }
     }
+
+    // add marker
+    private fun addAnnotationToMap(point: Point) {
+        // Create an instance of the Annotation API and get the PointAnnotationManager.
+        bitmapFromDrawableRes(
+            this.requireContext(),
+            R.drawable.anya_icon
+        )?.let {
+            val annotationApi = mapView?.annotations
+            pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView!!)!!
+            // Set options for the resulting symbol layer.
+            val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
+                // Define a geographic coordinate.
+                .withPoint(point)
+                // Specify the bitmap you assigned to the point annotation
+                // The bitmap will be added to map style automatically.
+                .withIconImage(it)
+            // Add the resulting pointAnnotation to the map.
+            pointAnnotationManager?.create(pointAnnotationOptions)
+        }
+    }
+    private fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
+        convertDrawableToBitmap(AppCompatResources.getDrawable(context, resourceId))
+
+    private fun convertDrawableToBitmap(sourceDrawable: Drawable?): Bitmap? {
+        if (sourceDrawable == null) {
+            return null
+        }
+        return if (sourceDrawable is BitmapDrawable) {
+            sourceDrawable.bitmap
+        } else {
+            // copying drawable object to not manipulate on the same reference
+            val constantState = sourceDrawable.constantState ?: return null
+            val drawable = constantState.newDrawable().mutate()
+            val bitmap: Bitmap = Bitmap.createBitmap(
+                drawable.intrinsicWidth, drawable.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+            bitmap
+        }
+    }
+
+    // delete marker
+    private fun removeMarkerFromMap(point: Point) {
+
+        val pointAnnotationOptions: PointAnnotationOptions =
+            PointAnnotationOptions().withPoint(point)
+
+        var annotationID : Long = -1
+        pointAnnotationManager.annotations.forEach {
+            if (it.point == point) {
+                annotationID = it.id
+            }
+        }
+
+        pointAnnotationManager
+            .update(pointAnnotationOptions
+                .build(
+                    annotationID,
+                    pointAnnotationManager
+                )
+            )
+    }
+
+
 
     private fun setupGesturesListener() {
         mapView?.gestures?.addOnMoveListener(onMoveListener)
@@ -329,11 +365,13 @@ class ExploreFragment : Fragment(), PermissionsListener {
     override fun onStart() {
         super.onStart()
         mapView?.onStart()
+        mapboxNavigation?.registerArrivalObserver(arrivalObserver)
     }
 
     override fun onStop() {
         super.onStop()
         mapView?.onStop()
+        mapboxNavigation?.unregisterArrivalObserver(arrivalObserver)
     }
 
     override fun onLowMemory() {
@@ -352,6 +390,8 @@ class ExploreFragment : Fragment(), PermissionsListener {
         routeLineApi?.cancel()
         routeLineView?.cancel()
 
+        mapboxNavigation?.unregisterRouteProgressObserver(routeProgressObserver)
+
     }
 
     override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) {
@@ -364,13 +404,74 @@ class ExploreFragment : Fragment(), PermissionsListener {
         }
     }
 
+    // check permission and set up map
     private fun enableLocation() {
         if (PermissionsManager.areLocationPermissionsGranted(this.context)) {
             onMapReady()
         } else {
             permissionManager = PermissionsManager(this)
             permissionManager.requestLocationPermissions(this.activity)
+            onMapReady()
         }
+    }
+
+    // navigation
+    private fun startNavigation(destination: Point) {
+        val originLocation = Location("test").apply {
+            longitude = 121.53231116772025
+            latitude = 25.038436316242397
+            bearing = 10f
+        }
+        val originPoint = Point.fromLngLat(
+            originLocation.longitude,
+            originLocation.latitude
+        )
+
+        mapboxNavigation?.requestRoutes(
+            RouteOptions.builder()
+                .applyDefaultNavigationOptions()
+                .coordinatesList(listOf(originPoint, destination))
+                .bearingsList(
+                    listOf(
+                        Bearing.builder()
+                            .angle(originLocation.bearing.toDouble())
+                            .degrees(45.0)
+                            .build(),
+                        null
+                    )
+                )
+                .build(),
+            object : NavigationRouterCallback {
+                override fun onCanceled(
+                    routeOptions: RouteOptions,
+                    routerOrigin: RouterOrigin
+                ) {
+                    Log.i("neil", "fetch route cancel")
+                }
+
+                override fun onFailure(
+                    reasons: List<RouterFailure>,
+                    routeOptions: RouteOptions
+                ) {
+                    Log.i("neil", "fetch route failure $reasons")
+                }
+
+                @SuppressLint("MissingPermission")
+                override fun onRoutesReady(
+                    routes: List<NavigationRoute>,
+                    routerOrigin: RouterOrigin
+                ) {
+                    Log.i("neil", "fetch route ready")
+                    routeLineApi?.setNavigationRoutes(routes) { value ->
+                        routeLineView?.renderRouteDrawData(mapBoxMap?.getStyle()!!, value)
+                    }
+                    mapboxNavigation!!.setNavigationRoutes(routes)
+                    mapboxNavigation!!.registerRouteProgressObserver(routeProgressObserver)
+                    mapboxNavigation!!.startTripSession(withForegroundService = false)
+
+                }
+            }
+        )
     }
 
 }
