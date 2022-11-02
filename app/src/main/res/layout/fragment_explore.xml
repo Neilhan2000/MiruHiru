@@ -42,7 +42,7 @@
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                mapbox:layout_constraintStart_toEndOf="@+id/imageView"
+                mapbox:layout_constraintStart_toEndOf="@+id/challengeImage"
                 mapbox:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -82,7 +82,7 @@
                 mapbox:layout_constraintTop_toTopOf="@+id/starIcon" />
 
             <TextView
-                android:id="@+id/challengeRating2"
+                android:id="@+id/challengeTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -94,7 +94,7 @@
                 mapbox:layout_constraintTop_toTopOf="@+id/timeIcon" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/challengeImage"
                 android:layout_width="100dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="16dp"
@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                mapbox:layout_constraintStart_toEndOf="@+id/imageView"
+                mapbox:layout_constraintStart_toEndOf="@+id/challengeImage"
                 mapbox:layout_constraintTop_toBottomOf="@+id/challengeTitle"
                 mapbox:srcCompat="@drawable/ic_baseline_location" />
 
@@ -121,8 +121,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                mapbox:layout_constraintBottom_toBottomOf="@+id/imageView"
-                mapbox:layout_constraintStart_toEndOf="@+id/imageView"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/challengeImage"
+                mapbox:layout_constraintStart_toEndOf="@+id/challengeImage"
                 mapbox:srcCompat="@drawable/ic_stage" />
 
             <ImageView
@@ -139,7 +139,7 @@
                 android:id="@+id/timeIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                mapbox:layout_constraintBottom_toBottomOf="@+id/imageView"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/challengeImage"
                 mapbox:layout_constraintStart_toStartOf="@+id/starIcon"
                 mapbox:srcCompat="@drawable/ic_time" />
         </androidx.constraintlayout.widget.ConstraintLayout>

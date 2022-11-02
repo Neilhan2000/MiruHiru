@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "136470928073",
+    "project_id": "miruhiru-2be9d",
+    "storage_bucket": "miruhiru-2be9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:136470928073:android:57e725a437bd4c697a4b18",
+        "android_client_info": {
+          "package_name": "com.neil.miruhiru"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "136470928073-bfb5gm4qlg604b98n58qphs4qopic7qj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1ZPd71WAoLVOCngM3KT20EMIYfrNQiiE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "136470928073-bfb5gm4qlg604b98n58qphs4qopic7qj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

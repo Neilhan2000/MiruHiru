@@ -1,17 +1,13 @@
 package com.neil.miruhiru.explore
 
 import android.annotation.SuppressLint
-import android.app.PendingIntent
 import android.content.Context
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -21,21 +17,19 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
-import androidx.navigation.ui.AppBarConfiguration
+import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.GeoPoint
 import com.google.gson.*
-import com.mapbox.android.core.location.*
 //import com.mapbox.android.core.location.LocationEngineListener
 //import com.mapbox.android.core.location.LocationEnginePriority
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.api.directions.v5.models.Bearing
-import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
-import com.mapbox.geojson.Geometry
 
 import com.mapbox.geojson.Point
 import com.mapbox.maps.*
@@ -50,66 +44,40 @@ import com.mapbox.maps.*
 //import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin
 //import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode
 //import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode
-import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
-import com.mapbox.maps.plugin.LocationPuck2D
-import com.mapbox.maps.plugin.Plugin
-import com.mapbox.maps.plugin.animation.camera
-import com.mapbox.maps.plugin.annotation.Annotation
-import com.mapbox.maps.plugin.annotation.OnAnnotationClickListener
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
-import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
-import com.mapbox.navigation.base.TimeFormat
 import com.mapbox.navigation.base.extensions.applyDefaultNavigationOptions
 import com.mapbox.navigation.base.options.NavigationOptions
 import com.mapbox.navigation.base.route.*
 import com.mapbox.navigation.base.trip.model.RouteLegProgress
 import com.mapbox.navigation.base.trip.model.RouteProgress
-import com.mapbox.navigation.base.trip.model.RouteProgressState
 import com.mapbox.navigation.core.MapboxNavigation
 import com.mapbox.navigation.core.MapboxNavigationProvider
 import com.mapbox.navigation.core.arrival.ArrivalObserver
-import com.mapbox.navigation.core.directions.session.RoutesObserver
-import com.mapbox.navigation.core.formatter.MapboxDistanceFormatter
-import com.mapbox.navigation.core.replay.MapboxReplayer
-import com.mapbox.navigation.core.replay.ReplayLocationEngine
-import com.mapbox.navigation.core.replay.route.ReplayProgressObserver
-import com.mapbox.navigation.core.replay.route.ReplayRouteMapper
-import com.mapbox.navigation.core.trip.session.LocationMatcherResult
-import com.mapbox.navigation.core.trip.session.LocationObserver
 import com.mapbox.navigation.core.trip.session.RouteProgressObserver
-import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi
-import com.mapbox.navigation.ui.maps.camera.NavigationCamera
-import com.mapbox.navigation.ui.maps.camera.data.MapboxNavigationViewportDataSource
-import com.mapbox.navigation.ui.maps.camera.lifecycle.NavigationBasicGesturesHandler
-import com.mapbox.navigation.ui.maps.camera.state.NavigationCameraState
-import com.mapbox.navigation.ui.maps.camera.transition.NavigationCameraTransitionOptions
-import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider
-import com.mapbox.navigation.ui.maps.route.arrow.api.MapboxRouteArrowApi
-import com.mapbox.navigation.ui.maps.route.arrow.api.MapboxRouteArrowView
-import com.mapbox.navigation.ui.maps.route.arrow.model.RouteArrowOptions
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView
 import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions
-import com.mapbox.navigation.ui.maps.route.line.model.RouteLine
-import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi
-import com.mapbox.navigation.ui.tripprogress.model.*
 
 
 import com.neil.miruhiru.R
-import com.neil.miruhiru.data.LocationData
+import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.databinding.FragmentExploreBinding
-import org.json.JSONObject
+import kotlin.math.roundToInt
 
 
 class ExploreFragment : Fragment(), PermissionsListener {
 
+    private val viewModel: ExploreViewModel by lazy {
+        ViewModelProvider(this).get(ExploreViewModel::class.java)
+    }
 
     private lateinit var permissionManager: PermissionsManager
     private lateinit var pointAnnotationManager: PointAnnotationManager
@@ -121,13 +89,6 @@ class ExploreFragment : Fragment(), PermissionsListener {
     private var routeLineView: MapboxRouteLineView? = null
     private var mapboxNavigation: MapboxNavigation? = null
     var stage: Int = 1
-
-    val point1 = Point.fromLngLat(121.53072919899932, 25.037852973613866)
-    val point2 = Point.fromLngLat(121.53262336348956, 25.03739848088037)
-    val point3 = Point.fromLngLat(121.53337585264387, 25.03863570426337)
-    val challengeLocations = listOf<Point>(point1, point2, point3)
-
-
 
     // listeners and observers
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
@@ -200,6 +161,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
         mapView = binding.mapView
         mapBoxMap = mapView?.getMapboxMap()
         enableLocation()
+        viewModel.challengeList
 
         mapboxNavigation =
             if (MapboxNavigationProvider.isCreated()) {
@@ -224,6 +186,15 @@ class ExploreFragment : Fragment(), PermissionsListener {
             startNavigation(destination)
         }
 
+        viewModel.challengeList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            it.forEach { challenge ->
+                addAnnotationToMap(Point.fromLngLat(
+                    challenge.location?.longitude!!,
+                    challenge.location?.latitude!!
+                ), challenge)
+            }
+        })
+
 
         return binding.root
     }
@@ -240,10 +211,6 @@ class ExploreFragment : Fragment(), PermissionsListener {
         ) {
             initLocationComponent()
             setupGesturesListener()
-            for (point in challengeLocations) {
-                addAnnotationToMap(point)
-            }
-            // add annotation click listener
         }
 
         // add map click listener, it will cause conflict with onAnnotationClickListener
@@ -260,7 +227,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
     }
 
     // add marker
-    private fun addAnnotationToMap(point: Point) {
+    private fun addAnnotationToMap(point: Point, challenge: Challenge) {
         // Create an instance of the Annotation API and get the PointAnnotationManager.
         bitmapFromDrawableRes(
             this.requireContext(),
@@ -268,15 +235,15 @@ class ExploreFragment : Fragment(), PermissionsListener {
         )?.let {
             val annotationApi = mapView?.annotations
             pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView!!)!!
+            // this data will be store in annotation
+            val locationInfo = LocationInfo(challenge.name!!, challenge.location!!, challenge.stage!!,
+            challenge.totalRating!!, challenge.timeSpent!!, challenge.image!!)
             // Set options for the resulting symbol layer.
-            val locationInfo = LocationData(0, "AppWorks大挑戰")
             val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-                // Define a geographic coordinate.
                 .withPoint(point)
-                // Specify the bitmap you assigned to the point annotation
-                // The bitmap will be added to map style automatically.
                 .withIconImage(it)
                 .withIconSize(2.0)
+                // store data to annotation
                 .withData(JsonParser.parseString(Gson().toJson(locationInfo)))
             // add annotation click listener.
             pointAnnotationManager?.addClickListener(object : OnPointAnnotationClickListener {
@@ -284,7 +251,17 @@ class ExploreFragment : Fragment(), PermissionsListener {
                     val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up)
                     binding.locationCardView.animation = animation
                     animation.start()
-                    Toast.makeText(requireContext(), "${Gson().fromJson(annotation.getData()?.asJsonObject, LocationData::class.java)}", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), "${Gson().fromJson(annotation.getData()?.asJsonObject, LocationInfo::class.java)}", Toast.LENGTH_SHORT).show()
+                    binding.challengeTitle.text = locationInfo.name
+                    binding.challengeRating.text = locationInfo.totalRating.toString()
+                    binding.challengeStage.text = locationInfo.stage.toString()
+                    binding.challengeTime.text = "${locationInfo.timeSpent/3600} Hrs"
+                    Glide.with(binding.challengeImage.context).load(locationInfo.image).centerCrop().apply(
+                        RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
+                    ).into(binding.challengeImage)
+//                    binding.challengeDistance.text = "${viewModel.calculateDistance(Point.fromLngLat(120.5323244,25.0384632),
+//                    locationInfo.location)}"
+                    calculateAndShowDistance(locationInfo.location)
                     binding.locationCardView.visibility = View.VISIBLE
                     return false
                 }
@@ -516,6 +493,22 @@ class ExploreFragment : Fragment(), PermissionsListener {
                 )
             }
         return currentPoint
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun calculateAndShowDistance(destination: GeoPoint) {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireContext())
+        var currentPoint: Point? = null
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                Log.i("neil", "current location = ${location?.latitude}, ${location?.longitude}")
+                currentPoint = Point.fromLngLat(
+                    location!!.longitude,
+                    location!!.latitude
+                )
+                val distance = viewModel.calculateDistance(currentPoint, destination)
+                binding.challengeDistance.text = "${distance.roundToInt()} Ms"
+            }
     }
 
 
