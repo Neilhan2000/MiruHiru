@@ -25,8 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.ui.AppBarConfiguration
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
+import com.google.gson.*
 import com.mapbox.android.core.location.*
 //import com.mapbox.android.core.location.LocationEngineListener
 //import com.mapbox.android.core.location.LocationEnginePriority
@@ -104,7 +103,9 @@ import com.mapbox.navigation.ui.tripprogress.model.*
 
 
 import com.neil.miruhiru.R
+import com.neil.miruhiru.data.LocationData
 import com.neil.miruhiru.databinding.FragmentExploreBinding
+import org.json.JSONObject
 
 
 class ExploreFragment : Fragment(), PermissionsListener {
@@ -268,17 +269,22 @@ class ExploreFragment : Fragment(), PermissionsListener {
             val annotationApi = mapView?.annotations
             pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView!!)!!
             // Set options for the resulting symbol layer.
+            val locationInfo = LocationData(0, "AppWorks大挑戰")
             val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
                 // Define a geographic coordinate.
                 .withPoint(point)
                 // Specify the bitmap you assigned to the point annotation
                 // The bitmap will be added to map style automatically.
                 .withIconImage(it)
+                .withIconSize(2.0)
+                .withData(JsonParser.parseString(Gson().toJson(locationInfo)))
+            // add annotation click listener.
             pointAnnotationManager?.addClickListener(object : OnPointAnnotationClickListener {
                 override fun onAnnotationClick(annotation: PointAnnotation): Boolean {
                     val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up)
                     binding.locationCardView.animation = animation
                     animation.start()
+                    Toast.makeText(requireContext(), "${Gson().fromJson(annotation.getData()?.asJsonObject, LocationData::class.java)}", Toast.LENGTH_SHORT).show()
                     binding.locationCardView.visibility = View.VISIBLE
                     return false
                 }
