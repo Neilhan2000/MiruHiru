@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
@@ -35,6 +36,7 @@ import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
+import com.mapbox.geojson.Geometry
 
 import com.mapbox.geojson.Point
 import com.mapbox.maps.*
@@ -53,10 +55,10 @@ import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.Plugin
 import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.annotation.Annotation
+import com.mapbox.maps.plugin.annotation.OnAnnotationClickListener
 import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
@@ -110,6 +112,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
     private lateinit var permissionManager: PermissionsManager
     private lateinit var pointAnnotationManager: PointAnnotationManager
+    private lateinit var binding: FragmentExploreBinding
 
     private var mapView: MapView? = null
     private var mapBoxMap: MapboxMap? = null
@@ -122,6 +125,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
     val point2 = Point.fromLngLat(121.53262336348956, 25.03739848088037)
     val point3 = Point.fromLngLat(121.53337585264387, 25.03863570426337)
     val challengeLocations = listOf<Point>(point1, point2, point3)
+
 
 
     // listeners and observers
@@ -190,7 +194,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
         savedInstanceState: Bundle?
     ): View? {
 
-        val binding = FragmentExploreBinding.inflate(inflater, container, false)
+        binding = FragmentExploreBinding.inflate(inflater, container, false)
 
         mapView = binding.mapView
         mapBoxMap = mapView?.getMapboxMap()
@@ -238,13 +242,19 @@ class ExploreFragment : Fragment(), PermissionsListener {
             for (point in challengeLocations) {
                 addAnnotationToMap(point)
             }
+            // add annotation click listener
         }
 
-        // add map click listener
+        // add map click listener, it will cause conflict with onAnnotationClickListener
         mapBoxMap?.addOnMapClickListener { point ->
             Log.i("neil", "location = ${point.latitude()}, ${point.longitude()}")
-            true
+            val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_down)
+            binding.locationCardView.animation = animation
+            animation.start()
+            binding.locationCardView.visibility = View.GONE
+            false
         }
+
 
     }
 
@@ -264,6 +274,15 @@ class ExploreFragment : Fragment(), PermissionsListener {
                 // Specify the bitmap you assigned to the point annotation
                 // The bitmap will be added to map style automatically.
                 .withIconImage(it)
+            pointAnnotationManager?.addClickListener(object : OnPointAnnotationClickListener {
+                override fun onAnnotationClick(annotation: PointAnnotation): Boolean {
+                    val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up)
+                    binding.locationCardView.animation = animation
+                    animation.start()
+                    binding.locationCardView.visibility = View.VISIBLE
+                    return false
+                }
+            })
             // Add the resulting pointAnnotation to the map.
             pointAnnotationManager?.create(pointAnnotationOptions)
         }
@@ -492,6 +511,12 @@ class ExploreFragment : Fragment(), PermissionsListener {
             }
         return currentPoint
     }
+
+
+//    override fun onAnnotationClick(annotation: PointAnnotation): Boolean {
+//        binding.locationCardView.visibility = View.VISIBLE
+//        return true
+//    }
 
 }
 

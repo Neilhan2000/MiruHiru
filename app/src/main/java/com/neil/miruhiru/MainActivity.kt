@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.fragment_profile -> {
                     findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalProfileFragment())
                     return@setOnItemSelectedListener true
-
                 }
             }
             false
