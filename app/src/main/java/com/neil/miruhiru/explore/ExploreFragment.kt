@@ -1,6 +1,7 @@
 package com.neil.miruhiru.explore
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -10,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,13 +22,13 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.navigation.ui.AppBarConfiguration
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
-import com.mapbox.android.core.location.LocationEngine
+import com.mapbox.android.core.location.*
 //import com.mapbox.android.core.location.LocationEngineListener
 //import com.mapbox.android.core.location.LocationEnginePriority
-import com.mapbox.android.core.location.LocationEngineProvider
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.android.gestures.MoveGestureDetector
@@ -109,11 +111,11 @@ class ExploreFragment : Fragment(), PermissionsListener {
     private lateinit var permissionManager: PermissionsManager
     private lateinit var pointAnnotationManager: PointAnnotationManager
 
-    var mapView: MapView? = null
-    var mapBoxMap: MapboxMap? = null
-    var routeLineApi: MapboxRouteLineApi? = null
-    var routeLineView: MapboxRouteLineView? = null
-    var mapboxNavigation: MapboxNavigation? = null
+    private var mapView: MapView? = null
+    private var mapBoxMap: MapboxMap? = null
+    private var routeLineApi: MapboxRouteLineApi? = null
+    private var routeLineView: MapboxRouteLineView? = null
+    private var mapboxNavigation: MapboxNavigation? = null
     var stage: Int = 1
 
     val point1 = Point.fromLngLat(121.53072919899932, 25.037852973613866)
@@ -176,6 +178,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
 //            removeMarkerFromMap(point1)
 //            removeMarkerFromMap(point2)
 //            removeMarkerFromMap(point3)
+            // can't remove annotation, try old version annotation plugin
             for (annotation in pointAnnotationManager.annotations) {
                 Log.i("neil", "new annotation id = ${annotation}")
             }
@@ -242,6 +245,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
             Log.i("neil", "location = ${point.latitude()}, ${point.longitude()}")
             true
         }
+
     }
 
     // add marker
@@ -472,6 +476,21 @@ class ExploreFragment : Fragment(), PermissionsListener {
                 }
             }
         )
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocation(): Point? {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireContext())
+        var currentPoint: Point? = null
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                Log.i("neil", "current location = ${location?.latitude}, ${location?.longitude}")
+                currentPoint = Point.fromLngLat(
+                    location!!.longitude,
+                    location!!.latitude
+                )
+            }
+        return currentPoint
     }
 
 }

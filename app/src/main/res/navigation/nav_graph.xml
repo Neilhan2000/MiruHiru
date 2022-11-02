@@ -8,4 +8,16 @@
         android:id="@+id/exploreFragment"
         android:name="com.neil.miruhiru.explore.ExploreFragment"
         android:label="ExploreFragment" />
+    <fragment
+        android:id="@+id/customFragment"
+        android:name="com.neil.miruhiru.custom.CustomFragment"
+        android:label="CustomFragment" />
+    <fragment
+        android:id="@+id/communityFragment"
+        android:name="com.neil.miruhiru.community.CommunityFragment"
+        android:label="CommunityFragment" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.neil.miruhiru.profile.ProfileFragment"
+        android:label="ProfileFragment" /><action android:id="@+id/action_global_exploreFragment" app:destination="@id/exploreFragment"/><action android:id="@+id/action_global_customFragment" app:destination="@id/customFragment"/><action android:id="@+id/action_global_communityFragment" app:destination="@id/communityFragment"/><action android:id="@+id/action_global_profileFragment" app:destination="@id/profileFragment"/>
 </navigation>
