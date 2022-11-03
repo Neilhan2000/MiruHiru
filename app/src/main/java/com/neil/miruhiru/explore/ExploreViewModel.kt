@@ -35,7 +35,6 @@ class ExploreViewModel: ViewModel() {
                 }
                 _challengeList.value = challengeList
                 Log.i("neil", "success load article = ${challengeList}")
-                Log.i("neil", "success load article = ${result.documents[0].data}")
             }
             .addOnFailureListener { exception ->
                 Log.i("neil", "Error getting documents.", exception)

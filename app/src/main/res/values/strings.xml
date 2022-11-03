@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">MiruHiru</string>
-    <string name="mapbox_access_token">pk.eyJ1IjoidHNhaWNoZW5naGFuIiwiYSI6ImNsOXdjancwZDFlNG40MXM1eHk1bXc3aWMifQ.XaJ-Lc-f8ITAmYqTSOxXWA</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="explore_fragment">探索</string>

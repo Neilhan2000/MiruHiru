@@ -21,7 +21,19 @@ android {
     }
 
     buildTypes {
+
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        def MAPBOX_ACCESS_TOKEN = properties.getProperty('mapbox.access.token')
+
+        debug {
+            buildConfigField "String", "MAPBOX_ACCESS_TOKEN", MAPBOX_ACCESS_TOKEN
+            resValue "string", "mapbox_access_token", MAPBOX_ACCESS_TOKEN
+        }
+
         release {
+            buildConfigField "String", "MAPBOX_ACCESS_TOKEN", MAPBOX_ACCESS_TOKEN
+            resValue "string", "mapbox_access_token", MAPBOX_ACCESS_TOKEN
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
