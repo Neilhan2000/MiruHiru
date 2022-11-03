@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_border.xml" value="0.271" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/ratingbar.xml" value="0.1035" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/ratingbar_empty.xml" value="0.1" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/ratingbar_filled.xml" value="0.1" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_text_border.xml" value="0.1455" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/activity_main.xml" value="0.23333333333333334" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/activity_main_activitytwo.xml" value="0.24444444444444444" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/content_main_activitytwo.xml" value="0.24444444444444444" />

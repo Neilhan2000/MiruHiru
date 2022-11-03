@@ -229,7 +229,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
     private fun determineChallengeIcon(type: String): Int {
         val iconRes = when (type) {
-            "food" -> R.drawable.anya_icon
+            "美食" -> R.drawable.anya_icon
             else -> R.drawable.anya_icon2
         }
         return iconRes

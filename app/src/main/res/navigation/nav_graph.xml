@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/exploreFragment">
 
@@ -20,4 +21,9 @@
         android:id="@+id/profileFragment"
         android:name="com.neil.miruhiru.profile.ProfileFragment"
         android:label="ProfileFragment" /><action android:id="@+id/action_global_exploreFragment" app:destination="@id/exploreFragment"/><action android:id="@+id/action_global_customFragment" app:destination="@id/customFragment"/><action android:id="@+id/action_global_communityFragment" app:destination="@id/communityFragment"/><action android:id="@+id/action_global_profileFragment" app:destination="@id/profileFragment"/>
+    <fragment
+        android:id="@+id/challengeDetailFragment"
+        android:name="com.neil.miruhiru.challengedetail.ChallengeDetailFragment"
+        android:label="fragment_challenge_detail"
+        tools:layout="@layout/fragment_challenge_detail" /><action android:id="@+id/action_global_challengeDetailFragment" app:destination="@id/challengeDetailFragment"/>
 </navigation>

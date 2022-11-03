@@ -10,4 +10,6 @@
     <color name="light_yellow">#fbe493</color>
     <color name="deep_yellow">#fcd340</color>
     <color name="grey">#85816f</color>
+    <color name="grey_cccccc">#cccccc</color>
+    <color name="food_type">#FFFFB907</color>
 </resources>
