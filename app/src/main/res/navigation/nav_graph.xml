@@ -20,10 +20,15 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.neil.miruhiru.profile.ProfileFragment"
-        android:label="ProfileFragment" /><action android:id="@+id/action_global_exploreFragment" app:destination="@id/exploreFragment"/><action android:id="@+id/action_global_customFragment" app:destination="@id/customFragment"/><action android:id="@+id/action_global_communityFragment" app:destination="@id/communityFragment"/><action android:id="@+id/action_global_profileFragment" app:destination="@id/profileFragment"/>
+        android:label="ProfileFragment" />
+    <action android:id="@+id/action_global_exploreFragment" app:destination="@id/exploreFragment"/>
+    <action android:id="@+id/action_global_customFragment" app:destination="@id/customFragment"/>
+    <action android:id="@+id/action_global_communityFragment" app:destination="@id/communityFragment"/>
+    <action android:id="@+id/action_global_profileFragment" app:destination="@id/profileFragment"/>
     <fragment
         android:id="@+id/challengeDetailFragment"
         android:name="com.neil.miruhiru.challengedetail.ChallengeDetailFragment"
         android:label="fragment_challenge_detail"
-        tools:layout="@layout/fragment_challenge_detail" /><action android:id="@+id/action_global_challengeDetailFragment" app:destination="@id/challengeDetailFragment"/>
+        tools:layout="@layout/fragment_challenge_detail" />
+    <action android:id="@+id/action_global_challengeDetailFragment" app:destination="@id/challengeDetailFragment"/>
 </navigation>

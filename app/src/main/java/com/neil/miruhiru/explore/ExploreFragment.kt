@@ -103,7 +103,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
     private val onMoveListener = object : OnMoveListener {
         override fun onMoveBegin(detector: MoveGestureDetector) {
-//            onCameraTrackingDismissed()
+            onCameraTrackingDismissed()
         }
 
         override fun onMove(detector: MoveGestureDetector): Boolean {
@@ -187,12 +187,14 @@ class ExploreFragment : Fragment(), PermissionsListener {
             startNavigation(destination)
         }
 
+        binding.myLocationIcon.setOnClickListener {
+            initLocationComponent()
+            setupGesturesListener()
+        }
+
         viewModel.challengeList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             it.forEach { challenge ->
-                addAnnotationToMap(Point.fromLngLat(
-                    challenge.location?.longitude!!,
-                    challenge.location?.latitude!!
-                ), challenge)
+                addAnnotationToMap(challenge)
             }
         })
 
@@ -235,8 +237,8 @@ class ExploreFragment : Fragment(), PermissionsListener {
         return iconRes
     }
 
-    // add marker
-    private fun addAnnotationToMap(point: Point, challenge: Challenge) {
+    // add annotation
+    private fun addAnnotationToMap(challenge: Challenge) {
         // Create an instance of the Annotation API and get the PointAnnotationManager.
         bitmapFromDrawableRes(
             this.requireContext(),
@@ -249,7 +251,10 @@ class ExploreFragment : Fragment(), PermissionsListener {
             challenge.totalRating!!, challenge.timeSpent!!, challenge.image!!)
             // Set options for the resulting symbol layer.
             val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-                .withPoint(point)
+                .withPoint(Point.fromLngLat(
+                    challenge.location?.longitude!!,
+                    challenge.location?.latitude!!
+                ))
                 .withIconImage(it)
                 .withIconSize(2.0)
                 // store data to annotation
@@ -368,7 +373,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
     }
 
     private fun onCameraTrackingDismissed() {
-        Toast.makeText(this.context, "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this.context, "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
         mapView?.location
             ?.removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         mapView?.location

@@ -11,13 +11,17 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.mapbox.geojson.Point
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.data.Comment
 import com.neil.miruhiru.data.Task
+import com.neil.miruhiru.data.User
 
 class ChallengeDetailViewModel : ViewModel() {
 
     init {
-        loadChallenge()
-        loadTasks()
+        val challengeId = "2WBySSd68w3VrA08eLGj"
+        loadChallenge(challengeId)
+        loadTasks(challengeId)
+//        loadComments(challengeId)
     }
 
     private val _challenge = MutableLiveData<Challenge>()
@@ -28,10 +32,20 @@ class ChallengeDetailViewModel : ViewModel() {
     val taskList: LiveData<List<Task>>
         get() = _taskList
 
-    private fun loadChallenge() {
+    private val _commentList = MutableLiveData<List<Comment>>()
+    val commentList: LiveData<List<Comment>>
+        get() = _commentList
+
+    lateinit var user: User
+
+    private val _commentUsers = MutableLiveData<List<User>>()
+    val commentUsers: LiveData<List<User>>
+        get() = _commentUsers
+
+    private fun loadChallenge(challengeId: String) {
         val db = Firebase.firestore
 
-        db.collection("challenges").document("2WBySSd68w3VrA08eLGj")
+        db.collection("challenges").document(challengeId)
             .get()
             .addOnSuccessListener { result ->
                 val challenge = result.toObject<Challenge>()
@@ -45,11 +59,11 @@ class ChallengeDetailViewModel : ViewModel() {
 
     }
 
-    private fun loadTasks() {
+    private fun loadTasks(challengeId: String) {
         val db = Firebase.firestore
         val taskList = mutableListOf<Task>()
 
-        db.collection("challenges").document("2WBySSd68w3VrA08eLGj")
+        db.collection("challenges").document(challengeId)
             .collection("tasks")
             .get()
             .addOnSuccessListener { result ->
@@ -58,12 +72,50 @@ class ChallengeDetailViewModel : ViewModel() {
                     taskList.add(task)
                 }
                 _taskList.value = taskList
-                Log.i("neil", "success load documents = ${taskList}")
+//                Log.i("neil", "success load documents = ${taskList}")
             }
             .addOnFailureListener { exception ->
                 Log.i("neil", "Error getting documents.", exception)
             }
 
+    }
+
+    fun loadComments(challengeId: String) {
+        val db = Firebase.firestore
+        val commentList = mutableListOf<Comment>()
+
+        db.collection("challenges").document(challengeId)
+            .collection("comments")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    val comment = document.toObject<Comment>()
+                    commentList.add(comment)
+                    addUserToCommentUsersList(comment.userId)
+                }
+                _commentList.value = commentList
+                Log.i("neil", "success load documents = ${commentList}")
+            }
+            .addOnFailureListener { exception ->
+                Log.i("neil", "Error getting documents.", exception)
+            }
+
+    }
+
+    private fun addUserToCommentUsersList(userId: String) {
+        val db = Firebase.firestore
+        val commentUsers = mutableListOf<User>()
+        db.collection("users")
+            .whereEqualTo("id", userId)
+            .get().addOnSuccessListener {
+                for (result in it.documents) {
+                    user = result.toObject<User>()!!
+                    commentUsers.add(user)
+                }
+                _commentUsers.value = commentUsers
+                Log.i("neil", "success load documents = ${commentUsers}")
+
+            }
     }
 
     fun calculateDistance(currentPoint: Point?, destinationPoint: GeoPoint): Float {
@@ -82,4 +134,5 @@ class ChallengeDetailViewModel : ViewModel() {
         return result[0]
 
     }
+
 }

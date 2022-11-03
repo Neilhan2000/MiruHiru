@@ -1,36 +1,34 @@
 package com.neil.miruhiru.challengedetail
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
-import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.GeoPoint
-import com.mapbox.android.core.permissions.PermissionsManager
-import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
-import com.mapbox.maps.Style
-import com.mapbox.maps.plugin.gestures.OnMoveListener
-import com.mapbox.maps.plugin.gestures.addOnMapClickListener
-import com.mapbox.maps.plugin.gestures.gestures
-import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
-import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.*
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
-import com.neil.miruhiru.explore.ExploreViewModel
 import kotlin.math.roundToInt
 
 class ChallengeDetailFragment : Fragment() {
@@ -40,24 +38,8 @@ class ChallengeDetailFragment : Fragment() {
     }
     private lateinit var binding: FragmentChallengeDetailBinding
     private lateinit var mapView: MapView
-
-    private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
-        mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().center(it).build())
-        mapView?.gestures?.focalPoint = mapView?.getMapboxMap()?.pixelForCoordinate(it)
-    }
-
-    private val onMoveListener = object : OnMoveListener {
-        override fun onMoveBegin(detector: MoveGestureDetector) {
-            onCameraTrackingDismissed()
-        }
-
-        override fun onMove(detector: MoveGestureDetector): Boolean {
-            return false
-        }
-
-        override fun onMoveEnd(detector: MoveGestureDetector) {}
-    }
-
+    private lateinit var pointAnnotationManager: PointAnnotationManager
+    private lateinit var firstStagePoint: Point
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,23 +48,58 @@ class ChallengeDetailFragment : Fragment() {
         binding = FragmentChallengeDetailBinding.inflate(inflater, container, false)
         mapView = binding.mapView
 
-
+        // observer challenge data and setup screen
         viewModel.challenge.observe(viewLifecycleOwner, Observer {
             setupScreen(it)
         })
 
-        onMapReady()
+        // observer task data to add annotation to map and setup map camera
+        viewModel.taskList.observe(viewLifecycleOwner, Observer {
+            it.forEach {
+                addAnnotationToMap(it)
+            }
+            firstStagePoint = Point.fromLngLat(
+                it[0].location?.longitude!!,
+                it[0].location?.latitude!!
+            )
+            setLocation()
+        })
 
         // set camera to current location
         binding.myLocation.setOnClickListener {
-            initLocationComponent()
-            setupGesturesListener()
+            setLocation()
         }
 
+        // click to show and hide comments
+        var show = true
+        binding.seeComment.setOnClickListener {
+            viewModel.loadComments("2WBySSd68w3VrA08eLGj")
+            if (show) {
+                binding.recyclerComment.visibility = View.VISIBLE
+                show = false
+            } else {
+                binding.recyclerComment.visibility = View.GONE
+                show = true
+            }
+        }
 
+        val adapter = CommentAdapter(viewModel)
+        binding.recyclerComment.adapter = adapter
+
+        // observer commentUsers and show in recyclerView
+        viewModel.commentUsers.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(viewModel.commentList.value)
+        })
 
         return binding.root
     }
+
+    private fun setLocation() {
+        if (this::firstStagePoint.isInitialized) {
+            mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().center(firstStagePoint).build())
+        }
+    }
+
     private fun setupScreen(challenge: Challenge) {
         binding.ChallengeTitle.text = challenge.name
         Glide.with(binding.challengeMainImage.context).load(challenge.image).centerCrop().apply(
@@ -114,37 +131,57 @@ class ChallengeDetailFragment : Fragment() {
             }
     }
 
-    // set up map
-    private fun onMapReady() {
-        mapView?.getMapboxMap()?.setCamera(
-            CameraOptions.Builder()
-                .zoom(16.0)
-                .build()
-        )
-        mapView?.getMapboxMap()?.loadStyleUri(
-            Style.MAPBOX_STREETS
-        ) {
-            initLocationComponent()
-            setupGesturesListener()
+    // add annotation
+    private fun addAnnotationToMap(task: Task) {
+        // Create an instance of the Annotation API and get the PointAnnotationManager.
+        bitmapFromDrawableRes(
+            this.requireContext(),
+            determineTaskIcon(task.stage!!)
+        )?.let {
+            val annotationApi = mapView?.annotations
+            pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView!!)!!
+            // Set options for the resulting symbol layer.
+            val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
+                .withPoint(Point.fromLngLat(
+                    task.location?.longitude!!,
+                    task.location?.latitude!!
+                ))
+                .withIconImage(it)
+                .withIconSize(2.0)
+
+            pointAnnotationManager?.create(pointAnnotationOptions)
         }
     }
 
-    private fun initLocationComponent() {
-        val locationComponentPlugin = mapView?.location
-        locationComponentPlugin?.updateSettings {
-            this.enabled = true
+    private fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
+        convertDrawableToBitmap(AppCompatResources.getDrawable(context, resourceId))
+
+    private fun convertDrawableToBitmap(sourceDrawable: Drawable?): Bitmap? {
+        if (sourceDrawable == null) {
+            return null
         }
-        locationComponentPlugin?.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+        return if (sourceDrawable is BitmapDrawable) {
+            sourceDrawable.bitmap
+        } else {
+            // copying drawable object to not manipulate on the same reference
+            val constantState = sourceDrawable.constantState ?: return null
+            val drawable = constantState.newDrawable().mutate()
+            val bitmap: Bitmap = Bitmap.createBitmap(
+                drawable.intrinsicWidth, drawable.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+            bitmap
+        }
     }
 
-    private fun setupGesturesListener() {
-        mapView?.gestures?.addOnMoveListener(onMoveListener)
-    }
-
-    private fun onCameraTrackingDismissed() {
-//        Toast.makeText(this.context, "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
-        mapView?.location
-            ?.removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
-        mapView?.gestures?.removeOnMoveListener(onMoveListener)
+    private fun determineTaskIcon(stage: Int): Int {
+        val iconRes = when (stage) {
+            1 -> R.drawable.anya_icon
+            else -> R.drawable.anya_icon2
+        }
+        return iconRes
     }
 }
