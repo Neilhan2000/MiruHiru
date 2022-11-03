@@ -227,12 +227,20 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
     }
 
+    private fun determineChallengeIcon(type: String): Int {
+        val iconRes = when (type) {
+            "food" -> R.drawable.anya_icon
+            else -> R.drawable.anya_icon2
+        }
+        return iconRes
+    }
+
     // add marker
     private fun addAnnotationToMap(point: Point, challenge: Challenge) {
         // Create an instance of the Annotation API and get the PointAnnotationManager.
         bitmapFromDrawableRes(
             this.requireContext(),
-            R.drawable.anya_icon
+            determineChallengeIcon(challenge.type!!)
         )?.let {
             val annotationApi = mapView?.annotations
             pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView!!)!!
@@ -260,8 +268,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
                     Glide.with(binding.challengeImage.context).load(locationInfo.image).centerCrop().apply(
                         RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
                     ).into(binding.challengeImage)
-//                    binding.challengeDistance.text = "${viewModel.calculateDistance(Point.fromLngLat(120.5323244,25.0384632),
-//                    locationInfo.location)}"
+                    // this fun will show distance the between your location and challenge in the cardView
                     calculateAndShowDistance(locationInfo.location)
                     binding.locationCardView.visibility = View.VISIBLE
                     return false
