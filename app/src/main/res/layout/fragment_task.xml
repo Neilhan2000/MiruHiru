@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".task.TaskFragment">
+
+
+    <com.mapbox.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        mapbox:layout_constraintBottom_toBottomOf="parent"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toTopOf="parent"
+        mapbox:mapbox_cameraTargetLat="23.5000"
+        mapbox:mapbox_cameraTargetLng="121.0000"
+        mapbox:mapbox_cameraZoom="15.0">
+
+    </com.mapbox.maps.MapView>
+
+    <TextView
+        android:id="@+id/progressBarBorder"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/progress_bar_border"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:focusable="true"
+        app:tint="@android:color/white"
+        android:backgroundTint="@color/light_yellow"
+        android:clickable="true"
+        app:maxImageSize="45dp"
+        app:srcCompat="@drawable/ic_add_white"
+        mapbox:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        mapbox:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/light_yellow"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="invisible"
+        app:maxImageSize="35dp"
+        app:srcCompat="@drawable/ic_chat"
+        app:tint="@android:color/white"
+        mapbox:layout_constraintBottom_toTopOf="@+id/fabAdd"
+        mapbox:layout_constraintEnd_toEndOf="@+id/fabAdd" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAndroid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/light_yellow"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="invisible"
+        app:maxImageSize="40dp"
+        app:srcCompat="@drawable/ic_android"
+        app:tint="@android:color/white"
+        mapbox:layout_constraintBottom_toTopOf="@+id/fabChat"
+        mapbox:layout_constraintEnd_toEndOf="@+id/fabChat" />
+
+    <TextView
+        android:id="@+id/progressBarBorder2"
+        android:layout_width="0dp"
+        android:layout_height="13dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/progress_border"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/progressBarBorder"
+        mapbox:layout_constraintEnd_toEndOf="@+id/progressBarBorder"
+        mapbox:layout_constraintStart_toEndOf="@+id/progressText"
+        mapbox:layout_constraintTop_toTopOf="@+id/progressBarBorder" />
+
+    <TextView
+        android:id="@+id/progressText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="3/5"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/progressBarBorder"
+        mapbox:layout_constraintStart_toStartOf="@+id/progressBarBorder"
+        mapbox:layout_constraintTop_toTopOf="@+id/progressBarBorder" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="130dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/mapView"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="@+id/mapView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

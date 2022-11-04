@@ -12,4 +12,5 @@
     <color name="grey">#85816f</color>
     <color name="grey_cccccc">#cccccc</color>
     <color name="food_type">#FFFFB907</color>
+    <color name="green_progress">#4C9900</color>
 </resources>

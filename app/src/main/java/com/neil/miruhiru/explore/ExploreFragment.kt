@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.location.LocationServices
@@ -65,6 +66,7 @@ import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView
 import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions
 import com.neil.miruhiru.BuildConfig
+import com.neil.miruhiru.NavGraphDirections
 
 
 import com.neil.miruhiru.R
@@ -262,6 +264,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
             // add annotation click listener.
             pointAnnotationManager?.addClickListener(object : OnPointAnnotationClickListener {
                 override fun onAnnotationClick(annotation: PointAnnotation): Boolean {
+
                     val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up)
                     binding.locationCardView.animation = animation
                     animation.start()
@@ -275,6 +278,9 @@ class ExploreFragment : Fragment(), PermissionsListener {
                     ).into(binding.challengeImage)
                     // this fun will show distance the between your location and challenge in the cardView
                     calculateAndShowDistance(locationInfo.location)
+                    binding.locationCardView.setOnClickListener {
+                        this@ExploreFragment.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment())
+                    }
                     binding.locationCardView.visibility = View.VISIBLE
                     return false
                 }

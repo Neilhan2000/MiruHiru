@@ -1,7 +1,9 @@
 package com.neil.miruhiru.challengedetail
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
@@ -15,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -41,6 +44,7 @@ class ChallengeDetailFragment : Fragment() {
     private lateinit var mapView: MapView
     private lateinit var pointAnnotationManager: PointAnnotationManager
     private lateinit var firstStagePoint: Point
+    private var show = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,17 +75,16 @@ class ChallengeDetailFragment : Fragment() {
             setLocation()
         }
 
+
         // click to show and hide comments
-        var show = true
         binding.seeComment.setOnClickListener {
             viewModel.loadComments("2WBySSd68w3VrA08eLGj")
             if (show) {
                 binding.recyclerComment.visibility = View.VISIBLE
-                show = false
             } else {
                 binding.recyclerComment.visibility = View.GONE
-                show = true
             }
+            show = !show
         }
 
         // set recyclerView adapter
@@ -124,11 +127,12 @@ class ChallengeDetailFragment : Fragment() {
         calculateAndShowDistance(challenge.location!!)
     }
 
-
     @SuppressLint("MissingPermission")
     private fun calculateAndShowDistance(destination: GeoPoint) {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireContext())
         var currentPoint: Point? = null
+
+        // calculate and show distance
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
 //                Log.i("neil", "current location = ${location?.latitude}, ${location?.longitude}")
@@ -138,8 +142,11 @@ class ChallengeDetailFragment : Fragment() {
                 )
                 val distance = viewModel.calculateDistance(currentPoint, destination)
                 binding.distanceText.text = "距離起點 ${distance.roundToInt()} Ms"
+            }.addOnFailureListener { exception ->
+                binding.distanceText.text = "${exception.message}"
             }
     }
+
 
     // add annotation
     private fun addAnnotationToMap(task: Task) {

@@ -31,4 +31,9 @@
         android:label="fragment_challenge_detail"
         tools:layout="@layout/fragment_challenge_detail" />
     <action android:id="@+id/action_global_challengeDetailFragment" app:destination="@id/challengeDetailFragment"/>
+    <fragment
+        android:id="@+id/taskFragment"
+        android:name="com.neil.miruhiru.task.TaskFragment"
+        android:label="fragment_task"
+        tools:layout="@layout/fragment_task" /><action android:id="@+id/action_global_taskFragment" app:destination="@id/taskFragment"/>
 </navigation>
