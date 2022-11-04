@@ -9,7 +9,10 @@
         android:id="@+id/locationCardView"
         android:layout_width="match_parent"
         android:layout_height="130dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:visibility="visible"
+        app:cardCornerRadius="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -39,9 +42,9 @@
                 android:text="5 ms"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toTopOf="@+id/imageView" />
+                app:layout_constraintBottom_toBottomOf="@+id/taskLocationIcon"
+                app:layout_constraintStart_toEndOf="@+id/taskLocationIcon"
+                app:layout_constraintTop_toTopOf="@+id/taskLocationIcon" />
 
             <TextView
                 android:id="@+id/challengeStage"
@@ -51,9 +54,9 @@
                 android:text="5"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-                app:layout_constraintStart_toEndOf="@+id/imageView2"
-                app:layout_constraintTop_toTopOf="@+id/imageView2" />
+                app:layout_constraintBottom_toBottomOf="@+id/currentStage"
+                app:layout_constraintStart_toEndOf="@+id/currentStage"
+                app:layout_constraintTop_toTopOf="@+id/currentStage" />
 
             <ImageView
                 android:id="@+id/challengeImage"
@@ -74,7 +77,7 @@
                 android:layout_marginTop="8dp" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/taskLocationIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -83,7 +86,7 @@
                 app:srcCompat="@drawable/ic_baseline_location" />
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/currentStage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="50dp"
@@ -105,8 +108,8 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/challengeImage"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/imageView"
-                app:layout_constraintTop_toBottomOf="@+id/imageView" />
+                app:layout_constraintStart_toStartOf="@+id/taskLocationIcon"
+                app:layout_constraintTop_toBottomOf="@+id/taskLocationIcon" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -3,12 +3,13 @@ package com.neil.miruhiru.data
 import com.google.firebase.firestore.GeoPoint
 
 data class Task(
-    val location: GeoPoint? = null,
-    val answer: String? = null,
-    val guide: String? = null,
-    val id: String? = null,
-    val image: String? = null,
-    val introduction: String? = null,
-    val question: String? = null,
-    val stage: Int? = null
+    val location: GeoPoint = GeoPoint(0.0,0.0),
+    val answer: String = "",
+    val guide: String = "",
+    val id: String = "",
+    val image: String = "",
+    val introduction: String = "",
+    val question: String = "",
+    val stage: Int = 0,
+    val name: String = ""
 )
