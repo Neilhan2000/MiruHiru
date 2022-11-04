@@ -88,7 +88,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
     private var mapBoxMap: MapboxMap? = null
     private var routeLineApi: MapboxRouteLineApi? = null
     private var routeLineView: MapboxRouteLineView? = null
-    private var mapboxNavigation: MapboxNavigation? = null
+//    private var mapboxNavigation: MapboxNavigation? = null
     var stage: Int = 1
 
     // listeners and observers
@@ -136,7 +136,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
             Toast.makeText(this@ExploreFragment.context, "arrive destination", Toast.LENGTH_SHORT).show()
             Log.i("neil", "stage $stage completed")
             Toast.makeText(this@ExploreFragment.context, "stage ${stage++} completed", Toast.LENGTH_SHORT).show()
-            mapboxNavigation?.unregisterRouteProgressObserver(routeProgressObserver)
+//            mapboxNavigation?.unregisterRouteProgressObserver(routeProgressObserver)
             val secondWaypoint = Point.fromLngLat(121.532658603193, 24.038928111026806)
 
             startNavigation(secondWaypoint)
@@ -164,20 +164,20 @@ class ExploreFragment : Fragment(), PermissionsListener {
         enableLocation()
         viewModel.challengeList
 
-        mapboxNavigation =
-            if (MapboxNavigationProvider.isCreated()) {
-                MapboxNavigationProvider.retrieve()
-            } else {
-                this.context?.let { it1 ->
-                    NavigationOptions.Builder(it1)
-                        .accessToken(BuildConfig.MAPBOX_ACCESS_TOKEN)
-                        .build()
-                }?.let { it2 ->
-                    MapboxNavigationProvider.create(
-                        it2
-                    )
-                }
-            }
+//        mapboxNavigation =
+//            if (MapboxNavigationProvider.isCreated()) {
+//                MapboxNavigationProvider.retrieve()
+//            } else {
+//                this.context?.let { it1 ->
+//                    NavigationOptions.Builder(it1)
+//                        .accessToken(BuildConfig.MAPBOX_ACCESS_TOKEN)
+//                        .build()
+//                }?.let { it2 ->
+//                    MapboxNavigationProvider.create(
+//                        it2
+//                    )
+//                }
+//            }
         val routeLineOptions = this.context?.let { it1 -> MapboxRouteLineOptions.Builder(it1).build() }
         routeLineApi = routeLineOptions?.let { it1 -> MapboxRouteLineApi(it1) }
         routeLineView = routeLineOptions?.let { it1 -> MapboxRouteLineView(it1) }
@@ -384,13 +384,13 @@ class ExploreFragment : Fragment(), PermissionsListener {
     override fun onStart() {
         super.onStart()
         mapView?.onStart()
-        mapboxNavigation?.registerArrivalObserver(arrivalObserver)
+//        mapboxNavigation?.registerArrivalObserver(arrivalObserver)
     }
 
     override fun onStop() {
         super.onStop()
         mapView?.onStop()
-        mapboxNavigation?.unregisterArrivalObserver(arrivalObserver)
+//        mapboxNavigation?.unregisterArrivalObserver(arrivalObserver)
     }
 
     override fun onLowMemory() {
@@ -409,7 +409,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
         routeLineApi?.cancel()
         routeLineView?.cancel()
 
-        mapboxNavigation?.unregisterRouteProgressObserver(routeProgressObserver)
+//        mapboxNavigation?.unregisterRouteProgressObserver(routeProgressObserver)
 
     }
 
@@ -446,51 +446,51 @@ class ExploreFragment : Fragment(), PermissionsListener {
             originLocation.latitude
         )
 
-        mapboxNavigation?.requestRoutes(
-            RouteOptions.builder()
-                .applyDefaultNavigationOptions()
-                .coordinatesList(listOf(originPoint, destination))
-                .bearingsList(
-                    listOf(
-                        Bearing.builder()
-                            .angle(originLocation.bearing.toDouble())
-                            .degrees(45.0)
-                            .build(),
-                        null
-                    )
-                )
-                .build(),
-            object : NavigationRouterCallback {
-                override fun onCanceled(
-                    routeOptions: RouteOptions,
-                    routerOrigin: RouterOrigin
-                ) {
-                    Log.i("neil", "fetch route cancel")
-                }
-
-                override fun onFailure(
-                    reasons: List<RouterFailure>,
-                    routeOptions: RouteOptions
-                ) {
-                    Log.i("neil", "fetch route failure $reasons")
-                }
-
-                @SuppressLint("MissingPermission")
-                override fun onRoutesReady(
-                    routes: List<NavigationRoute>,
-                    routerOrigin: RouterOrigin
-                ) {
-                    Log.i("neil", "fetch route ready")
-                    routeLineApi?.setNavigationRoutes(routes) { value ->
-                        routeLineView?.renderRouteDrawData(mapBoxMap?.getStyle()!!, value)
-                    }
-                    mapboxNavigation!!.setNavigationRoutes(routes)
-                    mapboxNavigation!!.registerRouteProgressObserver(routeProgressObserver)
-                    mapboxNavigation!!.startTripSession(withForegroundService = false)
-
-                }
-            }
-        )
+//        mapboxNavigation?.requestRoutes(
+//            RouteOptions.builder()
+//                .applyDefaultNavigationOptions()
+//                .coordinatesList(listOf(originPoint, destination))
+//                .bearingsList(
+//                    listOf(
+//                        Bearing.builder()
+//                            .angle(originLocation.bearing.toDouble())
+//                            .degrees(45.0)
+//                            .build(),
+//                        null
+//                    )
+//                )
+//                .build(),
+//            object : NavigationRouterCallback {
+//                override fun onCanceled(
+//                    routeOptions: RouteOptions,
+//                    routerOrigin: RouterOrigin
+//                ) {
+//                    Log.i("neil", "fetch route cancel")
+//                }
+//
+//                override fun onFailure(
+//                    reasons: List<RouterFailure>,
+//                    routeOptions: RouteOptions
+//                ) {
+//                    Log.i("neil", "fetch route failure $reasons")
+//                }
+//
+//                @SuppressLint("MissingPermission")
+//                override fun onRoutesReady(
+//                    routes: List<NavigationRoute>,
+//                    routerOrigin: RouterOrigin
+//                ) {
+//                    Log.i("neil", "fetch route ready")
+//                    routeLineApi?.setNavigationRoutes(routes) { value ->
+//                        routeLineView?.renderRouteDrawData(mapBoxMap?.getStyle()!!, value)
+//                    }
+//                    mapboxNavigation!!.setNavigationRoutes(routes)
+//                    mapboxNavigation!!.registerRouteProgressObserver(routeProgressObserver)
+//                    mapboxNavigation!!.startTripSession(withForegroundService = false)
+//
+//                }
+//            }
+//        )
     }
 
     @SuppressLint("MissingPermission")

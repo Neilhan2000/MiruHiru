@@ -15,9 +15,13 @@ import com.neil.miruhiru.data.Comment
 import com.neil.miruhiru.databinding.ItemChallengeCommentBinding
 
 
-class CommentAdapter(viewModel: ChallengeDetailViewModel): ListAdapter<Comment, CommentAdapter.ViewHolder>(DiffCallBack()) {
+class CommentAdapter(
+    viewModel: ChallengeDetailViewModel,
+    val onClick: (Int) -> Unit
+): ListAdapter<Comment, CommentAdapter.ViewHolder>(DiffCallBack()) {
 
     private val viewModel = viewModel
+    private lateinit var mRecyclerView: RecyclerView
 
     inner class ViewHolder(private val binding: ItemChallengeCommentBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -25,12 +29,22 @@ class CommentAdapter(viewModel: ChallengeDetailViewModel): ListAdapter<Comment, 
             binding.userName.text = item.userId
             binding.ratingBar.rating = item.rating
             binding.comment.text = item.text
-
-            Glide.with(binding.userIcon.context).load(viewModel.commentUsers.value?.get(adapterPosition)?.icon).centerCrop().apply(
+            Glide.with(binding.userIcon.context).load(viewModel.commentUsers.value?.get(adapterPosition)?.icon).circleCrop().apply(
                 RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
             ).into(binding.userIcon)
+            binding.reportIcon.setOnClickListener {
+                onClick(adapterPosition)
+            }
 
+            if (adapterPosition > 2) {
+                mRecyclerView.layoutParams.height = 174
+            }
         }
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        mRecyclerView = recyclerView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentAdapter.ViewHolder {

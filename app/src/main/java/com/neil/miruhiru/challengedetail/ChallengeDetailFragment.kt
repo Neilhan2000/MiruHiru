@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
@@ -83,7 +84,12 @@ class ChallengeDetailFragment : Fragment() {
             }
         }
 
-        val adapter = CommentAdapter(viewModel)
+        // set recyclerView adapter
+        val adapter = CommentAdapter(
+            viewModel
+        ) { index ->
+            reportUser(index)
+        }
         binding.recyclerComment.adapter = adapter
 
         // observer commentUsers and show in recyclerView
@@ -92,6 +98,10 @@ class ChallengeDetailFragment : Fragment() {
         })
 
         return binding.root
+    }
+
+    private fun reportUser(userIndex: Int) {
+        Toast.makeText(requireContext(), "report user $userIndex", Toast.LENGTH_SHORT).show()
     }
 
     private fun setLocation() {
