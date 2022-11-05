@@ -232,11 +232,10 @@ class ExploreFragment : Fragment(), PermissionsListener {
     }
 
     private fun determineChallengeIcon(type: String): Int {
-        val iconRes = when (type) {
+        return when (type) {
             "美食" -> R.drawable.anya_icon
             else -> R.drawable.anya_icon2
         }
-        return iconRes
     }
 
     // add annotation
@@ -249,8 +248,8 @@ class ExploreFragment : Fragment(), PermissionsListener {
             val annotationApi = mapView?.annotations
             pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView!!)!!
             // this data will be store in annotation
-            val locationInfo = LocationInfo(challenge.name!!, challenge.location!!, challenge.stage!!,
-            challenge.totalRating!!, challenge.timeSpent!!, challenge.image!!)
+//            val locationInfo = LocationInfo(challenge.name!!, challenge.location!!, challenge.stage!!,
+//            challenge.totalRating!!, challenge.timeSpent!!, challenge.image!!)
             // Set options for the resulting symbol layer.
             val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
                 .withPoint(Point.fromLngLat(
@@ -260,7 +259,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
                 .withIconImage(it)
                 .withIconSize(2.0)
                 // store data to annotation
-                .withData(JsonParser.parseString(Gson().toJson(locationInfo)))
+//                .withData(JsonParser.parseString(Gson().toJson(locationInfo)))
             // add annotation click listener.
             pointAnnotationManager?.addClickListener(object : OnPointAnnotationClickListener {
                 override fun onAnnotationClick(annotation: PointAnnotation): Boolean {
@@ -268,16 +267,17 @@ class ExploreFragment : Fragment(), PermissionsListener {
                     val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up)
                     binding.locationCardView.animation = animation
                     animation.start()
+                    // get data from annotation
 //                    Toast.makeText(requireContext(), "${Gson().fromJson(annotation.getData()?.asJsonObject, LocationInfo::class.java)}", Toast.LENGTH_SHORT).show()
-                    binding.challengeTitle.text = locationInfo.name
-                    binding.challengeRating.text = locationInfo.totalRating.toString()
-                    binding.challengeStage.text = locationInfo.stage.toString()
-                    binding.challengeTime.text = "${locationInfo.timeSpent/3600} Hrs"
-                    Glide.with(binding.challengeImage.context).load(locationInfo.image).centerCrop().apply(
+                    binding.challengeTitle.text = challenge.name
+                    binding.challengeRating.text = challenge.totalRating.toString()
+                    binding.challengeStage.text = challenge.stage.toString()
+                    binding.challengeTime.text = "${challenge.timeSpent?.div(3600)} Hrs"
+                    Glide.with(binding.challengeImage.context).load(challenge.image).centerCrop().apply(
                         RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
                     ).into(binding.challengeImage)
                     // this fun will show distance the between your location and challenge in the cardView
-                    calculateAndShowDistance(locationInfo.location)
+                    calculateAndShowDistance(challenge.location)
                     binding.locationCardView.setOnClickListener {
                         this@ExploreFragment.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment())
                     }

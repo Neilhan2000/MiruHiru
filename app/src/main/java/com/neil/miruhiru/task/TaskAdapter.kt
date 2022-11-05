@@ -35,10 +35,10 @@ class TaskAdapter() : ListAdapter<Task, TaskAdapter.ViewHolder>(DiffCallBack()) 
             binding.challengeStage.text = item.stage.toString()
             startTrackingDistance(item.location)
         }
+
         private fun startTrackingDistance(destination: GeoPoint) {
             scope.launch {
                 while(true) {
-                    Log.i("neil", "time")
                     calculateAndShowDistance(destination)
                     delay(1000)
                 }
