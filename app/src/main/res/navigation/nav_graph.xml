@@ -35,5 +35,19 @@
         android:id="@+id/taskFragment"
         android:name="com.neil.miruhiru.task.TaskFragment"
         android:label="fragment_task"
-        tools:layout="@layout/fragment_task" /><action android:id="@+id/action_global_taskFragment" app:destination="@id/taskFragment"/>
+        tools:layout="@layout/fragment_task" >
+        <action
+            android:id="@+id/action_taskFragment_to_taskDetailFragment"
+            app:destination="@id/taskDetailFragment" />
+    </fragment>
+    <action android:id="@+id/action_global_taskFragment" app:destination="@id/taskFragment"/>
+    <fragment
+        android:id="@+id/taskDetailFragment"
+        android:name="com.neil.miruhiru.taskdetail.TaskDetailFragment"
+        android:label="fragment_task_detail"
+        tools:layout="@layout/fragment_task_detail" >
+        <argument
+            android:name="locationInfo"
+            app:argType="com.neil.miruhiru.data.LocationInfo" />
+    </fragment><action android:id="@+id/action_global_taskDetailFragment" app:destination="@id/taskDetailFragment"/>
 </navigation>

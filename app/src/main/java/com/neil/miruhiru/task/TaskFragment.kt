@@ -131,7 +131,7 @@ class TaskFragment : Fragment() {
             guideAdapter.submitList(guildTextList)
             binding.guideTextRecycler.scrollToPosition(1)
 
-            val fakeTaskList = listOf(Task(location = GeoPoint(24.987527859125066, 121.57670261867133), stage = 1),
+            val fakeTaskList = listOf(Task(location = GeoPoint(24.987527859125066, 121.57670261867133), stage = 1, image = "https://www.mcdonalds.com/content/dam/sites/tw/carousel/desktop/2022/0928-%E9%A6%96%E9%A0%81%E8%BC%AA%E6%92%ADBanner_2336x1040_1.png"),
             Task(location = GeoPoint(24.98741195449783,121.57692885652426), stage = 2),
             Task(location = GeoPoint(24.986360821125544, 121.57708799621162), stage = 3)
             )
@@ -142,6 +142,9 @@ class TaskFragment : Fragment() {
             taskAdapter.submitList(fakeTaskList)
         })
 
+        // navigation to TaskDetailFragment
+
+        // setup map
         mapView = binding.mapView
         initLocationComponent()
         mapView?.gestures?.addOnMoveListener(onMoveListener)

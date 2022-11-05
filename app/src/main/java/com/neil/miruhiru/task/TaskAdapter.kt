@@ -6,6 +6,7 @@ import android.location.Location
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +15,9 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Point
+import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
+import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.ItemTaskTaskBinding
 import kotlinx.coroutines.*
@@ -24,6 +27,7 @@ class TaskAdapter() : ListAdapter<Task, TaskAdapter.ViewHolder>(DiffCallBack()) 
 
     private lateinit var context: Context
     private val scope = CoroutineScope(Job() + Dispatchers.IO)
+    private var distanceGlobal = 0
 
     inner class ViewHolder(private val binding: ItemTaskTaskBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -34,6 +38,11 @@ class TaskAdapter() : ListAdapter<Task, TaskAdapter.ViewHolder>(DiffCallBack()) 
             binding.challengeTitle.text = item.name
             binding.challengeStage.text = item.stage.toString()
             startTrackingDistance(item.location)
+            binding.startTaskButton.setOnClickListener {
+                val locationInfo = LocationInfo(
+                    item.name, distanceGlobal, item.introduction, item.image, item.question, item.answer)
+                itemView.findNavController().navigate(NavGraphDirections.actionGlobalTaskDetailFragment(locationInfo))
+            }
         }
 
         private fun startTrackingDistance(destination: GeoPoint) {
@@ -57,6 +66,7 @@ class TaskAdapter() : ListAdapter<Task, TaskAdapter.ViewHolder>(DiffCallBack()) 
                     )
                     val distance = calculateDistance(currentPoint, destination)
                     binding.challengeDistance.text = "${distance.roundToInt()} Ms"
+                    distanceGlobal = distance.roundToInt()
                 }
         }
 
