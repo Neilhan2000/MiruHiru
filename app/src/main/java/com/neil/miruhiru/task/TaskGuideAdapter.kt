@@ -18,7 +18,7 @@ class TaskGuideAdapter: ListAdapter<Task, TaskGuideAdapter.ViewHolder>(DiffCallB
         fun bind(item: Task) {
             binding.guideText.text = item.guide
             if (adapterPosition == 0 || adapterPosition == 2) {
-                itemView.visibility = View.INVISIBLE
+                itemView.visibility = View.GONE
             }
         }
     }

@@ -35,6 +35,21 @@
         mapbox:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="invisible"
+        app:maxImageSize="40dp"
+        app:tint="@android:color/white"
+        android:src="@drawable/ic_target"
+        app:backgroundTint="@color/light_yellow"
+        app:layout_constraintBottom_toTopOf="@+id/fabAndroid"
+        app:layout_constraintEnd_toEndOf="@+id/fabAndroid" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -102,7 +117,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/guideTextRecycler"
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:orientation="horizontal"
         mapbox:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

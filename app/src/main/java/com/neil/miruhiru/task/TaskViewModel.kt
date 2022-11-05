@@ -1,10 +1,14 @@
 package com.neil.miruhiru.task
 
+import android.annotation.SuppressLint
+import android.app.Application
 import android.location.Location
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -12,9 +16,11 @@ import com.google.firebase.ktx.Firebase
 import com.mapbox.geojson.Point
 import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.Task
+import kotlinx.coroutines.*
 
-class TaskViewModel: ViewModel() {
+class TaskViewModel(application: Application): AndroidViewModel(application) {
 
+    val viewModelApplication = application
     init {
         val challengeId = "2WBySSd68w3VrA08eLGj"
 //        loadTasks(challengeId)
@@ -103,20 +109,36 @@ class TaskViewModel: ViewModel() {
 
     }
 
-    fun calculateDistance(currentPoint: Point?, destinationPoint: GeoPoint): Float {
-        val current = Location("current")
-        current.latitude = currentPoint?.latitude()!!
-        current.longitude = currentPoint.latitude()
-
-        val destination = Location("current")
-        destination.latitude = destinationPoint.latitude
-        destination.longitude = destinationPoint.longitude
-
-        val result =  floatArrayOf(0.0F)
-        val distance = Location.distanceBetween(currentPoint.latitude(), currentPoint.longitude(),
-            destinationPoint.latitude, destinationPoint.longitude, result)
-
-        return result[0]
-
-    }
+//    private fun calculateDistance(currentPoint: Point?, destinationPoint: GeoPoint): Float {
+//        val current = Location("current")
+//        current.latitude = currentPoint?.latitude()!!
+//        current.longitude = currentPoint.latitude()
+//
+//        val destination = Location("current")
+//        destination.latitude = destinationPoint.latitude
+//        destination.longitude = destinationPoint.longitude
+//
+//        val result =  floatArrayOf(0.0F)
+//        val distance = Location.distanceBetween(currentPoint.latitude(), currentPoint.longitude(),
+//            destinationPoint.latitude, destinationPoint.longitude, result)
+//
+//        return result[0]
+//
+//    }
+//
+//    @SuppressLint("MissingPermission")
+//    fun calculateAndShowDistance(destination: GeoPoint) {
+//        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(viewModelApplication)
+//        var currentPoint: Point? = null
+//        fusedLocationClient.lastLocation
+//            .addOnSuccessListener { location : Location? ->
+//                Log.i("neil", "current location = ${location?.latitude}, ${location?.longitude}")
+//                currentPoint = Point.fromLngLat(
+//                    location!!.longitude,
+//                    location!!.latitude
+//                )
+//                val distance = calculateDistance(currentPoint, destination)
+//                Log.i("neil", "time $distance")
+//            }
+//    }
 }
