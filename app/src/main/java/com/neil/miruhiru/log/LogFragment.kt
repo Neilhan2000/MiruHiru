@@ -21,7 +21,7 @@ class LogFragment : Fragment() {
 
         val taskList = listOf(Task(), Task(), Task())
         val stageAdapter = LogStageAdapter()
-        binding.recyclerPhoto.adapter = stageAdapter
+        binding.recyclerStage.adapter = stageAdapter
         stageAdapter.submitList(taskList)
 
 

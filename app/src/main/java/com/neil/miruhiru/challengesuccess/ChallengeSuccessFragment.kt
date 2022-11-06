@@ -34,9 +34,11 @@ class ChallengeSuccessFragment : Fragment() {
 
     private fun setupScreen() {
         binding.postButton.setOnClickListener {
-            this.findNavController()
+            this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment())
         }
-        binding.cancelButton
+        binding.cancelButton.setOnClickListener {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment())
+        }
 
     }
 

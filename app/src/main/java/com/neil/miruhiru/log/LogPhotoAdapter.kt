@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Photo
+import com.neil.miruhiru.data.PhotoComment
 import com.neil.miruhiru.databinding.ItemLogPhotoBinding
 
 class LogPhotoAdapter: ListAdapter<Photo, LogPhotoAdapter.ViewHolder>(DiffCallBack()) {
@@ -15,6 +16,10 @@ class LogPhotoAdapter: ListAdapter<Photo, LogPhotoAdapter.ViewHolder>(DiffCallBa
     inner class ViewHolder(private val binding: ItemLogPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Photo) {
+            val photoCommentList = listOf(PhotoComment(), PhotoComment())
+            val photoCommentAdapter = LogPhotoCommentAdapter()
+            binding.recyclerPhotoComment.adapter = photoCommentAdapter
+            photoCommentAdapter.submitList(photoCommentList)
 
         }
     }

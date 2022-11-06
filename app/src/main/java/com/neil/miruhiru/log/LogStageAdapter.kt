@@ -2,6 +2,7 @@ package com.neil.miruhiru.log
 
 import androidx.recyclerview.widget.ListAdapter
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,9 @@ class LogStageAdapter(): ListAdapter<Task, LogStageAdapter.ViewHolder>(DiffCallB
             val photoList = listOf(Photo(), Photo())
             binding.recyclerPhoto.adapter = photoAdapter
             photoAdapter.submitList(photoList)
+            if (adapterPosition == photoAdapter.itemCount) {
+                binding.greyLine7.visibility = View.GONE
+            }
         }
     }
 
