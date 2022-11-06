@@ -27,14 +27,6 @@ class TaskDetailFragment : Fragment() {
         locationInfo = TaskDetailFragmentArgs.fromBundle(requireArguments()).locationInfo
         setupScreen()
 
-
-
-
-
-
-
-
-
         return binding.root
     }
     private fun setupScreen() {

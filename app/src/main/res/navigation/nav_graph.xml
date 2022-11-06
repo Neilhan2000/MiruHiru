@@ -67,5 +67,10 @@
         android:id="@+id/taskSuccessFragment"
         android:name="com.neil.miruhiru.tasksuccess.TaskSuccessFragment"
         android:label="fragment_task_success"
-        tools:layout="@layout/fragment_task_success" /><action android:id="@+id/action_global_taskSuccessFragment" app:destination="@id/taskSuccessFragment"/>
+        tools:layout="@layout/fragment_task_success" />
+    <action android:id="@+id/action_global_taskSuccessFragment" app:destination="@id/taskSuccessFragment" />
+    <dialog
+        android:id="@+id/logDialogFragment"
+        android:name="com.neil.miruhiru.tasksuccess.LogDialogFragment"
+        android:label="LogDialogFragment" /><action android:id="@+id/action_global_logDialogFragment" app:destination="@id/logDialogFragment"/>
 </navigation>

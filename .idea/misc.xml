@@ -6,6 +6,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_border.xml" value="0.271" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/dialog_border.xml" value="0.254" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/edit_text_border.xml" value="0.254" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/edit_text_border_log.xml" value="0.255" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/progress_bar_border.xml" value="0.1" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/progress_border.xml" value="0.1" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/ratingbar.xml" value="0.1035" />
@@ -20,6 +21,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_community.xml" value="0.21666666666666667" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom.xml" value="0.21666666666666667" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_explore.xml" value="0.25" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_log_dialog.xml" value="0.2" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_profile.xml" value="0.21666666666666667" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task.xml" value="0.22" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task_detail.xml" value="0.2" />

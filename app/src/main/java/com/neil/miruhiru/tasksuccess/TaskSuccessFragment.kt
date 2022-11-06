@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.databinding.FragmentTaskSuccessBinding
 
@@ -17,6 +19,12 @@ class TaskSuccessFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentTaskSuccessBinding.inflate(inflater, container, false)
+        binding.logButton.setOnClickListener {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalLogDialogFragment())
+        }
+        binding.continueButton.setOnClickListener {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
+        }
 
 
 

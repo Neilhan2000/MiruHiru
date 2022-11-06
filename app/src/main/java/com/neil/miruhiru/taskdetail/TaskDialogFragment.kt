@@ -44,9 +44,6 @@ class TaskDialogFragment : DialogFragment() {
     private fun setupScreen() {
         val builder = AlertDialog.Builder(requireActivity())
         builder.setView(binding.root)
-        binding.root.setOnClickListener {
-            requireActivity().finish()
-        }
         dialog = builder.create()
         dialog.window!!.setBackgroundDrawableResource(R.drawable.dialog_border)
         binding.question.text = locationInfo.question
