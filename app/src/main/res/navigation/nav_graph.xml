@@ -73,4 +73,9 @@
         android:id="@+id/logDialogFragment"
         android:name="com.neil.miruhiru.tasksuccess.LogDialogFragment"
         android:label="LogDialogFragment" /><action android:id="@+id/action_global_logDialogFragment" app:destination="@id/logDialogFragment"/>
+    <fragment
+        android:id="@+id/challengeSuccessFragment"
+        android:name="com.neil.miruhiru.challengesuccess.ChallengeSuccessFragment"
+        android:label="fragment_challenge_success"
+        tools:layout="@layout/fragment_challenge_success" /><action android:id="@+id/action_global_challengeSuccessFragment" app:destination="@id/challengeSuccessFragment"/>
 </navigation>
