@@ -77,5 +77,11 @@
         android:id="@+id/challengeSuccessFragment"
         android:name="com.neil.miruhiru.challengesuccess.ChallengeSuccessFragment"
         android:label="fragment_challenge_success"
-        tools:layout="@layout/fragment_challenge_success" /><action android:id="@+id/action_global_challengeSuccessFragment" app:destination="@id/challengeSuccessFragment"/>
+        tools:layout="@layout/fragment_challenge_success" />
+    <action android:id="@+id/action_global_challengeSuccessFragment" app:destination="@id/challengeSuccessFragment" />
+    <fragment
+        android:id="@+id/logFragment"
+        android:name="com.neil.miruhiru.log.LogFragment"
+        android:label="fragment_log"
+        tools:layout="@layout/fragment_log" /><action android:id="@+id/action_global_logFragment" app:destination="@id/logFragment"/>
 </navigation>

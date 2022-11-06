@@ -20,16 +20,3 @@ data class Message(
     val time: Timestamp = Timestamp(Date(0))
 )
 
-data class Photo(
-    val id: String = "",
-    val url: String = "",
-    val time: Timestamp = Timestamp(Date(0)),
-    val comments: List<PhotoComment> = mutableListOf()
-)
-
-data class PhotoComment(
-    val senderId: String = "",
-    val text: String = "",
-    val time: Timestamp = Timestamp(Date(0))
-)
-

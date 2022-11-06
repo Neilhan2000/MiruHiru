@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.fragment_profile -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalChallengeSuccessFragment())
+                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalLogFragment())
                     return@setOnItemSelectedListener true
                 }
             }
