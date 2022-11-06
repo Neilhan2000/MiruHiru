@@ -56,5 +56,16 @@
     <dialog
         android:id="@+id/taskDialogFragment"
         android:name="com.neil.miruhiru.taskdetail.TaskDialogFragment"
-        android:label="TaskDialogFragment" /><action android:id="@+id/action_global_taskDetailFragment" app:destination="@id/taskDetailFragment"/><action android:id="@+id/action_global_taskDialogFragment" app:destination="@id/taskDialogFragment"/>
+        android:label="TaskDialogFragment" >
+        <argument
+            android:name="locationInfo"
+            app:argType="com.neil.miruhiru.data.LocationInfo" />
+    </dialog>
+    <action android:id="@+id/action_global_taskDetailFragment" app:destination="@id/taskDetailFragment" />
+    <action android:id="@+id/action_global_taskDialogFragment" app:destination="@id/taskDialogFragment" />
+    <fragment
+        android:id="@+id/taskSuccessFragment"
+        android:name="com.neil.miruhiru.tasksuccess.TaskSuccessFragment"
+        android:label="fragment_task_success"
+        tools:layout="@layout/fragment_task_success" /><action android:id="@+id/action_global_taskSuccessFragment" app:destination="@id/taskSuccessFragment"/>
 </navigation>

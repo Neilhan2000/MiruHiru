@@ -52,7 +52,7 @@ class TaskDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "距離任務點太遠囉，靠近一點在回答八OuO", Toast.LENGTH_LONG).show()
         } else {
             binding.answerButton.setOnClickListener {
-                this.findNavController().navigate(NavGraphDirections.actionGlobalTaskDialogFragment())
+                this.findNavController().navigate(NavGraphDirections.actionGlobalTaskDialogFragment(locationInfo))
             }
         }
 
