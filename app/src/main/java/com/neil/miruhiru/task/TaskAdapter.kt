@@ -6,6 +6,7 @@ import android.location.Location
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.text.isDigitsOnly
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -38,9 +39,12 @@ class TaskAdapter() : ListAdapter<Task, TaskAdapter.ViewHolder>(DiffCallBack()) 
             binding.challengeTitle.text = item.name
             binding.challengeStage.text = item.stage.toString()
             startTrackingDistance(item.location)
+            Log.i("neilll", "dis $distanceGlobal")
+            Log.i("neilll", "dis ${item.location}")
             binding.startTaskButton.setOnClickListener {
                 val locationInfo = LocationInfo(
-                    item.name, distanceGlobal, item.introduction, item.image, item.question, item.answer)
+                    item.name, binding.challengeDistance.text.toString().filter { it.isDigit() }.toInt(),
+                    item.introduction, item.image, item.question, item.answer)
                 itemView.findNavController().navigate(NavGraphDirections.actionGlobalTaskDetailFragment(locationInfo))
             }
         }

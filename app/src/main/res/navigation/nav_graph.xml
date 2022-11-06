@@ -49,5 +49,12 @@
         <argument
             android:name="locationInfo"
             app:argType="com.neil.miruhiru.data.LocationInfo" />
-    </fragment><action android:id="@+id/action_global_taskDetailFragment" app:destination="@id/taskDetailFragment"/>
+        <action
+            android:id="@+id/action_taskDetailFragment_to_taskDialogFragment"
+            app:destination="@id/taskDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/taskDialogFragment"
+        android:name="com.neil.miruhiru.taskdetail.TaskDialogFragment"
+        android:label="TaskDialogFragment" /><action android:id="@+id/action_global_taskDetailFragment" app:destination="@id/taskDetailFragment"/><action android:id="@+id/action_global_taskDialogFragment" app:destination="@id/taskDialogFragment"/>
 </navigation>
