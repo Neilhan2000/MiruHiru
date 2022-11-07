@@ -94,4 +94,14 @@
         android:name="com.neil.miruhiru.invite.InviteFragment"
         android:label="fragment_invite"
         tools:layout="@layout/fragment_invite" /><action android:id="@+id/action_global_challengeTypeFragment" app:destination="@id/challengeTypeFragment"/><action android:id="@+id/action_global_inviteFragment" app:destination="@id/inviteFragment"/>
+    <fragment
+        android:id="@+id/joinFragment"
+        android:name="com.neil.miruhiru.join.JoinFragment"
+        android:label="fragment_join"
+        tools:layout="@layout/fragment_join" />
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="com.neil.miruhiru.join.ScanFragment"
+        android:label="fragment_scan"
+        tools:layout="@layout/fragment_scan" /><action android:id="@+id/action_global_joinFragment" app:destination="@id/joinFragment"/><action android:id="@+id/action_global_scanFragment" app:destination="@id/scanFragment"/>
 </navigation>

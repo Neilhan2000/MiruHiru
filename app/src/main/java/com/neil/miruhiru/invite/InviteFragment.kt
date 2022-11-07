@@ -38,8 +38,8 @@ class InviteFragment : Fragment() {
 
 
     private fun setupScreen() {
-        generateQrcode()
         generateChallengeKey()
+        generateQrcode()
         val userList = listOf(User(), User())
         val userAdapter = UserAdapter()
         binding.userRecycler.adapter = userAdapter
