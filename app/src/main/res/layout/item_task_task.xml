@@ -111,6 +111,19 @@
                 app:layout_constraintStart_toStartOf="@+id/taskLocationIcon"
                 app:layout_constraintTop_toBottomOf="@+id/taskLocationIcon" />
 
+            <ImageView
+                android:id="@+id/cardTaskSuccessIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/challengeTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/challengeTitle"
+                app:layout_constraintTop_toTopOf="@+id/challengeTitle"
+                app:layout_constraintVertical_bias="0.36"
+                app:srcCompat="@drawable/ic_success_500" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

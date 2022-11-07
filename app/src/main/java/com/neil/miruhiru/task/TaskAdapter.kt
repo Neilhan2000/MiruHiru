@@ -5,6 +5,7 @@ import android.content.Context
 import android.location.Location
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.findNavController
@@ -24,11 +25,12 @@ import com.neil.miruhiru.databinding.ItemTaskTaskBinding
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
-class TaskAdapter() : ListAdapter<Task, TaskAdapter.ViewHolder>(DiffCallBack()) {
+class TaskAdapter(viewModel: TaskViewModel) : ListAdapter<Task, TaskAdapter.ViewHolder>(DiffCallBack()) {
 
     private lateinit var context: Context
     private val scope = CoroutineScope(Job() + Dispatchers.IO)
     private var distanceGlobal = 0
+    private val viewModel = viewModel
 
     inner class ViewHolder(private val binding: ItemTaskTaskBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -46,6 +48,9 @@ class TaskAdapter() : ListAdapter<Task, TaskAdapter.ViewHolder>(DiffCallBack()) 
                     item.name, binding.challengeDistance.text.toString().filter { it.isDigit() }.toInt(),
                     item.introduction, item.image, item.question, item.answer)
                 itemView.findNavController().navigate(NavGraphDirections.actionGlobalTaskDetailFragment(locationInfo))
+            }
+            if (item.stage >= viewModel.currentStage) {
+                binding.cardTaskSuccessIcon.visibility = View.GONE
             }
         }
 

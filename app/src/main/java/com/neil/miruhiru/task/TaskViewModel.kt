@@ -59,6 +59,8 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
     val event: LiveData<Event>
         get() = _event
 
+    val currentStage = 2
+
 //    private fun loadTasks(challengeId: String) {
 //        val db = Firebase.firestore
 //        val taskList = mutableListOf<Task>()

@@ -99,7 +99,7 @@ class TaskFragment : Fragment() {
         }
 
         // task and guide adapter
-        taskAdapter = TaskAdapter()
+        taskAdapter = TaskAdapter(viewModel)
         guideAdapter = TaskGuideAdapter()
         binding.TaskRecycler.adapter = taskAdapter
         binding.guideTextRecycler.adapter = guideAdapter
@@ -133,9 +133,9 @@ class TaskFragment : Fragment() {
             guideAdapter.submitList(guildTextList)
             binding.guideTextRecycler.scrollToPosition(1)
 
-            val fakeTaskList = listOf(Task(answer = "99", question = "單點一次多少元", introduction = "漢堡加薯餅",name = "脆薯雙牛堡好ㄘ",location = GeoPoint(24.987527859125066, 121.57670261867133), stage = 1, image = "https://www.mcdonalds.com/content/dam/sites/tw/carousel/desktop/2022/0928-%E9%A6%96%E9%A0%81%E8%BC%AA%E6%92%ADBanner_2336x1040_1.png"),
-            Task(location = GeoPoint(24.98741195449783,121.57692885652426), stage = 2),
-            Task(location = GeoPoint(24.986360821125544, 121.57708799621162), stage = 3)
+            val fakeTaskList = listOf(Task(answer = "99", question = "單點一次多少元", introduction = "漢堡加薯餅",name = "脆薯雙牛堡好ㄘ",location = GeoPoint(25.038439309230398, 121.53236337071075), stage = 1, image = "https://www.mcdonalds.com/content/dam/sites/tw/carousel/desktop/2022/0928-%E9%A6%96%E9%A0%81%E8%BC%AA%E6%92%ADBanner_2336x1040_1.png"),
+            Task(location = GeoPoint(25.037096571143664, 121.53151283294005), stage = 2),
+            Task(location = GeoPoint(25.04247038998423, 121.53276152239846), stage = 3)
             )
             val currentStage = 2
             for (task in fakeTaskList) {

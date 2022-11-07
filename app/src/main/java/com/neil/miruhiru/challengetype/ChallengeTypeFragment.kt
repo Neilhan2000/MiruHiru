@@ -28,6 +28,9 @@ class ChallengeTypeFragment : Fragment() {
         binding.multiplePlayerButton.setOnClickListener {
             this.findNavController().navigate(NavGraphDirections.actionGlobalInviteFragment())
         }
+        binding.singlePlayerButton.setOnClickListener {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
+        }
     }
 
 }
