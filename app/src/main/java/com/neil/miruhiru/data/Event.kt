@@ -11,7 +11,8 @@ data class Event(
     val challengeId: String = "",
     val progress: List<Int> = mutableListOf(0),
     val messages: List<Message> = mutableListOf(),
-    val photos: List<Photo> = mutableListOf()
+    val photos: List<Photo> = mutableListOf(),
+    val stage: Int = 0
 )
 
 data class Message(

@@ -124,24 +124,27 @@ class TaskFragment : Fragment() {
 
         // observe taskList and setup screen
         viewModel.taskList.observe(viewLifecycleOwner, Observer {
-//            taskAdapter.submitList(it)
+            taskAdapter.submitList(it)
             taskAdapter.notifyDataSetChanged()
-            binding.progressBar.width = (binding.progressBarBorder.width - 16) / 5 * (viewModel.event.value?.progress?.minOrNull() ?: 0)
-            binding.progressText.text = "${it[0].stage} / 5"
+            binding.progressBar.width = ((binding.progressBarBorder.width) / 6) * (viewModel.currentStage)
+            binding.progressText.text = "${viewModel.currentStage} / 5"
 
             val guildTextList = listOf<Task>(Task(), it[0], Task())
             guideAdapter.submitList(guildTextList)
             binding.guideTextRecycler.scrollToPosition(1)
 
-            val fakeTaskList = listOf(Task(answer = "99", question = "單點一次多少元", introduction = "漢堡加薯餅",name = "脆薯雙牛堡好ㄘ",location = GeoPoint(25.038439309230398, 121.53236337071075), stage = 1, image = "https://www.mcdonalds.com/content/dam/sites/tw/carousel/desktop/2022/0928-%E9%A6%96%E9%A0%81%E8%BC%AA%E6%92%ADBanner_2336x1040_1.png"),
-            Task(location = GeoPoint(25.037096571143664, 121.53151283294005), stage = 2),
-            Task(location = GeoPoint(25.04247038998423, 121.53276152239846), stage = 3)
-            )
-            val currentStage = 2
-            for (task in fakeTaskList) {
-                addAnnotationToMap(task, currentStage)
+//            val fakeTaskList = listOf(Task(answer = "99", question = "單點一次多少元", introduction = "漢堡加薯餅",name = "脆薯雙牛堡好ㄘ",location = GeoPoint(25.038439309230398, 121.53236337071075), stage = 1, image = "https://www.mcdonalds.com/content/dam/sites/tw/carousel/desktop/2022/0928-%E9%A6%96%E9%A0%81%E8%BC%AA%E6%92%ADBanner_2336x1040_1.png"),
+//            Task(location = GeoPoint(25.037096571143664, 121.53151283294005), stage = 2),
+//            Task(location = GeoPoint(25.04247038998423, 121.53276152239846), stage = 3)
+//            )
+
+//            taskAdapter.submitList(fakeTaskList)
+        })
+
+        viewModel.annotationList.observe(viewLifecycleOwner, Observer {
+            for (task in it) {
+                addAnnotationToMap(task, viewModel.currentStage)
             }
-            taskAdapter.submitList(fakeTaskList)
         })
 
         // navigation to TaskDetailFragment
