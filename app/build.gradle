@@ -83,4 +83,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$version_glide"
     annotationProcessor "com.github.bumptech.glide:compiler:$version_glide"
 
+    // QR Generator
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+
 }

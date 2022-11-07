@@ -20,6 +20,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.location.LocationServices
@@ -29,6 +30,7 @@ import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
+import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Task
@@ -125,6 +127,9 @@ class ChallengeDetailFragment : Fragment() {
         binding.challengeDescription.text = challenge.description
         binding.typeText.text = challenge.type
         calculateAndShowDistance(challenge.location!!)
+        binding.startButton.setOnClickListener {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment())
+        }
     }
 
     @SuppressLint("MissingPermission")

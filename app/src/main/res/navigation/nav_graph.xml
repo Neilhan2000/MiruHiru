@@ -84,4 +84,14 @@
         android:name="com.neil.miruhiru.log.LogFragment"
         android:label="fragment_log"
         tools:layout="@layout/fragment_log" /><action android:id="@+id/action_global_logFragment" app:destination="@id/logFragment"/>
+    <fragment
+        android:id="@+id/challengeTypeFragment"
+        android:name="com.neil.miruhiru.challengetype.ChallengeTypeFragment"
+        android:label="fragment_challenge_type"
+        tools:layout="@layout/fragment_challenge_type" />
+    <fragment
+        android:id="@+id/inviteFragment"
+        android:name="com.neil.miruhiru.invite.InviteFragment"
+        android:label="fragment_invite"
+        tools:layout="@layout/fragment_invite" /><action android:id="@+id/action_global_challengeTypeFragment" app:destination="@id/challengeTypeFragment"/><action android:id="@+id/action_global_inviteFragment" app:destination="@id/inviteFragment"/>
 </navigation>
