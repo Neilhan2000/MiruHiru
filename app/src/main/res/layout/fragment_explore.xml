@@ -1,42 +1,362 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:mapbox="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    tools:context=".explore.ExploreFragment">
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toTopOf="parent" />
 
-        <data>
-
-        </data>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/locationCardView"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"
+        mapbox:cardCornerRadius="15dp"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/mapView"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".explore.ExploreFragment">
+            android:layout_height="match_parent">
 
-<!--                <com.mapbox.mapboxsdk.maps.MapView-->
-<!--                    android:id="@+id/mapView"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
+            <TextView
+                android:id="@+id/challengeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="AppWorks美食大挑戰"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                mapbox:layout_constraintStart_toEndOf="@+id/challengeImage"
+                mapbox:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/challengeDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="5 ms"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/locationIcon"
+                mapbox:layout_constraintStart_toEndOf="@+id/locationIcon"
+                mapbox:layout_constraintTop_toTopOf="@+id/locationIcon" />
+
+            <TextView
+                android:id="@+id/challengeStage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="5"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/stageIcon"
+                mapbox:layout_constraintStart_toEndOf="@+id/stageIcon"
+                mapbox:layout_constraintTop_toTopOf="@+id/stageIcon" />
+
+            <TextView
+                android:id="@+id/challengeRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="5.0(99)"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/starIcon"
+                mapbox:layout_constraintStart_toEndOf="@+id/starIcon"
+                mapbox:layout_constraintTop_toTopOf="@+id/starIcon" />
+
+            <TextView
+                android:id="@+id/challengeTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="2 hrs"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/timeIcon"
+                mapbox:layout_constraintStart_toEndOf="@+id/timeIcon"
+                mapbox:layout_constraintTop_toTopOf="@+id/timeIcon" />
+
+            <ImageView
+                android:id="@+id/challengeImage"
+                android:layout_width="100dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:scaleType="centerCrop"
+                mapbox:layout_constraintBottom_toBottomOf="parent"
+                mapbox:layout_constraintStart_toStartOf="parent"
+                mapbox:layout_constraintTop_toTopOf="parent"
+                mapbox:srcCompat="@drawable/anya_icon" />
+
+            <ImageView
+                android:id="@+id/locationIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                mapbox:layout_constraintStart_toEndOf="@+id/challengeImage"
+                mapbox:layout_constraintTop_toBottomOf="@+id/challengeTitle"
+                mapbox:srcCompat="@drawable/ic_baseline_location" />
+
+            <ImageView
+                android:id="@+id/stageIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/challengeImage"
+                mapbox:layout_constraintStart_toEndOf="@+id/challengeImage"
+                mapbox:srcCompat="@drawable/ic_stage" />
+
+            <ImageView
+                android:id="@+id/starIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/challengeDistance"
+                mapbox:layout_constraintStart_toEndOf="@+id/challengeDistance"
+                mapbox:layout_constraintTop_toTopOf="@+id/challengeDistance"
+                mapbox:srcCompat="@drawable/ic_star" />
+
+            <ImageView
+                android:id="@+id/timeIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/challengeImage"
+                mapbox:layout_constraintStart_toStartOf="@+id/starIcon"
+                mapbox:srcCompat="@drawable/ic_time" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <com.mapbox.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        mapbox:layout_constraintBottom_toBottomOf="parent"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintHorizontal_bias="0.0"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toTopOf="parent"
+        mapbox:layout_constraintVertical_bias="0.0"
+        mapbox:mapbox_cameraTargetLat="23.5000"
+        mapbox:mapbox_cameraTargetLng="121.0000"
+        mapbox:mapbox_cameraZoom="15.0">
+
+    </com.mapbox.maps.MapView>
+
+    <ImageView
+        android:id="@+id/myLocationIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_target"
+        mapbox:layout_constraintBottom_toBottomOf="parent"
+        mapbox:layout_constraintEnd_toEndOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+<!--<layout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:mapbox="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:visibility="visible">-->
+
+<!--    <data>-->
+
+<!--    </data>-->
+
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        tools:context=".explore.ExploreFragment">-->
+
+        <!--                <com.mapbox.mapboxsdk.maps.MapView-->
+        <!--                    android:id="@+id/mapView"-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="match_parent"-->
+        <!--                    mapbox:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                    mapbox:layout_constraintEnd_toEndOf="parent"-->
+        <!--                    mapbox:layout_constraintStart_toStartOf="parent"-->
+        <!--                    mapbox:layout_constraintTop_toTopOf="parent"-->
+        <!--                    mapbox:mapbox_cameraTargetLat="23.5000"-->
+        <!--                    mapbox:mapbox_cameraTargetLng="121.0000"-->
+        <!--                    mapbox:mapbox_cameraZoom="15.0"-->
+        <!--                    mapbox:mapbox_styleUrl="mapbox://styles/mapbox/streets-v10"/>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Button"-->
+<!--            mapbox:layout_constraintEnd_toEndOf="parent"-->
+<!--            mapbox:layout_constraintStart_toStartOf="parent"-->
+<!--            mapbox:layout_constraintTop_toTopOf="parent" />-->
+
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:id="@+id/locationCardView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="130dp"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:visibility="gone"-->
+<!--            mapbox:cardCornerRadius="15dp"-->
+<!--            mapbox:layout_constraintBottom_toBottomOf="@+id/mapView"-->
+<!--            mapbox:layout_constraintEnd_toEndOf="parent"-->
+<!--            mapbox:layout_constraintStart_toStartOf="parent">-->
+
+<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/challengeTitle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:text="AppWorks美食大挑戰"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="20sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    mapbox:layout_constraintStart_toEndOf="@+id/imageView"-->
+<!--                    mapbox:layout_constraintTop_toTopOf="parent" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/challengeDistance"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="8dp"-->
+<!--                    android:text="5 ms"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="12sp"-->
+<!--                    mapbox:layout_constraintBottom_toBottomOf="@+id/locationIcon"-->
+<!--                    mapbox:layout_constraintStart_toEndOf="@+id/locationIcon"-->
+<!--                    mapbox:layout_constraintTop_toTopOf="@+id/locationIcon" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/challengeStage"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="8dp"-->
+<!--                    android:text="5"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="12sp"-->
+<!--                    mapbox:layout_constraintBottom_toBottomOf="@+id/stageIcon"-->
+<!--                    mapbox:layout_constraintStart_toEndOf="@+id/stageIcon"-->
+<!--                    mapbox:layout_constraintTop_toTopOf="@+id/stageIcon" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/challengeRating"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="8dp"-->
+<!--                    android:text="5.0(99)"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="12sp"-->
+<!--                    mapbox:layout_constraintBottom_toBottomOf="@+id/starIcon"-->
+<!--                    mapbox:layout_constraintStart_toEndOf="@+id/starIcon"-->
+<!--                    mapbox:layout_constraintTop_toTopOf="@+id/starIcon" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/challengeRating2"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="8dp"-->
+<!--                    android:text="2 hrs"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="12sp"-->
+<!--                    mapbox:layout_constraintBottom_toBottomOf="@+id/timeIcon"-->
+<!--                    mapbox:layout_constraintStart_toEndOf="@+id/timeIcon"-->
+<!--                    mapbox:layout_constraintTop_toTopOf="@+id/timeIcon" />-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/imageView"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:layout_marginBottom="16dp"-->
+<!--                    android:scaleType="centerCrop"-->
 <!--                    mapbox:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    mapbox:layout_constraintEnd_toEndOf="parent"-->
 <!--                    mapbox:layout_constraintStart_toStartOf="parent"-->
 <!--                    mapbox:layout_constraintTop_toTopOf="parent"-->
-<!--                    mapbox:mapbox_cameraTargetLat="23.5000"-->
-<!--                    mapbox:mapbox_cameraTargetLng="121.0000"-->
-<!--                    mapbox:mapbox_cameraZoom="15.0"-->
-<!--                    mapbox:mapbox_styleUrl="mapbox://styles/mapbox/streets-v10"/>-->
+<!--                    mapbox:srcCompat="@drawable/anya_icon" />-->
 
-                <com.mapbox.maps.MapView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/mapView"
-                    mapbox:layout_constraintBottom_toBottomOf="parent"
-                    mapbox:layout_constraintEnd_toEndOf="parent"
-                    mapbox:layout_constraintStart_toStartOf="parent"
-                    mapbox:layout_constraintTop_toTopOf="parent"
-                    mapbox:mapbox_cameraTargetLat="23.5000"
-                    mapbox:mapbox_cameraTargetLng="121.0000"
-                    mapbox:mapbox_cameraZoom="15.0"/>
+<!--                <ImageView-->
+<!--                    android:id="@+id/locationIcon"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    mapbox:layout_constraintStart_toEndOf="@+id/imageView"-->
+<!--                    mapbox:layout_constraintTop_toBottomOf="@+id/challengeTitle"-->
+<!--                    mapbox:srcCompat="@drawable/ic_baseline_location" />-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/stageIcon"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    mapbox:layout_constraintBottom_toBottomOf="@+id/imageView"-->
+<!--                    mapbox:layout_constraintStart_toEndOf="@+id/imageView"-->
+<!--                    mapbox:srcCompat="@drawable/ic_stage" />-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/starIcon"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="50dp"-->
+<!--                    mapbox:layout_constraintBottom_toBottomOf="@+id/challengeDistance"-->
+<!--                    mapbox:layout_constraintStart_toEndOf="@+id/challengeDistance"-->
+<!--                    mapbox:layout_constraintTop_toTopOf="@+id/challengeDistance"-->
+<!--                    mapbox:srcCompat="@drawable/ic_star" />-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/timeIcon"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    mapbox:layout_constraintBottom_toBottomOf="@+id/imageView"-->
+<!--                    mapbox:layout_constraintStart_toStartOf="@+id/starIcon"-->
+<!--                    mapbox:srcCompat="@drawable/ic_time" />-->
+<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+<!--        </androidx.cardview.widget.CardView>-->
+
+<!--        <com.mapbox.maps.MapView-->
+<!--            android:id="@+id/mapView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            mapbox:layout_constraintBottom_toBottomOf="parent"-->
+<!--            mapbox:layout_constraintEnd_toEndOf="parent"-->
+<!--            mapbox:layout_constraintHorizontal_bias="0.0"-->
+<!--            mapbox:layout_constraintStart_toStartOf="parent"-->
+<!--            mapbox:layout_constraintTop_toTopOf="parent"-->
+<!--            mapbox:layout_constraintVertical_bias="0.0"-->
+<!--            mapbox:mapbox_cameraTargetLat="23.5000"-->
+<!--            mapbox:mapbox_cameraTargetLng="121.0000"-->
+<!--            mapbox:mapbox_cameraZoom="15.0">-->
+
+<!--        </com.mapbox.maps.MapView>-->
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+<!--</layout>-->
