@@ -1,5 +1,6 @@
 package com.neil.miruhiru.challengetype
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,18 +15,19 @@ import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Event
+import com.neil.miruhiru.data.User
 import timber.log.Timber
 import java.lang.Exception
 
-class TypeAndInviteViewModel() : ViewModel() {
+class ChallengeTypeViewModel() : ViewModel() {
 
-    private val _navigateToTaskFragment = MutableLiveData<Boolean?>()
-    val navigateToTaskFragment: LiveData<Boolean?>
+    private val _navigateToTaskFragment = MutableLiveData<String?>()
+    val navigateToTaskFragment: LiveData<String?>
         get() = _navigateToTaskFragment
 
     private var eventDocumentId = ""
 
-    fun postEvent(eventId: String, challenge: Challenge) {
+    fun postEvent(eventId: String, challenge: Challenge, type: String) {
         val event = hashMapOf(
             "id" to eventId,
             "members" to listOf<String>(),
@@ -41,17 +43,18 @@ class TypeAndInviteViewModel() : ViewModel() {
             .add(event)
             .addOnSuccessListener { documentReference ->
                 Timber.i("DocumentSnapshot added with ID: %s", documentReference.id)
-                _navigateToTaskFragment.value = true
                 eventDocumentId = documentReference.id
                 addMainUserToEvent()
+                updateUserCurrentEvent(eventId, type)
             }
             .addOnFailureListener { e ->
                 Timber.i(e, "Error adding document")
             }
     }
 
+
     private fun addMainUserToEvent() {
-        // add members
+        // add event members
         val db = Firebase.firestore
         db.collection("events").document(eventDocumentId)
             .update("members", FieldValue.arrayUnion(UserManager.userId))
@@ -72,7 +75,7 @@ class TypeAndInviteViewModel() : ViewModel() {
             }
     }
 
-    fun updateUserCurrentEvent(eventId: String) {
+    fun updateUserCurrentEvent(eventId: String, type: String) {
         val db = Firebase.firestore
         var userDocumentId = ""
         db.collection("users").whereEqualTo("id", UserManager.userId)
@@ -82,25 +85,45 @@ class TypeAndInviteViewModel() : ViewModel() {
 
                 db.collection("users").document(userDocumentId)
                     .update("currentEvent", eventId)
-                // update local user data
-                UserManager.getUser()
+                loadChallengeIdByEventId(eventId, type)
             }
 
     }
 
-    fun addOtherUserToEvent(eventId: String) {
+    // update local user data (especially current event)
+    private fun getUser(type: String) {
+
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id" , UserManager.userId)
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    val user = document.toObject<User>()
+                    UserManager.user = user
+                    _navigateToTaskFragment.value = type
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.i("neil", "Error getting documents.", exception)
+            }
+    }
+
+    fun addScanUserToEvent(eventId: String, type: String) {
         val db = Firebase.firestore
         var eventDocumentId = ""
+
+        // get event document id
         db.collection("events").whereEqualTo("id", eventId)
             .get()
             .addOnSuccessListener { result ->
+                Timber.i("result ${result.documents}")
                 eventDocumentId = result.documents[0].id
 
-                // add members
+                // add event members
                 db.collection("events").document(eventDocumentId)
                     .update("members", FieldValue.arrayUnion(UserManager.userId))
                     .addOnSuccessListener { documentReference ->
-                        Timber.i("DocumentSnapshot added with ID: %s", documentReference)
                     }
                     .addOnFailureListener { e ->
                         Timber.i(e, "Error adding document")
@@ -116,6 +139,9 @@ class TypeAndInviteViewModel() : ViewModel() {
                         // reset
                         db.collection("events").document(eventDocumentId)
                             .update("progress", progress)
+                            .addOnSuccessListener {
+                                loadChallengeIdByEventId(eventId, type)
+                            }
                     }
                     .addOnFailureListener { e ->
                         Timber.i(e, "Error adding document")
@@ -123,6 +149,33 @@ class TypeAndInviteViewModel() : ViewModel() {
             }
             .addOnFailureListener { e ->
                 Timber.i(e, "Error getting document")
+            }
+    }
+
+    private fun loadChallengeIdByEventId(eventId: String, type: String) {
+        val db = Firebase.firestore
+        var eventDocumentId = ""
+        var challengeId = ""
+        var challengeDocumentId = ""
+
+        db.collection("events").whereEqualTo("id", eventId)
+            .get()
+            .addOnSuccessListener { result ->
+                eventDocumentId = result.documents[0].id
+
+                db.collection("events").document(eventDocumentId)
+                    .get()
+                    .addOnSuccessListener { result->
+                        val event = result.toObject<Event>()
+                        challengeId = event?.challengeId ?: ""
+
+                        db.collection("challenges").whereEqualTo("id", challengeId)
+                            .get().addOnSuccessListener { result ->
+                                challengeDocumentId = result.documents[0].id
+                                UserManager.userChallengeDocumentId = challengeDocumentId
+                                getUser(type)
+                            }
+                    }
             }
     }
 

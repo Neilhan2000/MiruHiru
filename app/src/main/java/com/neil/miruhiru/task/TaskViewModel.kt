@@ -1,46 +1,16 @@
 package com.neil.miruhiru.task
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.location.Location
-import android.util.Log
-import android.view.View
-import android.view.animation.AnimationUtils
-import androidx.annotation.DrawableRes
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
-import com.google.gson.JsonParser
-import com.mapbox.geojson.Point
-import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
-import com.neil.miruhiru.NavGraphDirections
-import com.neil.miruhiru.R
-import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Event
-import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.data.Task
-import kotlinx.coroutines.*
 import timber.log.Timber
 
 class TaskViewModel(application: Application): AndroidViewModel(application) {
@@ -65,7 +35,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
 
     var currentStage = -1
 
-    fun loadEventsWithTask(challengeId: String, eventId: String) {
+    fun loadEventsWithTask(challengeDocumentId: String, eventId: String) {
         val db = Firebase.firestore
         val taskList = mutableListOf<Task>()
         val annotationList = mutableListOf<Task>()
@@ -79,8 +49,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                     currentStage = event.progress.minOrNull() ?: -1
                 }
 
-                Timber.tag("neil").i("success load documents = %s", event.value)
-                db.collection("challenges").document(challengeId)
+                db.collection("challenges").document(challengeDocumentId)
                     .collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener { result ->

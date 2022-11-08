@@ -1,4 +1,4 @@
-package com.neil.miruhiru.join
+package com.neil.miruhiru.scan
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -10,12 +10,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.budiyev.android.codescanner.AutoFocusMode
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
-import com.neil.miruhiru.R
+import com.neil.miruhiru.NavGraphDirections
+import com.neil.miruhiru.challengetype.ChallengeTypeViewModel
 import com.neil.miruhiru.databinding.FragmentScanBinding
 import kotlinx.coroutines.*
 
@@ -24,6 +28,9 @@ class ScanFragment : Fragment() {
     private lateinit var binding: FragmentScanBinding
     private lateinit var codeScanner: CodeScanner
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
+    private val viewModel: ChallengeTypeViewModel by lazy {
+        ViewModelProvider(this).get(ChallengeTypeViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +44,12 @@ class ScanFragment : Fragment() {
         } else {
             startScanning()
         }
+
+        viewModel.navigateToTaskFragment.observe(viewLifecycleOwner, Observer { addToEvent ->
+            if (addToEvent == "multiple") {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
+            }
+        })
 
 
 
@@ -80,6 +93,7 @@ class ScanFragment : Fragment() {
         codeScanner.decodeCallback = DecodeCallback { result ->
             scope.launch {
                 Toast.makeText(requireContext(), "$result", Toast.LENGTH_SHORT).show()
+                viewModel.addScanUserToEvent(result.text.toString(), "multiple")
             }
         }
         codeScanner.errorCallback = ErrorCallback { result ->

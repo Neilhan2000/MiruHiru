@@ -101,11 +101,7 @@
         android:id="@+id/inviteFragment"
         android:name="com.neil.miruhiru.invite.InviteFragment"
         android:label="fragment_invite"
-        tools:layout="@layout/fragment_invite" >
-        <argument
-            android:name="challenge"
-            app:argType="com.neil.miruhiru.data.Challenge" />
-    </fragment><action android:id="@+id/action_global_challengeTypeFragment" app:destination="@id/challengeTypeFragment"/><action android:id="@+id/action_global_inviteFragment" app:destination="@id/inviteFragment"/>
+        tools:layout="@layout/fragment_invite" /><action android:id="@+id/action_global_challengeTypeFragment" app:destination="@id/challengeTypeFragment"/><action android:id="@+id/action_global_inviteFragment" app:destination="@id/inviteFragment"/>
     <fragment
         android:id="@+id/joinFragment"
         android:name="com.neil.miruhiru.join.JoinFragment"
@@ -113,7 +109,7 @@
         tools:layout="@layout/fragment_join" />
     <fragment
         android:id="@+id/scanFragment"
-        android:name="com.neil.miruhiru.join.ScanFragment"
+        android:name="com.neil.miruhiru.scan.ScanFragment"
         android:label="fragment_scan"
         tools:layout="@layout/fragment_scan" />
     <action android:id="@+id/action_global_joinFragment" app:destination="@id/joinFragment"/>

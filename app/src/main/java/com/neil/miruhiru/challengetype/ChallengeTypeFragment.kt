@@ -9,8 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.neil.miruhiru.NavGraphDirections
-import com.neil.miruhiru.UserManager
-import com.neil.miruhiru.challengedetail.ChallengeDetailFragmentArgs
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.databinding.FragmentChallengeTypeBinding
 
@@ -20,8 +18,8 @@ class ChallengeTypeFragment : Fragment() {
     private lateinit var binding: FragmentChallengeTypeBinding
     private lateinit var challenge: Challenge
     private lateinit var eventId: String
-    private val viewModel: TypeAndInviteViewModel by lazy {
-        ViewModelProvider(this).get(TypeAndInviteViewModel::class.java)
+    private val viewModel: ChallengeTypeViewModel by lazy {
+        ViewModelProvider(this).get(ChallengeTypeViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -35,29 +33,27 @@ class ChallengeTypeFragment : Fragment() {
     }
 
     private fun setupScreen() {
-        eventId = getRandomString(20)
-        binding.multiplePlayerButton.setOnClickListener {
-            this.findNavController().navigate(NavGraphDirections.actionGlobalInviteFragment(challenge))
-        }
+        eventId = getRandomString()
         viewModel.navigateToTaskFragment.observe(viewLifecycleOwner, Observer { postEventSuccess ->
-            if (postEventSuccess == true) {
-                // update user current event data
-                viewModel.updateUserCurrentEvent(eventId)
-
+            if (postEventSuccess == "single") {
                 this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
+                viewModel.navigateToTaskFragmentCompleted()
+            } else if (postEventSuccess == "multiple") {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalInviteFragment())
                 viewModel.navigateToTaskFragmentCompleted()
             }
         })
+
         binding.singlePlayerButton.setOnClickListener {
-            viewModel.postEvent(eventId, challenge)
+            viewModel.postEvent(eventId, challenge, "single")
+        }
+        binding.multiplePlayerButton.setOnClickListener {
+            viewModel.postEvent(eventId, challenge, "multiple")
         }
     }
 
-    private fun getRandomString(length: Int) : String {
-        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
-        return (1..length)
-            .map { allowedChars.random() }
-            .joinToString("")
+    private fun getRandomString() : String {
+        return java.util.UUID.randomUUID().toString()
     }
 
 }

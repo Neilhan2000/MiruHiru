@@ -141,7 +141,6 @@ class ChallengeDetailFragment : Fragment() {
         calculateAndShowDistance(challenge.location!!)
         binding.startButton.setOnClickListener {
             // save current challengeId and navigate
-            UserManager.userChallengeId = challengeId
             this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment(challenge))
         }
     }

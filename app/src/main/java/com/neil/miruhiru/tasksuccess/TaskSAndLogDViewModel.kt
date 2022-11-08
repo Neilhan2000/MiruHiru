@@ -17,7 +17,7 @@ import java.lang.Exception
 class TaskSAndLogDViewModel(): ViewModel() {
 
     init {
-        loadEvent(UserManager.user.value?.currentEvent ?: "null")
+        loadEvent(UserManager.user.currentEvent)
     }
 
     private val _event = MutableLiveData<Event>()

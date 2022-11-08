@@ -13,9 +13,3 @@ data class Event(
     val stage: Int = 0
 )
 
-data class Message(
-    val senderId: String = "",
-    val text: String = "",
-    val time: Timestamp = Timestamp(Date(0))
-)
-

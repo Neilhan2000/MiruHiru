@@ -45,6 +45,7 @@ import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentTaskBinding
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 class TaskFragment : Fragment() {
 
@@ -127,6 +128,7 @@ class TaskFragment : Fragment() {
 
         // observe taskList and setup screen
         viewModel.taskList.observe(viewLifecycleOwner, Observer {
+            Timber.i("task list $it")
             taskAdapter.submitList(it)
             taskAdapter.notifyDataSetChanged()
             binding.progressBar.width = ((binding.progressBarBorder.width) / 6) * (viewModel.currentStage)
@@ -137,13 +139,14 @@ class TaskFragment : Fragment() {
             binding.guideTextRecycler.scrollToPosition(1)
 
         })
-        viewModel.loadEventsWithTask("2WBySSd68w3VrA08eLGj", UserManager.user.value?.currentEvent ?: "null")
 
         viewModel.annotationList.observe(viewLifecycleOwner, Observer {
             for (task in it) {
                 addAnnotationToMap(task, viewModel.currentStage)
             }
         })
+        viewModel.loadEventsWithTask(UserManager.userChallengeDocumentId ?: "null",
+            UserManager.user.currentEvent ?: "null")
 
         // navigation to TaskDetailFragment
 
