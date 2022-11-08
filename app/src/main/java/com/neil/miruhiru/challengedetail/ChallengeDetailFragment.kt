@@ -36,17 +36,23 @@ import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
+import com.neil.miruhiru.factory.ChallengeDetailViewModelFactory
+import com.neil.miruhiru.taskdetail.TaskDetailFragmentArgs
+import timber.log.Timber
 import kotlin.math.roundToInt
 
 class ChallengeDetailFragment : Fragment() {
 
+    private lateinit var factory: ChallengeDetailViewModelFactory
     private val viewModel: ChallengeDetailViewModel by lazy {
-        ViewModelProvider(this).get(ChallengeDetailViewModel::class.java)
+        ViewModelProvider(this, factory).get(ChallengeDetailViewModel::class.java)
     }
+
     private lateinit var binding: FragmentChallengeDetailBinding
     private lateinit var mapView: MapView
     private lateinit var pointAnnotationManager: PointAnnotationManager
     private lateinit var firstStagePoint: Point
+    private lateinit var challengeId: String
     private var show = true
 
     override fun onCreateView(
@@ -55,6 +61,10 @@ class ChallengeDetailFragment : Fragment() {
     ): View? {
         binding = FragmentChallengeDetailBinding.inflate(inflater, container, false)
         mapView = binding.mapView
+
+        // get args from last fragment and pass it to viewModel
+        challengeId = ChallengeDetailFragmentArgs.fromBundle(requireArguments()).challengeId
+        factory = ChallengeDetailViewModelFactory(challengeId)
 
         // observer challenge data and setup screen
         viewModel.challenge.observe(viewLifecycleOwner, Observer {
@@ -66,9 +76,10 @@ class ChallengeDetailFragment : Fragment() {
             it.forEach {
                 addAnnotationToMap(it)
             }
+            Timber.i("$it")
             firstStagePoint = Point.fromLngLat(
-                it[0].location?.longitude!!,
-                it[0].location?.latitude!!
+                it[0].location.longitude,
+                it[0].location.latitude
             )
             setLocation()
         })
@@ -81,7 +92,7 @@ class ChallengeDetailFragment : Fragment() {
 
         // click to show and hide comments
         binding.seeComment.setOnClickListener {
-            viewModel.loadComments("2WBySSd68w3VrA08eLGj")
+            viewModel.loadComments()
             if (show) {
                 binding.recyclerComment.visibility = View.VISIBLE
             } else {
@@ -129,7 +140,9 @@ class ChallengeDetailFragment : Fragment() {
         binding.typeText.text = challenge.type
         calculateAndShowDistance(challenge.location!!)
         binding.startButton.setOnClickListener {
-            this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment())
+            // save current challengeId and navigate
+            UserManager.userChallengeId = challengeId
+            this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment(challenge))
         }
     }
 

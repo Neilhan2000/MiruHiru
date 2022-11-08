@@ -9,15 +9,15 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Event
 import timber.log.Timber
 import java.lang.Exception
 
-class LogDialogViewModel(): ViewModel() {
+class TaskSAndLogDViewModel(): ViewModel() {
 
     init {
-        val challengeId = "2WBySSd68w3VrA08eLGj"
-        loadEvent(challengeId)
+        loadEvent(UserManager.user.value?.currentEvent ?: "null")
     }
 
     private val _event = MutableLiveData<Event>()
@@ -28,10 +28,10 @@ class LogDialogViewModel(): ViewModel() {
     var documentId = ""
     var stageNumber = -1
 
-    private fun loadEvent(challengeId: String) {
+    private fun loadEvent(eventId: String) {
         val db = Firebase.firestore
 
-        db.collection("events").whereEqualTo("id" ,"0")
+        db.collection("events").whereEqualTo("id" ,eventId)
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
@@ -72,13 +72,24 @@ class LogDialogViewModel(): ViewModel() {
             )
             db.collection("events").document(documentId)
                 .set(isCompleted, SetOptions.merge())
-            Timber.i("documentid $documentId")
+            UserManager.clearChallengeId()
         } catch (e: Exception) {
             Timber.i("Error ${e.message}")
         }
     }
 
     fun completeChallenge() {
+        val db = Firebase.firestore
+        var userDocumentId = ""
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener { result ->
+                userDocumentId = result.documents[0].id
 
+                db.collection("users").document(userDocumentId)
+                    .update("currentEvent", null)
+                // update local user data
+                UserManager.getUser()
+            }
     }
 }

@@ -29,7 +29,11 @@
         android:id="@+id/challengeDetailFragment"
         android:name="com.neil.miruhiru.challengedetail.ChallengeDetailFragment"
         android:label="fragment_challenge_detail"
-        tools:layout="@layout/fragment_challenge_detail" />
+        tools:layout="@layout/fragment_challenge_detail" >
+        <argument
+            android:name="challengeId"
+            app:argType="string" />
+    </fragment>
     <action android:id="@+id/action_global_challengeDetailFragment" app:destination="@id/challengeDetailFragment"/>
     <fragment
         android:id="@+id/taskFragment"
@@ -88,12 +92,20 @@
         android:id="@+id/challengeTypeFragment"
         android:name="com.neil.miruhiru.challengetype.ChallengeTypeFragment"
         android:label="fragment_challenge_type"
-        tools:layout="@layout/fragment_challenge_type" />
+        tools:layout="@layout/fragment_challenge_type" >
+        <argument
+            android:name="challenge"
+            app:argType="com.neil.miruhiru.data.Challenge" />
+    </fragment>
     <fragment
         android:id="@+id/inviteFragment"
         android:name="com.neil.miruhiru.invite.InviteFragment"
         android:label="fragment_invite"
-        tools:layout="@layout/fragment_invite" /><action android:id="@+id/action_global_challengeTypeFragment" app:destination="@id/challengeTypeFragment"/><action android:id="@+id/action_global_inviteFragment" app:destination="@id/inviteFragment"/>
+        tools:layout="@layout/fragment_invite" >
+        <argument
+            android:name="challenge"
+            app:argType="com.neil.miruhiru.data.Challenge" />
+    </fragment><action android:id="@+id/action_global_challengeTypeFragment" app:destination="@id/challengeTypeFragment"/><action android:id="@+id/action_global_inviteFragment" app:destination="@id/inviteFragment"/>
     <fragment
         android:id="@+id/joinFragment"
         android:name="com.neil.miruhiru.join.JoinFragment"
@@ -103,5 +115,7 @@
         android:id="@+id/scanFragment"
         android:name="com.neil.miruhiru.join.ScanFragment"
         android:label="fragment_scan"
-        tools:layout="@layout/fragment_scan" /><action android:id="@+id/action_global_joinFragment" app:destination="@id/joinFragment"/><action android:id="@+id/action_global_scanFragment" app:destination="@id/scanFragment"/>
+        tools:layout="@layout/fragment_scan" />
+    <action android:id="@+id/action_global_joinFragment" app:destination="@id/joinFragment"/>
+    <action android:id="@+id/action_global_scanFragment" app:destination="@id/scanFragment"/>
 </navigation>

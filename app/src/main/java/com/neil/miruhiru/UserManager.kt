@@ -14,6 +14,7 @@ object UserManager {
     private const val USER_DATA = "user_data"
     private const val USER_ID = "user_token"
     private const val USER_CHALLENGE_ID = "user_challenge_id"
+    private const val CURRENT_EVENT_ID = "current_event_id"
 
     private val _user = MutableLiveData<User>()
 
@@ -44,6 +45,7 @@ object UserManager {
             }
         }
 
+    // To check if user has uncompleted challenge
     var userChallengeId: String? = null
         get() = MiruHiruApplication.instance
             .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE)
@@ -67,6 +69,29 @@ object UserManager {
             }
         }
 
+    var currentEventId: String? = null
+        get() = MiruHiruApplication.instance
+            .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE)
+            .getString(CURRENT_EVENT_ID, null)
+        set(value) {
+            field = when (value) {
+                null -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .remove(CURRENT_EVENT_ID)
+                        .apply()
+                    null
+                }
+                else -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .putString(CURRENT_EVENT_ID, value)
+                        .apply()
+                    value
+                }
+            }
+        }
+
     /**
      * It can be use to check login status directly
      */
@@ -81,6 +106,16 @@ object UserManager {
         _user.value = null
     }
 
+    fun clearChallengeId() {
+        userChallengeId = null
+    }
+
+    fun clearCurrentEventId() {
+        currentEventId = null
+    }
+
+
+    // get or update user info in local
     fun getUser() {
 
         val db = Firebase.firestore

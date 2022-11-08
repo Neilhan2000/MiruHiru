@@ -39,6 +39,7 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListen
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.data.Task
@@ -82,6 +83,8 @@ class TaskFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentTaskBinding.inflate(inflater, container, false)
+
+        // factory
 
         // floating action button
         binding.fabAdd.setOnClickListener {
@@ -133,13 +136,8 @@ class TaskFragment : Fragment() {
             guideAdapter.submitList(guildTextList)
             binding.guideTextRecycler.scrollToPosition(1)
 
-//            val fakeTaskList = listOf(Task(answer = "99", question = "單點一次多少元", introduction = "漢堡加薯餅",name = "脆薯雙牛堡好ㄘ",location = GeoPoint(25.038439309230398, 121.53236337071075), stage = 1, image = "https://www.mcdonalds.com/content/dam/sites/tw/carousel/desktop/2022/0928-%E9%A6%96%E9%A0%81%E8%BC%AA%E6%92%ADBanner_2336x1040_1.png"),
-//            Task(location = GeoPoint(25.037096571143664, 121.53151283294005), stage = 2),
-//            Task(location = GeoPoint(25.04247038998423, 121.53276152239846), stage = 3)
-//            )
-
-//            taskAdapter.submitList(fakeTaskList)
         })
+        viewModel.loadEventsWithTask("2WBySSd68w3VrA08eLGj", UserManager.user.value?.currentEvent ?: "null")
 
         viewModel.annotationList.observe(viewLifecycleOwner, Observer {
             for (task in it) {
@@ -154,15 +152,6 @@ class TaskFragment : Fragment() {
         initLocationComponent()
         mapView?.gestures?.addOnMoveListener(onMoveListener)
 
-
-
-        // draw stage annotation
-
-        // calculate and show stage distance
-
-        // mutable stages recyclerView
-
-        // start navigation and calculate distance to stage location, using notifidatachage to bind recyclerview
 
 
 

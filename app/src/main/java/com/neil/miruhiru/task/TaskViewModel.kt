@@ -48,7 +48,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
     val viewModelApplication = application
     init {
         val challengeId = "2WBySSd68w3VrA08eLGj"
-        loadEventsWithTask(challengeId)
+//        loadEventsWithTask(challengeId)
     }
 
     private val _taskList = MutableLiveData<List<Task>>()
@@ -65,12 +65,12 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
 
     var currentStage = -1
 
-    private fun loadEventsWithTask(challengeId: String) {
+    fun loadEventsWithTask(challengeId: String, eventId: String) {
         val db = Firebase.firestore
         val taskList = mutableListOf<Task>()
         val annotationList = mutableListOf<Task>()
 
-        db.collection("events").whereEqualTo("id" ,"0")
+        db.collection("events").whereEqualTo("id" , eventId)
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
@@ -93,7 +93,6 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                         }
                         _taskList.value = taskList
                         _annotationList.value = annotationList
-//                Log.i("neil", "success load documents = ${taskList}")
                     }
                     .addOnFailureListener { exception ->
                         Timber.tag("neil").i(exception, "Error getting documents.")

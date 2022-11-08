@@ -23,10 +23,11 @@
         android:id="@+id/challengeKey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:text="ADFASDFASADF"
-        android:textSize="30sp"
-        app:layout_constraintStart_toStartOf="@+id/guide"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guide" />
 
     <TextView
@@ -56,14 +57,13 @@
     <Button
         android:id="@+id/copyButton"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/button_border"
         android:text="複製"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/challengeKey"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/challengeKey"
         app:layout_constraintTop_toTopOf="@+id/challengeKey" />
 
     <Button

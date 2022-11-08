@@ -2,7 +2,6 @@ package com.neil.miruhiru.tasksuccess
 
 import android.app.Dialog
 import android.os.Bundle
-import android.text.BoringLayout
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -12,20 +11,19 @@ import androidx.navigation.fragment.findNavController
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.databinding.FragmentLogDialogBinding
-import com.neil.miruhiru.task.TaskViewModel
 
 
 class LogDialogFragment : DialogFragment() {
 
     lateinit var binding: FragmentLogDialogBinding
     private lateinit var dialog: AlertDialog
-    private lateinit var viewModel: LogDialogViewModel
+    private lateinit var viewModel: TaskSAndLogDViewModel
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         binding = FragmentLogDialogBinding.inflate(LayoutInflater.from(context))
         setupScreen()
-        viewModel = ViewModelProvider(this).get(LogDialogViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(TaskSAndLogDViewModel::class.java)
         return dialog
     }
 

@@ -279,7 +279,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
                     // this fun will show distance the between your location and challenge in the cardView
                     calculateAndShowDistance(challenge.location)
                     binding.locationCardView.setOnClickListener {
-                        this@ExploreFragment.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment())
+                        this@ExploreFragment.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(challenge.id ?: "null"))
                     }
                     binding.locationCardView.visibility = View.VISIBLE
                     return false
