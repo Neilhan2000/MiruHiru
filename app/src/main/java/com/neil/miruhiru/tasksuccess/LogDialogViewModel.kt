@@ -10,6 +10,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.data.Event
+import timber.log.Timber
 import java.lang.Exception
 
 class LogDialogViewModel(): ViewModel() {
@@ -39,12 +40,12 @@ class LogDialogViewModel(): ViewModel() {
                     currentStage = event.progress.minOrNull() ?: -1
                     stageNumber = event.stage
                     documentId = document.id
-                    Log.i("neil", "document.id ${document.id}")
-                    Log.i("neil", "documentid $documentId")
+                    Timber.i("document.id ${document.id}")
+                    Timber.i("documentid $documentId")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
+                Timber.i("Error getting documents.", exception)
             }
 
     }
@@ -57,9 +58,9 @@ class LogDialogViewModel(): ViewModel() {
             )
             db.collection("events").document(documentId)
                 .set(progress, SetOptions.merge())
-            Log.i("neil", "documentid $documentId")
+            Timber.i("documentid $documentId")
         } catch (e: Exception) {
-            Log.i("neil", "Error ${e.message}")
+            Timber.i("Error ${e.message}")
         }
     }
 
@@ -71,9 +72,13 @@ class LogDialogViewModel(): ViewModel() {
             )
             db.collection("events").document(documentId)
                 .set(isCompleted, SetOptions.merge())
-            Log.i("neil", "documentid $documentId")
+            Timber.i("documentid $documentId")
         } catch (e: Exception) {
-            Log.i("neil", "Error ${e.message}")
+            Timber.i("Error ${e.message}")
         }
+    }
+
+    fun completeChallenge() {
+
     }
 }

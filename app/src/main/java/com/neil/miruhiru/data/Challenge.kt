@@ -13,5 +13,6 @@ data class Challenge(
     val stage: Int? = null,
     val timeSpent: Long? = null,
     val totalRating: Float? = null,
-    val type: String? = null
+    val type: String? = null,
+    val completedList: List<String>? = null
 )

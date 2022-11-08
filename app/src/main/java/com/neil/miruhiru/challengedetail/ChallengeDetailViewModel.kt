@@ -14,6 +14,7 @@ import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Comment
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.data.User
+import timber.log.Timber
 
 class ChallengeDetailViewModel : ViewModel() {
 
@@ -51,10 +52,10 @@ class ChallengeDetailViewModel : ViewModel() {
                 val challenge = result.toObject<Challenge>()
                 _challenge.value = challenge!!
 
-//                Log.i("neil", "success load documents = ${_challenge.value}")
+                Timber.tag("neil").i("success load documents = %s", _challenge.value)
             }
             .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
+                Timber.tag("neil").i(exception, "Error getting documents.")
             }
 
     }
@@ -75,7 +76,7 @@ class ChallengeDetailViewModel : ViewModel() {
 //                Log.i("neil", "success load documents = ${taskList}")
             }
             .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
+                Timber.tag("neil").i(exception, "Error getting documents.")
             }
 
     }
@@ -94,10 +95,10 @@ class ChallengeDetailViewModel : ViewModel() {
                     addUserToCommentUsersList(comment.userId)
                 }
                 _commentList.value = commentList
-                Log.i("neil", "success load documents = ${commentList}")
+                Timber.tag("neil").i("success load documents = %s", commentList)
             }
             .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
+                Timber.tag("neil").i(exception, "Error getting documents.")
             }
 
     }
@@ -113,7 +114,7 @@ class ChallengeDetailViewModel : ViewModel() {
                     commentUsers.add(user)
                 }
                 _commentUsers.value = commentUsers
-                Log.i("neil", "success load documents = ${commentUsers}")
+                Timber.tag("neil").i("success load documents = %s", commentUsers)
 
             }
     }

@@ -1,16 +1,15 @@
 package com.neil.miruhiru
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationItemView
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.neil.miruhiru.databinding.ActivityMainBinding
+import timber.log.Timber
+import timber.log.Timber.Forest.i
+import timber.log.Timber.Forest.plant
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +23,14 @@ class MainActivity : AppCompatActivity() {
         // bottom navigation
         val navController = Navigation.findNavController(this, R.id.myNavHostFragment)
         setupBottomNav()
+
+        // login
+        userLogin("user1")
+
+        // Timber
+        if (BuildConfig.DEBUG) {
+            plant(Timber.DebugTree())
+        }
     }
 
     private fun setupBottomNav() {
@@ -50,5 +57,13 @@ class MainActivity : AppCompatActivity() {
             }
             false
         }
+    }
+
+    private fun userLogin(userId: String) {
+        UserManager.userId = userId
+        UserManager.getUser()
+//        UserManager.user.observe(this, Observer {
+//            Timber.i("$it")
+//        })
     }
 }

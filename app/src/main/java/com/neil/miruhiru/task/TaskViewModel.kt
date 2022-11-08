@@ -41,6 +41,7 @@ import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.data.Task
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 class TaskViewModel(application: Application): AndroidViewModel(application) {
 
@@ -78,7 +79,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                     currentStage = event.progress.minOrNull() ?: -1
                 }
 
-                Log.i("neil", "success load documents = ${event.value}")
+                Timber.tag("neil").i("success load documents = %s", event.value)
                 db.collection("challenges").document(challengeId)
                     .collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
                     .get()
@@ -95,11 +96,11 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
 //                Log.i("neil", "success load documents = ${taskList}")
                     }
                     .addOnFailureListener { exception ->
-                        Log.i("neil", "Error getting documents.", exception)
+                        Timber.tag("neil").i(exception, "Error getting documents.")
                     }
             }
             .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
+                Timber.tag("neil").i(exception, "Error getting documents.")
             }
 
     }
@@ -122,10 +123,10 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
             .collection("tasks")
             .add(user)
             .addOnSuccessListener { documentReference ->
-                Log.d("neil", "DocumentSnapshot added with ID: ${documentReference.id}")
+                Timber.tag("neil").d("DocumentSnapshot added with ID: %s", documentReference.id)
             }
             .addOnFailureListener { e ->
-                Log.w("neil", "Error adding document", e)
+                Timber.tag("neil").w(e, "Error adding document")
             }
     }
 
