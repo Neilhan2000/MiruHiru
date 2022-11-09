@@ -101,7 +101,11 @@
         android:id="@+id/inviteFragment"
         android:name="com.neil.miruhiru.invite.InviteFragment"
         android:label="fragment_invite"
-        tools:layout="@layout/fragment_invite" /><action android:id="@+id/action_global_challengeTypeFragment" app:destination="@id/challengeTypeFragment"/><action android:id="@+id/action_global_inviteFragment" app:destination="@id/inviteFragment"/>
+        tools:layout="@layout/fragment_invite" >
+        <argument
+            android:name="eventId"
+            app:argType="string" />
+    </fragment><action android:id="@+id/action_global_challengeTypeFragment" app:destination="@id/challengeTypeFragment"/><action android:id="@+id/action_global_inviteFragment" app:destination="@id/inviteFragment"/>
     <fragment
         android:id="@+id/joinFragment"
         android:name="com.neil.miruhiru.join.JoinFragment"

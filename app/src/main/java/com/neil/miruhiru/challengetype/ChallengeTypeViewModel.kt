@@ -35,7 +35,8 @@ class ChallengeTypeViewModel() : ViewModel() {
             "isCompleted" to false,
             "challengeId" to challenge.id,
             "progress" to listOf<Int>(),
-            "stage" to challenge.stage
+            "stage" to challenge.stage,
+            "status" to "prepare"
         )
 
         val db = Firebase.firestore
@@ -121,8 +122,9 @@ class ChallengeTypeViewModel() : ViewModel() {
                 eventDocumentId = result.documents[0].id
 
                 // add event members
+                val userId = "user2" // Usermanager.userid
                 db.collection("events").document(eventDocumentId)
-                    .update("members", FieldValue.arrayUnion(UserManager.userId))
+                    .update("members", FieldValue.arrayUnion(userId))
                     .addOnSuccessListener { documentReference ->
                     }
                     .addOnFailureListener { e ->

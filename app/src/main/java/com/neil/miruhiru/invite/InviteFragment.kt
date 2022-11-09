@@ -9,18 +9,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.neil.miruhiru.NavGraphDirections
-import com.neil.miruhiru.data.User
+import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.databinding.FragmentInviteBinding
 
 class InviteFragment : Fragment() {
 
     private lateinit var binding: FragmentInviteBinding
     private lateinit var eventId: String
+    private val viewModel: InviteFragmentViewModel by lazy {
+        ViewModelProvider(this).get(InviteFragmentViewModel::class.java)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,12 +44,8 @@ class InviteFragment : Fragment() {
 
 
     private fun setupScreen() {
-        generateEventId()
+        getEventId()
         generateQrcode()
-        val userList = listOf(User(), User())
-        val userAdapter = UserAdapter()
-        binding.userRecycler.adapter = userAdapter
-        userAdapter.submitList(userList)
 
         binding.copyButton.setOnClickListener {
             val clipboardManager = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -51,9 +54,31 @@ class InviteFragment : Fragment() {
             Toast.makeText(requireContext(), "複製到剪貼簿成功", Toast.LENGTH_SHORT).show()
         }
 
+        // start event
         binding.startChallengeButton.setOnClickListener {
-            this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
+            viewModel.eventStart(eventId)
         }
+        viewModel.navigateToTaskFragment.observe(viewLifecycleOwner, Observer { eventStart ->
+            if (eventStart == true) {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
+                viewModel.navigateToTaskFragmentCompleted()
+                //snapshot listen status
+            }
+        })
+
+        // user recyclerview
+        viewModel.detectUserJoin(eventId)
+        viewModel.detectEventStart(eventId)
+
+        val userAdapter = UserAdapter()
+        binding.userRecycler.adapter = userAdapter
+        viewModel.userList.observe(viewLifecycleOwner, Observer {
+            userAdapter.submitList(it)
+            // check if the user is main user (only main user can control event is started or not)
+            if (UserManager.user.id != it[0].id) {
+                changeButtonStatus()
+            }
+        })
     }
 
     private fun generateQrcode() {
@@ -64,12 +89,14 @@ class InviteFragment : Fragment() {
         val bitmap = encoder.createBitmap(matrix)
         binding.qrCode.setImageBitmap(bitmap)
     }
-    private fun generateEventId() {
-        eventId = getRandomString()
+    private fun getEventId() {
+        eventId = InviteFragmentArgs.fromBundle(requireArguments()).eventId
         binding.challengeKey.text = eventId
     }
-    private fun getRandomString() : String {
-        return java.util.UUID.randomUUID().toString()
+    private fun changeButtonStatus() {
+        binding.startChallengeButton.isEnabled = false
+        binding.startChallengeButton.text = "等待挑戰開始"
+        binding.startChallengeButton.setBackgroundResource(R.drawable.button_disable_border)
     }
 
 }

@@ -10,6 +10,7 @@ data class Event(
     val isCompleted: Boolean = false,
     val challengeId: String = "",
     val progress: List<Int> = mutableListOf(0),
-    val stage: Int = 0
+    val stage: Int = 0,
+    val status: String = ""
 )
 

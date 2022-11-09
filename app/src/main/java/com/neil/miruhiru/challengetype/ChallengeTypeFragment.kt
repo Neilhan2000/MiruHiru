@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.databinding.FragmentChallengeTypeBinding
+import timber.log.Timber
 
 
 class ChallengeTypeFragment : Fragment() {
@@ -34,12 +35,13 @@ class ChallengeTypeFragment : Fragment() {
 
     private fun setupScreen() {
         eventId = getRandomString()
+        Timber.i("$eventId")
         viewModel.navigateToTaskFragment.observe(viewLifecycleOwner, Observer { postEventSuccess ->
             if (postEventSuccess == "single") {
                 this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
                 viewModel.navigateToTaskFragmentCompleted()
             } else if (postEventSuccess == "multiple") {
-                this.findNavController().navigate(NavGraphDirections.actionGlobalInviteFragment())
+                this.findNavController().navigate(NavGraphDirections.actionGlobalInviteFragment(eventId))
                 viewModel.navigateToTaskFragmentCompleted()
             }
         })
@@ -48,6 +50,7 @@ class ChallengeTypeFragment : Fragment() {
             viewModel.postEvent(eventId, challenge, "single")
         }
         binding.multiplePlayerButton.setOnClickListener {
+            Timber.i("$eventId")
             viewModel.postEvent(eventId, challenge, "multiple")
         }
     }

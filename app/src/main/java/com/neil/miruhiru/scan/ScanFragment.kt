@@ -22,11 +22,13 @@ import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.challengetype.ChallengeTypeViewModel
 import com.neil.miruhiru.databinding.FragmentScanBinding
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 class ScanFragment : Fragment() {
 
     private lateinit var binding: FragmentScanBinding
     private lateinit var codeScanner: CodeScanner
+    private lateinit var eventId: String
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
     private val viewModel: ChallengeTypeViewModel by lazy {
         ViewModelProvider(this).get(ChallengeTypeViewModel::class.java)
@@ -47,7 +49,7 @@ class ScanFragment : Fragment() {
 
         viewModel.navigateToTaskFragment.observe(viewLifecycleOwner, Observer { addToEvent ->
             if (addToEvent == "multiple") {
-                this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
+                this.findNavController().navigate(NavGraphDirections.actionGlobalInviteFragment(eventId))
             }
         })
 
@@ -93,7 +95,8 @@ class ScanFragment : Fragment() {
         codeScanner.decodeCallback = DecodeCallback { result ->
             scope.launch {
                 Toast.makeText(requireContext(), "$result", Toast.LENGTH_SHORT).show()
-                viewModel.addScanUserToEvent(result.text.toString(), "multiple")
+                eventId = result.text.toString()
+                viewModel.addScanUserToEvent(eventId, "multiple")
             }
         }
         codeScanner.errorCallback = ErrorCallback { result ->
