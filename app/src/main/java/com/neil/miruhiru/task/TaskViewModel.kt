@@ -46,6 +46,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                 for (document in result) {
                     val event = document.toObject<Event>()
                     _event.value = event
+                    Timber.i("task list event progress ${event.progress}")
                     currentStage = event.progress.minOrNull() ?: -1
                 }
 
@@ -53,6 +54,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                     .collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener { result ->
+                        Timber.i("challenge document id = $challengeDocumentId, result ${result.documents.size}")
                         for (document in result) {
                             val task = document.toObject<Task>()
                             if (task.stage <= currentStage) {
@@ -60,6 +62,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                             }
                             annotationList.add(task)
                         }
+                        Timber.i("task list size ${taskList.size} current stage$currentStage")
                         _taskList.value = taskList
                         _annotationList.value = annotationList
                     }

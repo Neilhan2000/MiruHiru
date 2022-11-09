@@ -269,7 +269,10 @@ class TaskFragment : Fragment() {
             // add annotation click listener.
             pointAnnotationManager?.addClickListener(object : OnPointAnnotationClickListener {
                 override fun onAnnotationClick(annotation: PointAnnotation): Boolean {
-                    binding.TaskRecycler.smoothScrollToPosition(task.stage - 1)
+                    val position = currentStage - task.stage
+                    if (position >= 0) {
+                        binding.TaskRecycler.smoothScrollToPosition(position)
+                    }
                     return false
                 }
             })
