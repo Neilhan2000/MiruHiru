@@ -31,7 +31,7 @@ class TaskSuccessFragment : Fragment() {
         // current event set button
         viewModel.getCurrentStage.observe(viewLifecycleOwner, Observer { currentStage ->
             Timber.i("current${currentStage}, stage${viewModel.stageNumber}")
-            if (currentStage <= viewModel.stageNumber) {
+            if (currentStage < viewModel.stageNumber) {
                 binding.continueButton.setOnClickListener {
                     this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
                 }

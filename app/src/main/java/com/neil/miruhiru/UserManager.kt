@@ -80,7 +80,7 @@ object UserManager {
 //        _user.value = null
     }
 
-    fun clearChallengeId() {
+    fun clearChallengeDocumentId() {
         userChallengeDocumentId = null
     }
 

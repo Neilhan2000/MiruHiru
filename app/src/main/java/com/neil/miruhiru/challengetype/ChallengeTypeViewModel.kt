@@ -102,6 +102,7 @@ class ChallengeTypeViewModel() : ViewModel() {
                 for (document in result) {
                     val user = document.toObject<User>()
                     UserManager.user = user
+                    Timber.i("get user $user")
                     _navigateToTaskFragment.value = type
                 }
             }
@@ -122,10 +123,23 @@ class ChallengeTypeViewModel() : ViewModel() {
                 eventDocumentId = result.documents[0].id
 
                 // add event members
-                val userId = "user2" // Usermanager.userid
+                val userId = UserManager.userId // Usermanager.userid
                 db.collection("events").document(eventDocumentId)
                     .update("members", FieldValue.arrayUnion(userId))
                     .addOnSuccessListener { documentReference ->
+
+                        // update user current event
+                        db.collection("users").whereEqualTo("id", UserManager.userId)
+                            .get()
+                            .addOnSuccessListener {
+                                val userDocumentId = it.documents[0].id
+
+                                db.collection("users").document(userDocumentId)
+                                    .update("currentEvent", eventId)
+                                    .addOnSuccessListener {
+                                        loadChallengeIdByEventId(eventId, type)
+                                    }
+                            }
                     }
                     .addOnFailureListener { e ->
                         Timber.i(e, "Error adding document")
@@ -141,9 +155,7 @@ class ChallengeTypeViewModel() : ViewModel() {
                         // reset
                         db.collection("events").document(eventDocumentId)
                             .update("progress", progress)
-                            .addOnSuccessListener {
-                                loadChallengeIdByEventId(eventId, type)
-                            }
+
                     }
                     .addOnFailureListener { e ->
                         Timber.i(e, "Error adding document")

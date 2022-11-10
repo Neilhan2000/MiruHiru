@@ -73,7 +73,7 @@ class TaskDialogFragment : DialogFragment() {
 
     private fun submitAnswer(answer: String) {
         if (isAnswerCorrect(answer)) {
-            Timber.i("current${viewModel.currentStage}, stage${viewModel.stageNumber}")
+            Timber.i("current event stage ${viewModel.currentStage}, stage${viewModel.stageNumber}")
             if (viewModel.currentStage <= viewModel.stageNumber - 1) {
                 viewModel.updateProgress()
             } else {

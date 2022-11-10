@@ -128,7 +128,6 @@ class TaskFragment : Fragment() {
 
         // observe taskList and setup screen
         viewModel.taskList.observe(viewLifecycleOwner, Observer {
-            Timber.i("task list $it")
             taskAdapter.submitList(it)
             taskAdapter.notifyDataSetChanged()
             binding.progressBar.width = ((binding.progressBarBorder.width) / 6) * (viewModel.currentStage)

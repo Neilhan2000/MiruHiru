@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         setupBottomNav()
 
         // login
-        userLogin("user1")
+        userLogin("user2")
 
         // Timber
         if (BuildConfig.DEBUG) {

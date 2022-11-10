@@ -1,7 +1,5 @@
 package com.neil.miruhiru.tasksuccess
 
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,7 +11,6 @@ import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Event
 import timber.log.Timber
-import java.lang.Exception
 
 class TaskSAndLogDViewModel(): ViewModel() {
 
@@ -49,9 +46,9 @@ class TaskSAndLogDViewModel(): ViewModel() {
                     _event.value = event
 
                     if (event.progress.first() == event.progress.last()) {
-                        currentStage = event.progress.maxOrNull() ?: -1
+                        currentStage = (event.progress.minOrNull() ?: -1) - 1
                     } else {
-                        currentStage = event.progress.maxOrNull() ?: -1
+                        currentStage = event.progress.minOrNull() ?: -1
                     }
 
 
@@ -82,11 +79,12 @@ class TaskSAndLogDViewModel(): ViewModel() {
                 val progress = documentReference.data?.get("progress") as MutableList<Int>
 
                 Timber.i("progress $progress")
-                if (progress.first() != progress.last()) {
+
+                if (progress.first() == progress.last()) {
                     // remove first element
                     progress.removeAt(0)
                     // add
-                    progress.add(currentStage)
+                    progress.add(currentStage + 2)
                 } else {
                     // remove first element
                     progress.removeAt(0)
@@ -121,13 +119,14 @@ class TaskSAndLogDViewModel(): ViewModel() {
 
         // clean user current event data
         var userDocumentId = ""
+        Timber.i("complete event userid = ${UserManager.userId}")
         db.collection("users").whereEqualTo("id", UserManager.userId)
             .get()
             .addOnSuccessListener { result ->
                 userDocumentId = result.documents[0].id
 
                 db.collection("users").document(userDocumentId)
-                    .update("currentEvent", null)
+                    .update("currentEvent", "")
                 // update local user data
                 UserManager.getUser()
             }
@@ -137,7 +136,8 @@ class TaskSAndLogDViewModel(): ViewModel() {
         val db = Firebase.firestore
         // add user to challenge completed list
         UserManager.userChallengeDocumentId?.let { db.collection("challenges").document(it)
-            .update("completedList", listOf(UserManager.userId))}
+            .update("completedList", FieldValue.arrayUnion(UserManager.userId))}
+        UserManager.clearChallengeDocumentId()
     }
 
     private val _isButtonClickable = MutableLiveData<Boolean>()

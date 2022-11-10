@@ -39,7 +39,7 @@ class LogDialogFragment : DialogFragment() {
                     viewModel.updateProgress()
                     this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
                 } else {
-                    viewModel.completeEvent()
+//                    viewModel.completeEvent()
                     this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeSuccessFragment())
                 }
             }

@@ -40,35 +40,43 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
         val taskList = mutableListOf<Task>()
         val annotationList = mutableListOf<Task>()
 
+        Timber.i("challenge document id $challengeDocumentId, event id $eventId")
         db.collection("events").whereEqualTo("id" , eventId)
             .get()
             .addOnSuccessListener { result ->
+                Timber.i("result size ${result.documents.size}")
+                Timber.i("get document success")
                 for (document in result) {
+                    Timber.i("go into for loop")
                     val event = document.toObject<Event>()
                     _event.value = event
-                    Timber.i("task list event progress ${event.progress}")
                     currentStage = event.progress.minOrNull() ?: -1
+                    Timber.i("task list event progress ${event.progress}")
+                    Timber.i("current stage $currentStage")
+
+
+                    db.collection("challenges").document(challengeDocumentId)
+                        .collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
+                        .get()
+                        .addOnSuccessListener { result ->
+                            Timber.i("challenge document id = $challengeDocumentId, result ${result.documents.size}")
+                            for (document in result) {
+                                val task = document.toObject<Task>()
+                                if (task.stage <= currentStage) {
+                                    taskList.add(task)
+                                }
+                                annotationList.add(task)
+                            }
+                            Timber.i("task list size ${taskList.size} current stage$currentStage")
+                            _taskList.value = taskList
+                            _annotationList.value = annotationList
+                        }
+                        .addOnFailureListener { exception ->
+                            Timber.i(exception, "Error getting documents.")
+                        }
                 }
 
-                db.collection("challenges").document(challengeDocumentId)
-                    .collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
-                    .get()
-                    .addOnSuccessListener { result ->
-                        Timber.i("challenge document id = $challengeDocumentId, result ${result.documents.size}")
-                        for (document in result) {
-                            val task = document.toObject<Task>()
-                            if (task.stage <= currentStage) {
-                                taskList.add(task)
-                            }
-                            annotationList.add(task)
-                        }
-                        Timber.i("task list size ${taskList.size} current stage$currentStage")
-                        _taskList.value = taskList
-                        _annotationList.value = annotationList
-                    }
-                    .addOnFailureListener { exception ->
-                        Timber.tag("neil").i(exception, "Error getting documents.")
-                    }
+
             }
             .addOnFailureListener { exception ->
                 Timber.tag("neil").i(exception, "Error getting documents.")
