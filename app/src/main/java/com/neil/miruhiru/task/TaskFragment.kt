@@ -2,8 +2,10 @@ package com.neil.miruhiru.task
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
@@ -16,10 +18,14 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -147,14 +153,79 @@ class TaskFragment : Fragment() {
         viewModel.loadEventsWithTask(UserManager.userChallengeDocumentId ?: "null",
             UserManager.user.currentEvent ?: "null")
 
-        // navigation to TaskDetailFragment
-
         // setup map
         mapView = binding.mapView
         initLocationComponent()
         mapView?.gestures?.addOnMoveListener(onMoveListener)
 
+        // override back press
+        requireActivity().onBackPressedDispatcher
+            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                @SuppressLint("ResourceAsColor")
+                override fun handleOnBackPressed() {
 
+                    if (viewModel.isMultiple == true) {
+                        val defaultBuilder = AlertDialog.Builder(requireContext())
+                            .setTitle("要退出挑戰嗎?")
+                            .setMessage("發現挑戰有其他玩家，退出後將無法再參與歐")
+                            .setPositiveButton("確定", object: DialogInterface.OnClickListener{
+                                override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    viewModel.cleanEventMultiple()
+                                }
+                            })
+                            .setNegativeButton("取消", object: DialogInterface.OnClickListener{
+                                override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    // do nothing
+                                }
+                            })
+                            .show()
+                        defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
+                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                        defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
+                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+
+                    } else if (viewModel.isMultiple == false) {
+                        val defaultBuilder = AlertDialog.Builder(requireContext())
+                            .setTitle("要退出挑戰嗎?")
+                            .setMessage("退出後進度會自動儲存歐")
+                            .setPositiveButton("確定", object: DialogInterface.OnClickListener{
+                                override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    this@TaskFragment.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+                                }
+                            })
+                            .setNeutralButton("不要儲存", object: DialogInterface.OnClickListener{
+                                override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    viewModel.cleanEventSingle()
+                                }
+                            })
+                            .setNegativeButton("取消", object: DialogInterface.OnClickListener{
+                                override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    // do nothing
+                                }
+                            })
+                            .show()
+                        defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
+                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                        defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
+                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                        defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
+                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                    }
+//                    // if you want onBackPressed() to be called as normal afterwards
+//                    if (isEnabled) {
+//                        isEnabled = false
+//                        requireActivity().onBackPressed()
+//                    }
+                }
+            })
+
+        // observer clean user current event
+        viewModel.navigateUp.observe(viewLifecycleOwner, Observer { backPressSuccess ->
+            if (backPressSuccess) {
+                this@TaskFragment.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+                viewModel.navigateUpCompleted()
+            }
+        })
 
 
         return binding.root

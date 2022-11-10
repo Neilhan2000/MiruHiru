@@ -2,9 +2,13 @@ package com.neil.miruhiru
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.User
 
 object UserManager {
@@ -15,6 +19,10 @@ object UserManager {
     private const val CURRENT_EVENT_ID = "current_event_id"
 
 
+
+    private val _hasCurrentEvent = MutableLiveData<User>()
+    val hasCurrentEvent: LiveData<User>
+        get() = _hasCurrentEvent
 
     var user = User()
 
@@ -97,6 +105,7 @@ object UserManager {
                     val user = document.toObject<User>()
 //                    _user.value = user
                     this.user = user
+                    _hasCurrentEvent.value = user
                 }
             }
             .addOnFailureListener { exception ->

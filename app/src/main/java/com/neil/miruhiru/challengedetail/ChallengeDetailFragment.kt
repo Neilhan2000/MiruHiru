@@ -3,6 +3,7 @@ package com.neil.miruhiru.challengedetail
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -16,8 +17,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -140,9 +143,33 @@ class ChallengeDetailFragment : Fragment() {
         binding.typeText.text = challenge.type
         calculateAndShowDistance(challenge.location!!)
         binding.startButton.setOnClickListener {
-            // save current challengeId and navigate
-            this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment(challenge))
+            viewModel.checkHasCurrentEvent()
         }
+
+        // observe if has uncompleted event
+        viewModel.hasCurrentEvent.observe(viewLifecycleOwner, Observer { user ->
+            if (user.currentEvent.isNotEmpty()) {
+                val defaultBuilder = AlertDialog.Builder(requireContext())
+                    .setTitle("發現上次儲存的紀錄")
+                    .setMessage("要繼續上次的挑戰嗎?")
+                    .setPositiveButton("確定", object: DialogInterface.OnClickListener{
+                        override fun onClick(p0: DialogInterface?, p1: Int) {
+                            this@ChallengeDetailFragment.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
+                        }
+                    })
+                    .setNeutralButton("清除紀錄", object: DialogInterface.OnClickListener{
+                        override fun onClick(p0: DialogInterface?, p1: Int) {
+                            viewModel.cleanEventSingle()
+                        }
+                    }) .show()
+                defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
+                    .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+            } else {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment(challenge))
+            }
+        })
     }
 
     @SuppressLint("MissingPermission")

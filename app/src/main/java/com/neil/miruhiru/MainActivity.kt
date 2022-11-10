@@ -62,8 +62,10 @@ class MainActivity : AppCompatActivity() {
     private fun userLogin(userId: String) {
         UserManager.userId = userId
         UserManager.getUser()
-//        UserManager.user.observe(this, Observer {
-//            Timber.i("$it")
+//        UserManager.hasCurrentEvent.observe(this, Observer { user ->
+//            if (user.currentEvent.isNotEmpty()) {
+//                findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalTaskFragment())
+//            }
 //        })
     }
 }

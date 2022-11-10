@@ -42,6 +42,42 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     val commentUsers: LiveData<List<User>>
         get() = _commentUsers
 
+    private val _hasCurrentEvent = MutableLiveData<User>()
+    val hasCurrentEvent: LiveData<User>
+        get() = _hasCurrentEvent
+
+    fun checkHasCurrentEvent() {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                it?.let {
+                    _hasCurrentEvent.value = it.documents[0].toObject<User>()
+                }
+            }
+    }
+
+    fun cleanEventSingle() {
+        val db = Firebase.firestore
+        var userDocumented = ""
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                userDocumented = it.documents[0].id
+
+                db.collection("users").document(userDocumented)
+                    .update("currentEvent", "")
+            }
+    }
+
+
+
+
+
+
+
     private var challengeDocumentId = ""
 
     private fun loadChallenge(challengeId: String) {

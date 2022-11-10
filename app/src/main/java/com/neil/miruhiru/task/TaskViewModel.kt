@@ -1,16 +1,20 @@
 package com.neil.miruhiru.task
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.Task
+import com.neil.miruhiru.data.User
 import timber.log.Timber
 
 class TaskViewModel(application: Application): AndroidViewModel(application) {
@@ -31,6 +35,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
 
     var currentStage = -1
     var totalStage = -1
+    var isMultiple: Boolean? = null
 
     fun loadEventsWithTask(challengeDocumentId: String, eventId: String) {
         val db = Firebase.firestore
@@ -49,6 +54,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                     _event.value = event
                     currentStage = event.progress.minOrNull() ?: -1
                     totalStage = event.stage
+                    isMultiple = event.progress.size > 1
 
                     Timber.i("task list event progress ${event.progress}")
                     Timber.i("current stage $currentStage")
@@ -108,36 +114,69 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
             }
     }
 
-//    private fun calculateDistance(currentPoint: Point?, destinationPoint: GeoPoint): Float {
-//        val current = Location("current")
-//        current.latitude = currentPoint?.latitude()!!
-//        current.longitude = currentPoint.latitude()
-//
-//        val destination = Location("current")
-//        destination.latitude = destinationPoint.latitude
-//        destination.longitude = destinationPoint.longitude
-//
-//        val result =  floatArrayOf(0.0F)
-//        val distance = Location.distanceBetween(currentPoint.latitude(), currentPoint.longitude(),
-//            destinationPoint.latitude, destinationPoint.longitude, result)
-//
-//        return result[0]
-//
-//    }
-//
-//    @SuppressLint("MissingPermission")
-//    fun calculateAndShowDistance(destination: GeoPoint) {
-//        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(viewModelApplication)
-//        var currentPoint: Point? = null
-//        fusedLocationClient.lastLocation
-//            .addOnSuccessListener { location : Location? ->
-//                Log.i("neil", "current location = ${location?.latitude}, ${location?.longitude}")
-//                currentPoint = Point.fromLngLat(
-//                    location!!.longitude,
-//                    location!!.latitude
-//                )
-//                val distance = calculateDistance(currentPoint, destination)
-//                Log.i("neil", "time $distance")
-//            }
-//    }
+    private val _navigateUp = MutableLiveData<Boolean>()
+    val navigateUp: LiveData<Boolean>
+        get() = _navigateUp
+
+    fun cleanEventSingle() {
+        val db = Firebase.firestore
+        var userDocumented = ""
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                userDocumented = it.documents[0].id
+
+                db.collection("users").document(userDocumented)
+                    .update("currentEvent", "")
+                    .addOnSuccessListener {
+                        _navigateUp.value = true
+                    }
+            }
+    }
+
+    fun cleanEventMultiple() {
+        val db = Firebase.firestore
+        var userDocumented = ""
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                userDocumented = it.documents[0].id
+
+                db.collection("users").document(userDocumented)
+                    .get()
+                    .addOnSuccessListener {
+                        val user = it.toObject<User>()
+                        Timber.i("user id ${user?.currentEvent}")
+
+                        db.collection("events").whereEqualTo("id", user?.currentEvent)
+                            .get()
+                            .addOnSuccessListener {
+                                val eventDocumented = it.documents[0].id
+
+                                // remove member and progress
+                                db.collection("events").document(eventDocumented)
+                                    .update("members", FieldValue.arrayRemove(UserManager.userId))
+                                    .addOnSuccessListener {
+
+                                        db.collection("events").document(eventDocumented)
+                                            .update("progress", FieldValue.arrayRemove(currentStage))
+                                            .addOnSuccessListener {
+                                                db.collection("users").document(userDocumented)
+                                                    .update("currentEvent", "")
+                                                    .addOnSuccessListener {
+                                                        _navigateUp.value = true
+                                                    }
+                                            }
+                                    }
+                            }
+                    }
+
+            }
+    }
+
+    fun navigateUpCompleted() {
+        _navigateUp.value = false
+    }
 }
