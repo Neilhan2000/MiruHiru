@@ -34,6 +34,7 @@ class TaskSuccessFragment : Fragment() {
             if (currentStage < viewModel.stageNumber) {
                 binding.continueButton.setOnClickListener {
                     this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
+                    viewModel.navigateToTaskFragmentCompleted()
                 }
             } else {
                 binding.continueButton.text = "結束挑戰"
@@ -57,18 +58,13 @@ class TaskSuccessFragment : Fragment() {
                     binding.continueButton.setBackgroundResource(R.drawable.button_border)
                     binding.continueButton.isEnabled = true
                     // remove snapshot listener
+                    viewModel.removeDetectUsersProgress()
                 } else {
                     binding.continueButton.text = "等待同伴挑戰中"
                     binding.continueButton.setBackgroundResource(R.drawable.button_disable_border)
                     binding.continueButton.isEnabled = false
                 }
             }
-//            else if (binding.continueButton.text == "等待同伴挑戰中"){
-//                binding.continueButton.setOnClickListener(null)
-//                binding.continueButton.setOnClickListener {
-//                    this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeSuccessFragment())
-//                }
-//            }
         })
 
 

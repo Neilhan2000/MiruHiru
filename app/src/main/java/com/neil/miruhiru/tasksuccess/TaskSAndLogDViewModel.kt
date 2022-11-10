@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -161,6 +162,7 @@ class TaskSAndLogDViewModel(): ViewModel() {
     val isButtonClickable: LiveData<Boolean>
         get() = _isButtonClickable
 
+    private lateinit var listenerRegistration: ListenerRegistration
     private fun detectUsersProgress() {
         val db = Firebase.firestore
 
@@ -169,7 +171,7 @@ class TaskSAndLogDViewModel(): ViewModel() {
             .addOnSuccessListener { result ->
                 val eventDocumentId = result.documents[0].id
 
-                db.collection("events").document(eventDocumentId)
+                listenerRegistration = db.collection("events").document(eventDocumentId)
                     .addSnapshotListener { value, error ->
                         val event = value?.toObject<Event>()
                         event?.progress?.let {
@@ -179,5 +181,9 @@ class TaskSAndLogDViewModel(): ViewModel() {
                         }
                     }
             }
+    }
+
+    fun removeDetectUsersProgress() {
+        listenerRegistration.remove()
     }
 }
