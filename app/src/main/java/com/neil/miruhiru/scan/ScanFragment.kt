@@ -21,6 +21,7 @@ import com.budiyev.android.codescanner.ScanMode
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.challengetype.ChallengeTypeViewModel
 import com.neil.miruhiru.databinding.FragmentScanBinding
+import com.neil.miruhiru.join.JoinEventViewModel
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -30,8 +31,8 @@ class ScanFragment : Fragment() {
     private lateinit var codeScanner: CodeScanner
     private lateinit var eventId: String
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
-    private val viewModel: ChallengeTypeViewModel by lazy {
-        ViewModelProvider(this).get(ChallengeTypeViewModel::class.java)
+    private val viewModel: JoinEventViewModel by lazy {
+        ViewModelProvider(this).get(JoinEventViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -50,6 +51,7 @@ class ScanFragment : Fragment() {
         viewModel.navigateToTaskFragment.observe(viewLifecycleOwner, Observer { addToEvent ->
             if (addToEvent == "multiple") {
                 this.findNavController().navigate(NavGraphDirections.actionGlobalInviteFragment(eventId))
+                viewModel.navigateToTaskFragmentCompleted()
             }
         })
 

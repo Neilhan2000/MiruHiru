@@ -26,6 +26,8 @@ class InviteFragmentViewModel: ViewModel() {
     val navigateToTaskFragment: LiveData<Boolean>
         get() = _navigateToTaskFragment
 
+    var mainUser = ""
+
     fun navigateToTaskFragmentCompleted() {
         _navigateToTaskFragment.value = false
     }
@@ -39,6 +41,7 @@ class InviteFragmentViewModel: ViewModel() {
                 event?.members?.let { for (userId in event.members) {
                     userIdList.add(userId)
                 } }
+                mainUser = userIdList[0]
                 Timber.i("userid list $userIdList")
                 loadUserData(userIdList)
             }
@@ -52,7 +55,8 @@ class InviteFragmentViewModel: ViewModel() {
             db.collection("users").whereEqualTo("id", userId)
                 .get().addOnSuccessListener { result ->
                     val user = result.documents.get(0).toObject<User>()
-                    Timber.i("user $user")
+
+
                     user?.let { userList.add(user) }
                     _userList.value = userList
                 }

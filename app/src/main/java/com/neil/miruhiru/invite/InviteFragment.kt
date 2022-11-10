@@ -74,10 +74,11 @@ class InviteFragment : Fragment() {
         binding.userRecycler.adapter = userAdapter
         viewModel.userList.observe(viewLifecycleOwner, Observer {
             userAdapter.submitList(it)
-            // check if the user is main user (only main user can control event is started or not)
-//            if (UserManager.user.id != it[0].id) {
-//                changeButtonStatus()
-//            }
+            userAdapter.notifyDataSetChanged()
+            // check if the user is main user (only main user can control event started)
+            if (UserManager.user.id != viewModel.mainUser) {
+                changeButtonStatus()
+            }
         })
     }
 
