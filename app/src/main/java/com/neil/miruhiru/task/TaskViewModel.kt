@@ -16,10 +16,6 @@ import timber.log.Timber
 class TaskViewModel(application: Application): AndroidViewModel(application) {
 
     val viewModelApplication = application
-    init {
-        val challengeId = "2WBySSd68w3VrA08eLGj"
-//        loadEventsWithTask(challengeId)
-    }
 
     private val _taskList = MutableLiveData<List<Task>>()
     val taskList: LiveData<List<Task>>
@@ -34,6 +30,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
         get() = _event
 
     var currentStage = -1
+    var totalStage = -1
 
     fun loadEventsWithTask(challengeDocumentId: String, eventId: String) {
         val db = Firebase.firestore
@@ -51,6 +48,8 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                     val event = document.toObject<Event>()
                     _event.value = event
                     currentStage = event.progress.minOrNull() ?: -1
+                    totalStage = event.stage
+
                     Timber.i("task list event progress ${event.progress}")
                     Timber.i("current stage $currentStage")
 

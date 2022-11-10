@@ -74,13 +74,7 @@ class TaskDialogFragment : DialogFragment() {
     private fun submitAnswer(answer: String) {
         if (isAnswerCorrect(answer)) {
             Timber.i("current event stage ${viewModel.currentStage}, stage${viewModel.stageNumber}")
-            if (viewModel.currentStage <= viewModel.stageNumber - 1) {
-                viewModel.updateProgress()
-            } else {
-                viewModel.updateProgress()
-                viewModel.completeEvent()
-                viewModel.completeChallenge()
-            }
+            viewModel.updateProgress()
 
         } else if (answer.isEmpty()) {
             Toast.makeText(requireContext(), "你還沒有輸入歐歐歐", Toast.LENGTH_SHORT).show()

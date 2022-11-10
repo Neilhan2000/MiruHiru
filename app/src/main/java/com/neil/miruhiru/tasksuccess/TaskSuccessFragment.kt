@@ -37,7 +37,9 @@ class TaskSuccessFragment : Fragment() {
                 }
             } else {
                 binding.continueButton.text = "結束挑戰"
-                Timber.i("getcurrentstage set 結束挑戰")
+                viewModel.completeEvent()
+                viewModel.completeChallenge()
+
                 binding.continueButton.setOnClickListener(null)
                 binding.continueButton.setOnClickListener {
                     this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeSuccessFragment())

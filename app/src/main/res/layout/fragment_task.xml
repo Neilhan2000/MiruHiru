@@ -99,7 +99,10 @@
         android:layout_width="0dp"
         android:layout_height="13dp"
         android:layout_marginStart="10dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/progress_border"
+        app:layout_constraintEnd_toEndOf="@+id/progressBarBorder"
+        app:layout_constraintHorizontal_bias="0.0"
         mapbox:layout_constraintBottom_toBottomOf="@+id/progressBarBorder"
         mapbox:layout_constraintStart_toEndOf="@+id/progressText"
         mapbox:layout_constraintTop_toTopOf="@+id/progressBarBorder" />

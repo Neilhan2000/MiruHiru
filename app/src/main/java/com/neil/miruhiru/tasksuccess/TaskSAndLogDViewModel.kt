@@ -31,7 +31,6 @@ class TaskSAndLogDViewModel(): ViewModel() {
         get() = _getCurrentStage
 
     var currentStage = -1
-    var documentId = ""
     var stageNumber = -1
 
     private fun loadEvent(eventId: String) {
@@ -41,7 +40,6 @@ class TaskSAndLogDViewModel(): ViewModel() {
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    documentId = document.id
                     val event = document.toObject<Event>()
                     _event.value = event
 
@@ -70,34 +68,43 @@ class TaskSAndLogDViewModel(): ViewModel() {
 
     fun updateProgress() {
         val db = Firebase.firestore
+        var eventDocumentId = ""
 
-        // update progress, here we read progress array and reset it on firebase
-        db.collection("events").document(documentId)
+        // get document id
+        db.collection("events").whereEqualTo("id" ,UserManager.user.currentEvent)
             .get()
-            .addOnSuccessListener { documentReference ->
-                // read
-                val progress = documentReference.data?.get("progress") as MutableList<Int>
-
-                Timber.i("progress $progress")
-
-                if (progress.first() == progress.last()) {
-                    // remove first element
-                    progress.removeAt(0)
-                    // add
-                    progress.add(currentStage + 2)
-                } else {
-                    // remove first element
-                    progress.removeAt(0)
-                    // add
-                    progress.add(currentStage + 1)
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    eventDocumentId = document.id
                 }
-                // reset
-                db.collection("events").document(documentId)
-                    .update("progress", progress)
-                _navigateToTaskFragment.value = true
-            }
-            .addOnFailureListener { e ->
-                Timber.i(e, "Error adding document")
+                // update progress, here we read progress array and reset it on firebase
+                db.collection("events").document(eventDocumentId)
+                    .get()
+                    .addOnSuccessListener { documentReference ->
+                        // read
+                        val progress = documentReference.data?.get("progress") as MutableList<Int>
+
+                        Timber.i("progress $progress")
+
+                        if (progress.first() == progress.last()) {
+                            // remove first element
+                            progress.removeAt(0)
+                            // add
+                            progress.add(currentStage + 2)
+                        } else {
+                            // remove first element
+                            progress.removeAt(0)
+                            // add
+                            progress.add(currentStage + 1)
+                        }
+                        // reset
+                        db.collection("events").document(eventDocumentId)
+                            .update("progress", progress)
+                        _navigateToTaskFragment.value = true
+                    }
+                    .addOnFailureListener { e ->
+                        Timber.i(e, "Error adding document")
+                    }
             }
     }
 
@@ -113,22 +120,32 @@ class TaskSAndLogDViewModel(): ViewModel() {
         val isCompleted = hashMapOf(
             "isCompleted" to true
         )
-        db.collection("events").document(documentId)
-            .set(isCompleted, SetOptions.merge())
-//        UserManager.clearChallengeId()
+        var eventDocumentId = ""
 
-        // clean user current event data
-        var userDocumentId = ""
-        Timber.i("complete event userid = ${UserManager.userId}")
-        db.collection("users").whereEqualTo("id", UserManager.userId)
+        db.collection("events").whereEqualTo("id" ,UserManager.user.currentEvent)
             .get()
             .addOnSuccessListener { result ->
-                userDocumentId = result.documents[0].id
+                for (document in result) {
+                    eventDocumentId = document.id
+                }
 
-                db.collection("users").document(userDocumentId)
-                    .update("currentEvent", "")
-                // update local user data
-                UserManager.getUser()
+                db.collection("events").document(eventDocumentId)
+                    .set(isCompleted, SetOptions.merge())
+
+                // clean user current event data
+                var userDocumentId = ""
+
+                db.collection("users").whereEqualTo("id", UserManager.userId)
+                    .get()
+                    .addOnSuccessListener { result ->
+                        userDocumentId = result.documents[0].id
+
+                        Timber.i("complete event userid = ${UserManager.userId}")
+                        db.collection("users").document(userDocumentId)
+                            .update("currentEvent", "")
+                        // update local user data
+                        UserManager.getUser()
+                    }
             }
     }
 

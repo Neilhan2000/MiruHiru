@@ -130,8 +130,8 @@ class TaskFragment : Fragment() {
         viewModel.taskList.observe(viewLifecycleOwner, Observer {
             taskAdapter.submitList(it)
             taskAdapter.notifyDataSetChanged()
-            binding.progressBar.width = ((binding.progressBarBorder.width) / 6) * (viewModel.currentStage)
-            binding.progressText.text = "${viewModel.currentStage} / 5"
+            binding.progressBar.layoutParams.width = ((binding.progressBar.width) / viewModel.totalStage) * viewModel.currentStage
+            binding.progressText.text = "${viewModel.currentStage} / ${viewModel.totalStage}"
 
             val guildTextList = listOf<Task>(Task(), it[0], Task())
             guideAdapter.submitList(guildTextList)
