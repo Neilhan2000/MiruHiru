@@ -164,7 +164,7 @@ class ChallengeDetailFragment : Fragment() {
                     }) .show()
                 defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
                     .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
-                defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
+                defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
                     .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
             } else {
                 this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment(challenge))

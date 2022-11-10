@@ -2,9 +2,13 @@ package com.neil.miruhiru.tasksuccess
 
 import android.app.Dialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -33,16 +37,23 @@ class LogDialogFragment : DialogFragment() {
         builder.setView(binding.root)
         dialog = builder.create()
         dialog.window!!.setBackgroundDrawableResource(R.drawable.dialog_border)
-        binding.logButton2.setOnClickListener {
+        binding.uploadButton.setOnClickListener {
             if (isInputValid()) {
-                if (viewModel.currentStage < viewModel.stageNumber) {
-                    viewModel.updateProgress()
-                    this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
-                } else {
-//                    viewModel.completeEvent()
-                    this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeSuccessFragment())
-                }
+                // update data then close dialog
+                binding.logSuccessIcon.visibility = View.VISIBLE
+                binding.uploadedImage.visibility = View.VISIBLE
+                binding.uploadButton.text = "上傳成功"
+
             }
+        }
+
+        binding.editTextLog.addTextChangedListener {
+            binding.logSuccessIcon.visibility = View.GONE
+            binding.uploadButton.text = "留下紀錄"
+        }
+
+        binding.uploadedImage.setOnClickListener {
+
         }
     }
 

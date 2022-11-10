@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_border.xml" value="0.271" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_disable_border.xml" value="0.1745" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/challenge_success_border.xml" value="0.1195" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/dialog_border.xml" value="0.254" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/disable_button_border.xml" value="0.254" />
@@ -28,7 +29,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_invite.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_join.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_log.xml" value="0.12" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_log_dialog.xml" value="0.2" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_log_dialog.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_profile.xml" value="0.21666666666666667" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_scan.xml" value="0.14376528117359413" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task.xml" value="0.33" />

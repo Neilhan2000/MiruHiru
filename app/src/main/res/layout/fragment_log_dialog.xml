@@ -5,22 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/logButton2"
-        android:layout_width="350dp"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/backToTaskSuccessButton"
+        android:layout_width="155dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/button_border"
-        android:text="留下紀錄"
+        android:background="@drawable/button_disable_border"
+        android:backgroundTint="@color/grey_cccccc"
+        android:text="回上一頁"
+        android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextLog" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextLog"
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/editTextLog"
@@ -35,10 +37,10 @@
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/uploadImage" />
+        app:layout_constraintTop_toBottomOf="@+id/imageBorder" />
 
     <TextView
-        android:id="@+id/uploadImage"
+        android:id="@+id/imageBorder"
         android:layout_width="350dp"
         android:layout_height="300dp"
         android:layout_marginStart="16dp"
@@ -51,4 +53,48 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/uploadButton"
+        android:layout_width="155dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/button_border"
+        android:gravity="center"
+        android:text="留下紀錄"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/backToTaskSuccessButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/backToTaskSuccessButton"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/logSuccessIcon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/uploadButton"
+        app:layout_constraintEnd_toEndOf="@+id/uploadButton"
+        app:layout_constraintTop_toTopOf="@+id/uploadButton"
+        app:layout_constraintVertical_bias="0.65"
+        app:srcCompat="@drawable/ic_success_500" />
+
+    <ImageView
+        android:id="@+id/uploadedImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:scaleType="centerCrop"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/imageBorder"
+        app:layout_constraintEnd_toEndOf="@+id/imageBorder"
+        app:layout_constraintStart_toStartOf="@+id/imageBorder"
+        app:layout_constraintTop_toTopOf="@+id/imageBorder"
+        tools:srcCompat="@tools:sample/avatars" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

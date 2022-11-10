@@ -163,17 +163,23 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                                         db.collection("events").document(eventDocumented)
                                             .update("progress", FieldValue.arrayRemove(currentStage))
                                             .addOnSuccessListener {
+
                                                 db.collection("users").document(userDocumented)
                                                     .update("currentEvent", "")
                                                     .addOnSuccessListener {
                                                         _navigateUp.value = true
                                                     }
+
                                             }
+
                                     }
+
                             }
+
                     }
 
             }
+
     }
 
     fun navigateUpCompleted() {
