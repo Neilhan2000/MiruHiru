@@ -5,12 +5,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentLogBinding
+import com.neil.miruhiru.explore.ExploreViewModel
 
 class LogFragment : Fragment() {
 
     private lateinit var binding: FragmentLogBinding
+    private val viewModel: LogViewModel by lazy {
+        ViewModelProvider(this).get(LogViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,6 +28,8 @@ class LogFragment : Fragment() {
         val stageAdapter = LogStageAdapter()
         binding.recyclerStage.adapter = stageAdapter
         stageAdapter.submitList(taskList)
+
+
 
 
         return binding.root

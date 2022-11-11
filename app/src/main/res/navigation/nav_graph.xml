@@ -75,7 +75,7 @@
     <action android:id="@+id/action_global_taskSuccessFragment" app:destination="@id/taskSuccessFragment" />
     <dialog
         android:id="@+id/logDialogFragment"
-        android:name="com.neil.miruhiru.tasksuccess.LogDialogFragment"
+        android:name="com.neil.miruhiru.log.LogDialogFragment"
         android:label="LogDialogFragment" /><action android:id="@+id/action_global_logDialogFragment" app:destination="@id/logDialogFragment"/>
     <fragment
         android:id="@+id/challengeSuccessFragment"

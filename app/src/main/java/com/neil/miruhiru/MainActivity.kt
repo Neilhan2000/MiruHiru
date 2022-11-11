@@ -1,7 +1,9 @@
 package com.neil.miruhiru
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -25,17 +27,29 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
 
+    companion object {
+        private lateinit var instance: MainActivity
+
+        fun getInstanceFromViewModel(): MainActivity? {
+            return instance
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        // set activity instance
+        instance = this
 
         // bottom navigation
         val navController = Navigation.findNavController(this, R.id.myNavHostFragment)
         setupBottomNav()
 
         // login
-        userLogin("user1")
+        userLogin("user2")
 
         // Timber
         if (BuildConfig.DEBUG) {
@@ -78,33 +92,17 @@ class MainActivity : AppCompatActivity() {
             if (user.currentEvent.isNotEmpty()) {
                 val defaultBuilder = AlertDialog.Builder(this)
                     .setTitle("上次挑戰中斷")
-                    .setMessage("要繼續上次的挑戰嗎?")
+                    .setMessage("將自動為你導向上次的紀錄")
                     .setPositiveButton("確定", object: DialogInterface.OnClickListener{
                         override fun onClick(p0: DialogInterface?, p1: Int) {
                             findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalTaskFragment())
                         }
-                    })
-                    .setNegativeButton("取消", object: DialogInterface.OnClickListener{
-                        override fun onClick(p0: DialogInterface?, p1: Int) {
-                            // do noting
-                        }
-
-                    })
-                    .setNeutralButton("清除紀錄", object: DialogInterface.OnClickListener{
-                        override fun onClick(p0: DialogInterface?, p1: Int) {
-//                            cleanEvent(user)
-                        }
-                    }) .show()
+                    }).show()
                 defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
-                    .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
-                defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
-                    .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
-                defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
                     .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
             }
         })
     }
-
 //    fun cleanEvent(user: User) {
 //        val db = Firebase.firestore
 //

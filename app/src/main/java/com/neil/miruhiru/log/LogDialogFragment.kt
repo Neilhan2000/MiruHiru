@@ -1,34 +1,64 @@
-package com.neil.miruhiru.tasksuccess
+package com.neil.miruhiru.log
 
+import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.app.Dialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.graphics.TypefaceCompatUtil
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
-import com.neil.miruhiru.NavGraphDirections
+import com.mapbox.android.core.permissions.PermissionsListener
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.R
 import com.neil.miruhiru.databinding.FragmentLogDialogBinding
+import com.neil.miruhiru.tasksuccess.TaskSAndLogDViewModel
+import timber.log.Timber
 
 
 class LogDialogFragment : DialogFragment() {
 
     lateinit var binding: FragmentLogDialogBinding
     private lateinit var dialog: AlertDialog
-    private lateinit var viewModel: TaskSAndLogDViewModel
+    private val viewModel: LogViewModel by lazy {
+        ViewModelProvider(this).get(LogViewModel::class.java)
+    }
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         binding = FragmentLogDialogBinding.inflate(LayoutInflater.from(context))
+
         setupScreen()
-        viewModel = ViewModelProvider(this).get(TaskSAndLogDViewModel::class.java)
+
         return dialog
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+         Timber.i("$requestCode $resultCode data ${data?.data}")
+        if (requestCode == 105 && resultCode == RESULT_OK) {
+            data?.data?.let {
+                viewModel.imageUri = it
+                binding.uploadedImage.setImageURI(viewModel.imageUri)
+                viewModel.uploadImage()
+            }
+        }
+    }
+
+    private fun selectImage() {
+        val intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
+
+        startActivityForResult(Intent.createChooser(intent,"picture"), 105)
+//        startActivityForResult(intent, 105)
     }
 
     private fun setupScreen() {
@@ -40,6 +70,7 @@ class LogDialogFragment : DialogFragment() {
         binding.uploadButton.setOnClickListener {
             if (isInputValid()) {
                 // update data then close dialog
+                viewModel.uploadImage()
                 binding.logSuccessIcon.visibility = View.VISIBLE
                 binding.uploadedImage.visibility = View.VISIBLE
                 binding.uploadButton.text = "上傳成功"
@@ -53,7 +84,7 @@ class LogDialogFragment : DialogFragment() {
         }
 
         binding.uploadedImage.setOnClickListener {
-
+            selectImage()
         }
     }
 

@@ -151,7 +151,7 @@ class TaskFragment : Fragment() {
             }
         })
         viewModel.loadEventsWithTask(UserManager.userChallengeDocumentId ?: "null",
-            UserManager.user.currentEvent ?: "null")
+            UserManager.user.currentEvent)
 
         // setup map
         mapView = binding.mapView
@@ -226,6 +226,15 @@ class TaskFragment : Fragment() {
                 viewModel.navigateUpCompleted()
             }
         })
+
+        // observer if user is kicked out of challenge
+        viewModel.isKicked.observe(viewLifecycleOwner, Observer { isKicked ->
+            if (isKicked) {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+                Toast.makeText(requireContext(), "你已被移出挑戰", Toast.LENGTH_SHORT).show()
+            }
+        })
+        viewModel.detectUserKicked()
 
 
         return binding.root
@@ -374,5 +383,6 @@ class TaskFragment : Fragment() {
             bitmap
         }
     }
+
 
 }
