@@ -31,6 +31,10 @@ class TaskSAndLogDViewModel(): ViewModel() {
     val getCurrentStage: LiveData<Int>
         get() = _getCurrentStage
 
+    private val _navigateToLogFragment = MutableLiveData<Boolean>()
+    val navigateToLogFragment: LiveData<Boolean>
+        get() = _navigateToLogFragment
+
     var currentStage = -1
     var stageNumber = -1
 
@@ -113,6 +117,10 @@ class TaskSAndLogDViewModel(): ViewModel() {
         _navigateToTaskFragment.value = false
     }
 
+    fun navigateToLogFragmentCompleted() {
+        _navigateToLogFragment.value = false
+    }
+
 
     fun completeEvent() {
 
@@ -144,8 +152,18 @@ class TaskSAndLogDViewModel(): ViewModel() {
                         Timber.i("complete event userid = ${UserManager.userId}")
                         db.collection("users").document(userDocumentId)
                             .update("currentEvent", "")
-                        // update local user data
-                        UserManager.getUser()
+                            .addOnSuccessListener {
+
+                                // add event to user completedEvents list
+                                db.collection("users").document(userDocumentId)
+                                    .update("completedEvents", FieldValue.arrayUnion(UserManager.user.currentEvent))
+                                    .addOnSuccessListener {
+                                        // clean local user current event data
+                                        UserManager.getUser()
+                                        _navigateToLogFragment.value = true
+                                    }
+                            }
+
                     }
             }
     }

@@ -21,6 +21,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.neil.miruhiru.R
 import com.neil.miruhiru.databinding.FragmentLogDialogBinding
 import timber.log.Timber
@@ -103,10 +104,14 @@ class LogDialogFragment : DialogFragment() {
                 viewModel.uploadImage()
             }
         }
+        binding.backToTaskSuccessButton.setOnClickListener {
+            this.findNavController().navigateUp()
+        }
 
         binding.editTextLog.addTextChangedListener {
             binding.logSuccessIcon.visibility = View.GONE
             binding.uploadButton.text = "留下紀錄"
+            viewModel.text = it.toString()
         }
 
         binding.uploadedImage.setOnClickListener {

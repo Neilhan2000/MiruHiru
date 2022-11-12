@@ -69,10 +69,12 @@ class TaskAdapter(viewModel: TaskViewModel) : ListAdapter<Task, TaskAdapter.View
             var currentPoint: Point? = null
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location : Location? ->
-                    currentPoint = Point.fromLngLat(
-                        location!!.longitude,
-                        location!!.latitude
-                    )
+                    location?.let {
+                        currentPoint = Point.fromLngLat(
+                            location.longitude,
+                            location.latitude
+                        )
+                    }
                     val distance = calculateDistance(currentPoint, destination)
                     binding.challengeDistance.text = "${distance.roundToInt()} Ms"
                     distanceGlobal = distance.roundToInt()
@@ -81,16 +83,21 @@ class TaskAdapter(viewModel: TaskViewModel) : ListAdapter<Task, TaskAdapter.View
 
         private fun calculateDistance(currentPoint: Point?, destinationPoint: GeoPoint): Float {
             val current = Location("current")
-            current.latitude = currentPoint?.latitude()!!
-            current.longitude = currentPoint.latitude()
+            currentPoint?.let {
+                current.latitude = currentPoint.latitude()
+                current.longitude = currentPoint.latitude()
+            }
 
             val destination = Location("current")
             destination.latitude = destinationPoint.latitude
             destination.longitude = destinationPoint.longitude
 
             val result =  floatArrayOf(0.0F)
-            val distance = Location.distanceBetween(currentPoint.latitude(), currentPoint.longitude(),
-                destinationPoint.latitude, destinationPoint.longitude, result)
+            val distance = currentPoint?.let {
+                Location.distanceBetween(
+                    currentPoint.latitude(), currentPoint.longitude(),
+                    destinationPoint.latitude, destinationPoint.longitude, result)
+            }
 
             return result[0]
         }

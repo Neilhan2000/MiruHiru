@@ -42,21 +42,28 @@ class TaskSuccessFragment : Fragment() {
                     viewModel.navigateToTaskFragmentCompleted()
                 }
             } else {
-                binding.continueButton.text = "結束挑戰"
-                viewModel.completeEvent()
-                viewModel.completeChallenge()
+                binding.continueButton.text = "挑戰完成"
 
                 binding.continueButton.setOnClickListener(null)
                 binding.continueButton.setOnClickListener {
-                    this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeSuccessFragment())
+                    viewModel.completeEvent()
+                    viewModel.completeChallenge()
                 }
+            }
+        })
+
+        // observer event complete and navigate to log fragment
+        viewModel.navigateToLogFragment.observe(viewLifecycleOwner, Observer { completeEvent ->
+            if (completeEvent) {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeSuccessFragment())
+                viewModel.navigateToLogFragmentCompleted()
             }
         })
 
         // button clickable set button
         viewModel.isButtonClickable.observe(viewLifecycleOwner, Observer { buttonClickable ->
 
-            if (binding.continueButton.text != "結束挑戰") {
+            if (binding.continueButton.text != "挑戰完成") {
                 if (buttonClickable) {
                     Timber.i("isButtonClickable set 繼續挑戰")
                     binding.continueButton.text = "繼續挑戰"
