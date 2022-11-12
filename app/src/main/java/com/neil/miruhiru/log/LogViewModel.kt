@@ -32,9 +32,9 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
 
     private val viewModelApplication = application
 
-    private val _challengeList = MutableLiveData<List<Challenge>>()
-    val challengeList: LiveData<List<Challenge>>
-        get() = _challengeList
+    private val _uploadStatus = MutableLiveData<Boolean>()
+    val uploadStatus: LiveData<Boolean>
+        get() = _uploadStatus
     lateinit var imageUri: Uri
 
     fun loadImage() {
@@ -63,12 +63,14 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
         val storageReference = FirebaseStorage.getInstance().getReference("images/$fileName")
         storageReference.putFile(imageUri)
             .addOnSuccessListener {
-                Toast.makeText(viewModelApplication, "success", Toast.LENGTH_SHORT).show()
+                Toast.makeText(viewModelApplication, "上傳成功", Toast.LENGTH_SHORT).show()
                 if (progressDialog.isShowing) progressDialog.dismiss()
+                _uploadStatus.value = true
             }
             .addOnFailureListener {
-                Toast.makeText(viewModelApplication, "fail", Toast.LENGTH_SHORT).show()
+                Toast.makeText(viewModelApplication, "上傳失敗，原因:${it.message}", Toast.LENGTH_SHORT).show()
                 if (progressDialog.isShowing) progressDialog.dismiss()
+                _uploadStatus.value = false
             }
 
 

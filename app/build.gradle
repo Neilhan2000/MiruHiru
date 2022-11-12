@@ -93,4 +93,7 @@ dependencies {
     // Timber
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
+    // Bottom Sheet Spinner
+    implementation 'com.github.nestoleh:bottomsheet-spinner:0.1.5'
+
 }
