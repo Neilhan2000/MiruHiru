@@ -5,34 +5,37 @@ import android.os.Parcelable
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
+import kotlin.math.ln
 
-data class ParcelGeoPoint(
-    val geoPoint: GeoPoint
-) : Parcelable {
+class ParcelableGeoPoint() : Parcelable {
 
+    private lateinit var geoPoint: GeoPoint
 
-    constructor(parcel: Parcel) : this(
-        GeoPoint(0.0, 0.0)
-    ) {
+    constructor(parcel: Parcel) : this() {
+        parcel.writeDouble(geoPoint.latitude)
+        parcel.writeDouble(geoPoint.longitude)
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-
+        val lat = parcel.readDouble()
+        val lng = parcel.readDouble()
+        geoPoint = GeoPoint(lat, lng)
     }
 
     override fun describeContents(): Int {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<ParcelGeoPoint> {
-        override fun createFromParcel(parcel: Parcel): ParcelGeoPoint {
-            return ParcelGeoPoint(parcel)
+    companion object CREATOR : Parcelable.Creator<ParcelableGeoPoint> {
+        override fun createFromParcel(parcel: Parcel): ParcelableGeoPoint {
+            return ParcelableGeoPoint(parcel)
         }
 
-        override fun newArray(size: Int): Array<ParcelGeoPoint?> {
+        override fun newArray(size: Int): Array<ParcelableGeoPoint?> {
             return arrayOfNulls(size)
         }
     }
+
 }
 
 @Parcelize
@@ -42,7 +45,7 @@ data class Challenge(
     val image: String? = null,
     val isUpload: Boolean? = null,
     val likeList: List<String>? = null,
-    val location: @RawValue GeoPoint? = null,
+    val location:  @RawValue GeoPoint? = null,
     val name: String? = null,
     val stage: Int? = null,
     val timeSpent: Long? = null,

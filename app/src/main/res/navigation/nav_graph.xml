@@ -95,7 +95,7 @@
         tools:layout="@layout/fragment_challenge_type" >
         <argument
             android:name="challenge"
-            app:argType="com.neil.miruhiru.data.Challenge" />
+            app:argType="com.neil.miruhiru.data.ChallengeInfo" />
     </fragment>
     <fragment
         android:id="@+id/inviteFragment"

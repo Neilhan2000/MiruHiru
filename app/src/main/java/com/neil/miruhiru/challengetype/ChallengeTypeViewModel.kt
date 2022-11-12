@@ -14,6 +14,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.data.ChallengeInfo
 import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.User
 import timber.log.Timber
@@ -27,7 +28,7 @@ class ChallengeTypeViewModel() : ViewModel() {
 
     private var eventDocumentId = ""
 
-    fun postEvent(eventId: String, challenge: Challenge, type: String) {
+    fun postEvent(eventId: String, challenge: ChallengeInfo, type: String) {
         val event = hashMapOf(
             "id" to eventId,
             "members" to listOf<String>(),

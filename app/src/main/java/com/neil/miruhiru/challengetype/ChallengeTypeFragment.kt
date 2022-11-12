@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.data.ChallengeInfo
 import com.neil.miruhiru.databinding.FragmentChallengeTypeBinding
 import timber.log.Timber
 
@@ -17,7 +18,7 @@ import timber.log.Timber
 class ChallengeTypeFragment : Fragment() {
 
     private lateinit var binding: FragmentChallengeTypeBinding
-    private lateinit var challenge: Challenge
+    private lateinit var challenge: ChallengeInfo
     private lateinit var eventId: String
     private val viewModel: ChallengeTypeViewModel by lazy {
         ViewModelProvider(this).get(ChallengeTypeViewModel::class.java)

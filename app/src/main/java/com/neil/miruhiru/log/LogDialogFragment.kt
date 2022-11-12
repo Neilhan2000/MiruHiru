@@ -56,9 +56,7 @@ class LogDialogFragment : DialogFragment() {
 
     private fun selectImage() {
         val intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
-
         startActivityForResult(Intent.createChooser(intent,"picture"), 105)
-//        startActivityForResult(intent, 105)
     }
 
     private fun setupScreen() {

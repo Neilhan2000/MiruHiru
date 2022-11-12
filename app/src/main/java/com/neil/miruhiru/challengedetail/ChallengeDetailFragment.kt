@@ -37,6 +37,7 @@ import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.data.ChallengeInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
 import com.neil.miruhiru.factory.ChallengeDetailViewModelFactory
@@ -167,7 +168,8 @@ class ChallengeDetailFragment : Fragment() {
                 defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
                     .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
             } else {
-                this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment(challenge))
+                this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment(
+                    ChallengeInfo(challenge.id, challenge.stage)))
             }
         })
     }
