@@ -11,6 +11,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Event
+import com.neil.miruhiru.data.User
 import timber.log.Timber
 
 class TaskSAndLogDViewModel(): ViewModel() {
@@ -96,11 +97,13 @@ class TaskSAndLogDViewModel(): ViewModel() {
                             progress.removeAt(0)
                             // add
                             progress.add(currentStage + 2)
+                            UserManager.currentStage = currentStage + 1
                         } else {
                             // remove first element
                             progress.removeAt(0)
                             // add
                             progress.add(currentStage + 1)
+                            UserManager.currentStage = currentStage
                         }
                         // reset
                         db.collection("events").document(eventDocumentId)
@@ -138,6 +141,7 @@ class TaskSAndLogDViewModel(): ViewModel() {
                     eventDocumentId = document.id
                 }
 
+                // set event completed
                 db.collection("events").document(eventDocumentId)
                     .set(isCompleted, SetOptions.merge())
 
@@ -159,13 +163,27 @@ class TaskSAndLogDViewModel(): ViewModel() {
                                     .update("completedEvents", FieldValue.arrayUnion(UserManager.user.currentEvent))
                                     .addOnSuccessListener {
                                         // clean local user current event data
-                                        UserManager.getUser()
-                                        _navigateToLogFragment.value = true
+                                        getUser()
                                     }
                             }
 
                     }
             }
+    }
+
+    private fun getUser() {
+        val db = Firebase.firestore
+        db.collection("users").whereEqualTo("id" , UserManager.userId)
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    val user = document.toObject<User>()
+                    UserManager.user = user
+                    UserManager.currentStage = -1
+                    _navigateToLogFragment.value = true
+                }
+            }
+
     }
 
     fun completeChallenge() {

@@ -7,21 +7,32 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.neil.miruhiru.R
-import com.neil.miruhiru.data.Photo
+import com.neil.miruhiru.data.Log
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.ItemLogStageBinding
+import timber.log.Timber
 
-class LogStageAdapter(): ListAdapter<Task, LogStageAdapter.ViewHolder>(DiffCallBack()) {
+class LogStageAdapter(viewModel: LogViewModel) : ListAdapter<Task, LogStageAdapter.ViewHolder>(DiffCallBack()) {
 
+    private val viewModel = viewModel
 
     inner class ViewHolder(private val binding: ItemLogStageBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Task) {
-            val photoAdapter = LogPhotoAdapter()
-            val photoList = listOf(Photo(), Photo())
-            binding.recyclerPhoto.adapter = photoAdapter
-            photoAdapter.submitList(photoList)
-            if (adapterPosition == photoAdapter.itemCount) {
+            binding.stageName .text = item.name
+            binding.stageNumber.text = when (item.stage) {
+                1 -> "第一關"
+                2 -> "第二關"
+                3 -> "第三關"
+                4 -> "第四關"
+                else -> "第五關"
+            }
+
+            val logAdapter = LogLogAdapter(viewModel, adapterPosition)
+            binding.recyclerPhoto.adapter = logAdapter
+            Timber.i("loglist ${viewModel.logList.value}")
+            logAdapter.submitList(viewModel.logList.value)
+            if (adapterPosition == logAdapter.itemCount) {
                 binding.greyLine7.visibility = View.GONE
             }
         }

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentLogBinding
@@ -24,10 +25,12 @@ class LogFragment : Fragment() {
         binding = FragmentLogBinding.inflate(inflater, container, false)
 
 
-        val taskList = listOf(Task(), Task(), Task())
-        val stageAdapter = LogStageAdapter()
+        val stageAdapter = LogStageAdapter(viewModel)
         binding.recyclerStage.adapter = stageAdapter
-        stageAdapter.submitList(taskList)
+        viewModel.userInfoList.observe(viewLifecycleOwner, Observer {
+            stageAdapter.submitList(viewModel.taskList.value)
+        })
+        viewModel.loadCompletedChallenge()
 
 
 

@@ -25,6 +25,8 @@ object UserManager {
         get() = _hasCurrentEvent
 
     var user = User()
+    // this variable is used for updating log and cleaning progress of user current event
+    var currentStage = -1
 
     // id or userToken
     var userId: String? = null
@@ -103,13 +105,10 @@ object UserManager {
             .addOnSuccessListener { result ->
                 for (document in result) {
                     val user = document.toObject<User>()
-//                    _user.value = user
                     this.user = user
                     _hasCurrentEvent.value = user
                 }
             }
-            .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
-            }
+
     }
 }
