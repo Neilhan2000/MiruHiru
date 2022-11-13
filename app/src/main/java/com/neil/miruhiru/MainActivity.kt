@@ -3,11 +3,13 @@ package com.neil.miruhiru
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -18,6 +20,8 @@ import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.User
 import com.neil.miruhiru.databinding.ActivityMainBinding
+import com.neil.miruhiru.task.TaskViewModel
+import kotlinx.coroutines.*
 import timber.log.Timber
 import timber.log.Timber.Forest.i
 import timber.log.Timber.Forest.plant
@@ -26,6 +30,9 @@ import timber.log.Timber.Forest.plant
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this).get(MainViewModel::class.java)
+    }
 
     companion object {
         private lateinit var instance: MainActivity
@@ -40,6 +47,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val scope = CoroutineScope(Job() + Dispatchers.IO)
+        scope.launch {
+            while (true) {
+                delay(1000)
+                Log.i("main", "current stage ${UserManager.currentStage}")
+            }
+        }
 
         // set activity instance
         instance = this
@@ -88,97 +102,58 @@ class MainActivity : AppCompatActivity() {
         UserManager.getUser()
 
         // check if has uncompleted event
-        UserManager.hasCurrentEvent.observe(this, Observer { user ->
-            if (user.currentEvent.isNotEmpty()) {
+        UserManager.hasCurrentEvent.observe(this, Observer { event ->
+            if (event.members.size == 1) {
                 val defaultBuilder = AlertDialog.Builder(this)
                     .setTitle("上次挑戰中斷")
-                    .setMessage("將自動為你導向上次的紀錄")
-                    .setPositiveButton("確定", object: DialogInterface.OnClickListener{
+                    .setMessage("要繼續上次的進度嗎")
+                    .setPositiveButton("確定", object : DialogInterface.OnClickListener{
                         override fun onClick(p0: DialogInterface?, p1: Int) {
                             findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalTaskFragment())
                         }
-                    }).show()
+                    })
+                    .setNegativeButton("取消", object : DialogInterface.OnClickListener{
+                        override fun onClick(p0: DialogInterface?, p1: Int) {
+                            // do nothing
+                        }
+                    })
+                    .setNeutralButton("清除紀錄", object : DialogInterface.OnClickListener{
+                        override fun onClick(p0: DialogInterface?, p1: Int) {
+                            viewModel.cleanEventSingle()
+                        }
+                    })
+                    .show()
                 defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
                     .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
+                defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
+                    .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
+                defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
+                    .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
+            } else {
+                val defaultBuilder = AlertDialog.Builder(this)
+                    .setTitle("上次挑戰中斷")
+                    .setMessage("要繼續上次的進度嗎")
+                    .setPositiveButton("確定", object : DialogInterface.OnClickListener{
+                        override fun onClick(p0: DialogInterface?, p1: Int) {
+                            findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalTaskFragment())
+                        }
+                    })
+                    .setNeutralButton("清除紀錄", object : DialogInterface.OnClickListener{
+                        override fun onClick(p0: DialogInterface?, p1: Int) {
+                            Log.i("Main", "current ${UserManager.currentStage}")
+                            viewModel.cleanEventMultiple()
+                        }
+                    })
+                    .show()
+                defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
+                defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
+                    .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
             }
+
         })
     }
-//    fun cleanEvent(user: User) {
-//        val db = Firebase.firestore
-//
-//        db.collection("events").whereEqualTo("id", user.currentEvent)
-//            .get()
-//            .addOnSuccessListener {
-//                val event = it.documents[0].toObject<Event>()
-//
-//                event?.progress?.size?.let { progressMember ->
-//                    if (progressMember > 1) {
-//                        cleanEventMultiple()
-//                    } else {
-//                        cleanEventSingle()
-//                    }
-//                }
-//            }
-//
-//    }
 
-//    fun cleanEventSingle() {
-//        val db = Firebase.firestore
-//        var userDocumented = ""
-//
-//        db.collection("users").whereEqualTo("id", UserManager.userId)
-//            .get()
-//            .addOnSuccessListener {
-//                userDocumented = it.documents[0].id
-//
-//                db.collection("users").document(userDocumented)
-//                    .update("currentEvent", "")
-//            }
-//    }
-//
-//    fun cleanEventMultiple() {
-//        val db = Firebase.firestore
-//        var userDocumented = ""
-//
-//        db.collection("users").whereEqualTo("id", UserManager.userId)
-//            .get()
-//            .addOnSuccessListener {
-//                userDocumented = it.documents[0].id
-//
-//                db.collection("users").document(userDocumented)
-//                    .get()
-//                    .addOnSuccessListener {
-//                        val user = it.toObject<User>()
-//                        Timber.i("user id ${user?.currentEvent}")
-//
-//                        db.collection("events").whereEqualTo("id", user?.currentEvent)
-//                            .get()
-//                            .addOnSuccessListener {
-//                                val eventDocumented = it.documents[0].id
-//
-//                                // remove member and progress
-//                                db.collection("events").document(eventDocumented)
-//                                    .update("members", FieldValue.arrayRemove(UserManager.userId))
-//                                    .addOnSuccessListener {
-//
-//                                        db.collection("events").document(eventDocumented)
-//                                            .update("progress", FieldValue.arrayRemove(currentStage))
-//                                            .addOnSuccessListener {
-//
-//                                                db.collection("users").document(userDocumented)
-//                                                    .update("currentEvent", "")
-//
-//                                            }
-//
-//                                    }
-//
-//                            }
-//
-//                    }
-//
-//            }
-//
-//    }
 
 
 

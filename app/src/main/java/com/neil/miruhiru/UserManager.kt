@@ -16,17 +16,39 @@ object UserManager {
     private const val USER_DATA = "user_data"
     private const val USER_ID = "user_token"
     private const val USER_CHALLENGE_ID = "user_challenge_id"
-    private const val CURRENT_EVENT_ID = "current_event_id"
+    private const val CURRENT_STAGE= "current_stage"
 
 
 
-    private val _hasCurrentEvent = MutableLiveData<User>()
-    val hasCurrentEvent: LiveData<User>
+    private val _hasCurrentEvent = MutableLiveData<Event>()
+    val hasCurrentEvent: LiveData<Event>
         get() = _hasCurrentEvent
 
     var user = User()
     // this variable is used for updating log and cleaning progress of user current event
-    var currentStage = -1
+    var currentStage: Int? = null
+        get() = MiruHiruApplication.instance
+            .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE)
+            .getInt(CURRENT_STAGE, -1)
+        set(value) {
+            field = when (value) {
+                null -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .remove(CURRENT_STAGE)
+                        .apply()
+                    null
+                }
+                else -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .putInt(CURRENT_STAGE, value)
+                        .apply()
+                    value
+                }
+            }
+        }
+
 
     // id or userToken
     var userId: String? = null
@@ -106,7 +128,15 @@ object UserManager {
                 for (document in result) {
                     val user = document.toObject<User>()
                     this.user = user
-                    _hasCurrentEvent.value = user
+                }
+
+                // if has event, we load it
+                if (user.currentEvent.isNotEmpty()) {
+                    db.collection("events").whereEqualTo("id", user.currentEvent)
+                        .get()
+                        .addOnSuccessListener { result ->
+                            _hasCurrentEvent.value = result.documents[0].toObject<Event>()
+                        }
                 }
             }
 

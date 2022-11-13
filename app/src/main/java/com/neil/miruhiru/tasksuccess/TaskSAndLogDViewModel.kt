@@ -41,6 +41,7 @@ class TaskSAndLogDViewModel(): ViewModel() {
     var stageNumber = -1
 
     private fun loadEvent(eventId: String) {
+
         val db = Firebase.firestore
 
         db.collection("events").whereEqualTo("id" ,eventId)
@@ -57,12 +58,15 @@ class TaskSAndLogDViewModel(): ViewModel() {
                     }
 
 
-                    Timber.i("current event progress ${event.progress}")
-                    Timber.i("current event stage $currentStage")
+//                    Timber.i("current event progress ${event.progress}")
+//                    Timber.i("current event stage $currentStage")
 
 
                     stageNumber = event.stage
                     _getCurrentStage.value = currentStage
+                    // set user manager current stage
+                    UserManager.currentStage = currentStage + 1
+                    Timber.i("set current stage ${UserManager.currentStage}")
 
                     detectUsersProgress()
                 }
@@ -98,14 +102,15 @@ class TaskSAndLogDViewModel(): ViewModel() {
                             progress.removeAt(0)
                             // add
                             progress.add(currentStage + 2)
-                            UserManager.currentStage = currentStage + 1
+                            UserManager.currentStage = currentStage + 2
                         } else {
                             // remove first element
                             progress.removeAt(0)
                             // add
                             progress.add(currentStage + 1)
-                            UserManager.currentStage = currentStage
+                            UserManager.currentStage = currentStage + 1
                         }
+                        Timber.i("set current stage ${UserManager.currentStage}")
                         // reset
                         db.collection("events").document(eventDocumentId)
                             .update("progress", progress)
@@ -190,7 +195,7 @@ class TaskSAndLogDViewModel(): ViewModel() {
                 for (document in result) {
                     val user = document.toObject<User>()
                     UserManager.user = user
-                    UserManager.currentStage = -1
+                    UserManager.currentStage = null
                     _navigateToLogFragment.value = true
                 }
             }

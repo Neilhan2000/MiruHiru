@@ -71,11 +71,13 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                     val event = document.toObject<Event>()
                     _event.value = event
                     currentStage = event.progress.minOrNull() ?: -1
+                    UserManager.currentStage = currentStage
+                    Timber.i("set current stage ${UserManager.currentStage}")
                     totalStage = event.stage
                     isMultiple = event.progress.size > 1
 
-                    Timber.i("task list event progress ${event.progress}")
-                    Timber.i("current stage $currentStage")
+//                    Timber.i("task list event progress ${event.progress}")
+//                    Timber.i("current stage $currentStage")
 
 
                     db.collection("challenges").document(challengeDocumentId)
@@ -172,14 +174,19 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                             .get()
                             .addOnSuccessListener {
                                 val eventDocumented = it.documents[0].id
+                                val event = it.documents[0].toObject<Event>()
+
 
                                 // remove member and progress
                                 db.collection("events").document(eventDocumented)
                                     .update("members", FieldValue.arrayRemove(UserManager.userId))
                                     .addOnSuccessListener {
 
+                                        val progressList = event?.progress as MutableList<Int>
+                                        progressList.remove(currentStage)
+
                                         db.collection("events").document(eventDocumented)
-                                            .update("progress", FieldValue.arrayRemove(currentStage))
+                                            .update("progress", progressList)
                                             .addOnSuccessListener {
 
                                                 db.collection("users").document(userDocumented)
