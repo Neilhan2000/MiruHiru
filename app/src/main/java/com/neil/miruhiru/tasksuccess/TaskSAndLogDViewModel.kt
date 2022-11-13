@@ -207,7 +207,6 @@ class TaskSAndLogDViewModel(): ViewModel() {
         // add user to challenge completed list
         UserManager.userChallengeDocumentId?.let { db.collection("challenges").document(it)
             .update("completedList", FieldValue.arrayUnion(UserManager.userId))}
-        UserManager.clearChallengeDocumentId()
     }
 
     private val _isButtonClickable = MutableLiveData<Boolean>()

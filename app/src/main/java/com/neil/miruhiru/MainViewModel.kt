@@ -22,7 +22,10 @@ class MainViewModel: ViewModel() {
 
                 db.collection("users").document(userDocumented)
                     .update("currentEvent", "")
-                    .addOnSuccessListener { UserManager.currentStage = null }
+                    .addOnSuccessListener {
+                        UserManager.currentStage = null
+                        UserManager.getUser()
+                    }
             }
     }
 
@@ -50,13 +53,12 @@ class MainViewModel: ViewModel() {
                             .update("progress", progress)
                             .addOnSuccessListener { UserManager.currentStage = null }
 
-                        // remove member
-                        db.collection("events").document(eventDocumentId)
-                            .update("members", FieldValue.arrayRemove(UserManager.userId))
-
                         // remove user current event
                         db.collection("users").document(userDocumented)
                             .update("currentEvent", "")
+                            .addOnFailureListener {
+                                UserManager.getUser()
+                            }
 
                     }
 

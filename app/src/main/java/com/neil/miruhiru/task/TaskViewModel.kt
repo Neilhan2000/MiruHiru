@@ -150,6 +150,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                 db.collection("users").document(userDocumented)
                     .update("currentEvent", "")
                     .addOnSuccessListener {
+                        UserManager.getUser()
                         _navigateUp.value = true
                     }
             }
@@ -177,27 +178,25 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                                 val event = it.documents[0].toObject<Event>()
 
 
-                                // remove member and progress
+                                // remove progress
+                                val progressList = event?.progress as MutableList<Int>
+                                progressList.remove(currentStage)
+
                                 db.collection("events").document(eventDocumented)
-                                    .update("members", FieldValue.arrayRemove(UserManager.userId))
+                                    .update("progress", progressList)
                                     .addOnSuccessListener {
 
-                                        val progressList = event?.progress as MutableList<Int>
-                                        progressList.remove(currentStage)
-
-                                        db.collection("events").document(eventDocumented)
-                                            .update("progress", progressList)
+                                        // remove current
+                                        db.collection("users").document(userDocumented)
+                                            .update("currentEvent", "")
                                             .addOnSuccessListener {
-
-                                                db.collection("users").document(userDocumented)
-                                                    .update("currentEvent", "")
-                                                    .addOnSuccessListener {
-                                                        _navigateUp.value = true
-                                                    }
-
+                                                UserManager.getUser()
+                                                _navigateUp.value = true
                                             }
 
                                     }
+
+
 
                             }
 

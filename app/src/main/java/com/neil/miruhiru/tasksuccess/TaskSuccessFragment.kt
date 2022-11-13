@@ -33,6 +33,9 @@ class TaskSuccessFragment : Fragment() {
         binding.logButton.setOnClickListener {
             this.findNavController().navigate(NavGraphDirections.actionGlobalLogDialogFragment())
         }
+        binding.chatRoomText.setOnClickListener {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalChatDialogFragment())
+        }
 
         // current event set button
         viewModel.getCurrentStage.observe(viewLifecycleOwner, Observer { currentStage ->
@@ -95,11 +98,6 @@ class TaskSuccessFragment : Fragment() {
                     // do nothing
                 }
             })
-
-
-
-
-
 
         return binding.root
     }

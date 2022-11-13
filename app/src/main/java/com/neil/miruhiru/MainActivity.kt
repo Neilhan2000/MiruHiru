@@ -47,13 +47,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val scope = CoroutineScope(Job() + Dispatchers.IO)
-        scope.launch {
-            while (true) {
-                delay(1000)
-                Log.i("main", "current stage ${UserManager.currentStage}")
-            }
-        }
+
 
         // set activity instance
         instance = this
@@ -103,7 +97,7 @@ class MainActivity : AppCompatActivity() {
 
         // check if has uncompleted event
         UserManager.hasCurrentEvent.observe(this, Observer { event ->
-            if (event.members.size == 1) {
+            if (event.progress.size == 1) {
                 val defaultBuilder = AlertDialog.Builder(this)
                     .setTitle("上次挑戰中斷")
                     .setMessage("要繼續上次的進度嗎")

@@ -44,66 +44,43 @@ class ChatDialogViewModel : ViewModel() {
                 val event = it.documents[0].toObject<Event>()
                 event?.members?.let { userIdList = it }
 
-                if (memberList.isEmpty()) {
-                    // load user
-                    for (userId in userIdList) {
-                        db.collection("users").whereEqualTo("id", userId)
-                            .get()
-                            .addOnSuccessListener {
-                                val user = it.documents[0].toObject<User>()
-                                if (user != null) {
-                                    memberList.add(user)
-                                }
 
-                                if (memberList.size == event?.members?.size) {
-                                    // load message
-                                    db.collection("events").document(eventDocumentId).collection("messages").orderBy("time", Query.Direction.ASCENDING)
-                                        .addSnapshotListener { messages, error ->
-                                            val messageList :MutableList<MessageAdapter.MessageItem> = mutableListOf()
+                // load user
+                for (userId in userIdList) {
+                    db.collection("users").whereEqualTo("id", userId)
+                        .get()
+                        .addOnSuccessListener {
+                            val user = it.documents[0].toObject<User>()
+                            if (user != null) {
+                                memberList.add(user)
+                            }
 
-                                            messages?.let {
-                                                for (m in messages.documents) {
-                                                    val message = m.toObject<Message>()
-                                                    message?.let {
-                                                        if (message?.senderId == UserManager.userId) {
-                                                            messageList.add(MessageAdapter.MessageItem.MyMessage(message = message))
-                                                        } else {
-                                                            messageList.add(MessageAdapter.MessageItem.OtherMessage(message = message))
-                                                        }
+                            if (memberList.size == event?.members?.size) {
+                                // load message
+                                db.collection("events").document(eventDocumentId).collection("messages").orderBy("time", Query.Direction.ASCENDING)
+                                    .addSnapshotListener { messages, error ->
+                                        val messageList :MutableList<MessageAdapter.MessageItem> = mutableListOf()
+
+                                        messages?.let {
+                                            for (m in messages.documents) {
+                                                val message = m.toObject<Message>()
+                                                message?.let {
+                                                    if (message?.senderId == UserManager.userId) {
+                                                        messageList.add(MessageAdapter.MessageItem.MyMessage(message = message))
+                                                    } else {
+                                                        messageList.add(MessageAdapter.MessageItem.OtherMessage(message = message))
                                                     }
-
                                                 }
+
                                             }
-                                            _messageList.value = messageList
-
                                         }
-                                }
-                            }
-                    }
-                } else {
-                    // not load user
-                    // load message
-                    db.collection("events").document(eventDocumentId).collection("messages").orderBy("time", Query.Direction.ASCENDING)
-                        .addSnapshotListener { messages, error ->
-                            val messageList :MutableList<MessageAdapter.MessageItem> = mutableListOf()
+                                        _messageList.value = messageList
 
-                            messages?.let {
-                                for (m in messages.documents) {
-                                    val message = m.toObject<Message>()
-                                    message?.let {
-                                        if (message?.senderId == UserManager.userId) {
-                                            messageList.add(MessageAdapter.MessageItem.MyMessage(message = message))
-                                        } else {
-                                            messageList.add(MessageAdapter.MessageItem.OtherMessage(message = message))
-                                        }
                                     }
-
-                                }
                             }
-                            _messageList.value = messageList
-
                         }
                 }
+
             }
 
 

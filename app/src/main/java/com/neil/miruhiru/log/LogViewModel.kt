@@ -102,7 +102,7 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                     "text" to text,
                     "senderId" to UserManager.userId,
                     "time" to Timestamp.now(),
-                    "stage" to UserManager.currentStage
+                    "stage" to (UserManager.currentStage?.minus(1) ?: -1)
                 )
                 db.collection("events").document(eventDocumentId).collection("logs")
                     .add(log)

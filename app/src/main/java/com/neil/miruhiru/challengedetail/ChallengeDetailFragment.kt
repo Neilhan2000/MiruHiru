@@ -143,13 +143,14 @@ class ChallengeDetailFragment : Fragment() {
         binding.challengeDescription.text = challenge.description
         binding.typeText.text = challenge.type
         calculateAndShowDistance(challenge.location!!)
+
         binding.startButton.setOnClickListener {
-            viewModel.checkHasCurrentEvent()
+            viewModel.checkHasCurrentEvent(challengeId)
         }
 
         // observe if has uncompleted event
-        viewModel.hasCurrentEvent.observe(viewLifecycleOwner, Observer { user ->
-            if (user.currentEvent.isNotEmpty()) {
+        viewModel.hasCurrentEvent.observe(viewLifecycleOwner, Observer { hasEvent ->
+            if (hasEvent) {
                 val defaultBuilder = AlertDialog.Builder(requireContext())
                     .setTitle("發現上次儲存的紀錄")
                     .setMessage("要繼續上次的挑戰嗎?")

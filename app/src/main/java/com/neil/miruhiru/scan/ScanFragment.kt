@@ -96,7 +96,6 @@ class ScanFragment : Fragment() {
 
         codeScanner.decodeCallback = DecodeCallback { result ->
             scope.launch {
-                Toast.makeText(requireContext(), "$result", Toast.LENGTH_SHORT).show()
                 eventId = result.text.toString()
                 viewModel.addScanUserToEvent(eventId, "multiple")
             }

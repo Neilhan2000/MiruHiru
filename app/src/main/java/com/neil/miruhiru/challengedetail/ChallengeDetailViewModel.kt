@@ -12,10 +12,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.mapbox.geojson.Point
 import com.neil.miruhiru.UserManager
-import com.neil.miruhiru.data.Challenge
-import com.neil.miruhiru.data.Comment
-import com.neil.miruhiru.data.Task
-import com.neil.miruhiru.data.User
+import com.neil.miruhiru.data.*
 import timber.log.Timber
 
 class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
@@ -42,20 +39,23 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     val commentUsers: LiveData<List<User>>
         get() = _commentUsers
 
-    private val _hasCurrentEvent = MutableLiveData<User>()
-    val hasCurrentEvent: LiveData<User>
+    private val _hasCurrentEvent = MutableLiveData<Boolean>()
+    val hasCurrentEvent: LiveData<Boolean>
         get() = _hasCurrentEvent
 
-    fun checkHasCurrentEvent() {
+    fun checkHasCurrentEvent(challengeId: String) {
         val db = Firebase.firestore
 
-        db.collection("users").whereEqualTo("id", UserManager.userId)
-            .get()
-            .addOnSuccessListener {
-                it?.let {
-                    _hasCurrentEvent.value = it.documents[0].toObject<User>()
+        if (UserManager.user.currentEvent.isNotEmpty()) {
+            db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+                .get()
+                .addOnSuccessListener {
+                    val event = it.documents[0].toObject<Event>()
+                    _hasCurrentEvent.value = event?.challengeId == challengeId
                 }
-            }
+        } else {
+            _hasCurrentEvent.value = false
+        }
     }
 
     fun cleanEventSingle() {
@@ -69,6 +69,7 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
                 db.collection("users").document(userDocumented)
                     .update("currentEvent", "")
+                UserManager.getUser()
             }
     }
 

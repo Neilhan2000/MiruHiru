@@ -59,7 +59,7 @@ class CommentAdapter(
 
     class DiffCallBack : DiffUtil.ItemCallback<Comment>() {
         override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem == newItem
         }
 
         override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean {
