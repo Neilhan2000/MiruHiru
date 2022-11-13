@@ -29,10 +29,16 @@ class LogStageAdapter(viewModel: LogViewModel) : ListAdapter<Task, LogStageAdapt
             }
 
             val logAdapter = LogLogAdapter(viewModel, adapterPosition)
+            val logList = mutableListOf<Log>()
             binding.recyclerPhoto.adapter = logAdapter
-            Timber.i("loglist ${viewModel.logList.value}")
-            logAdapter.submitList(viewModel.logList.value)
-            if (adapterPosition == logAdapter.itemCount) {
+            viewModel.logList.value?.forEach { log ->
+                if (log.stage == item.stage) {
+                    logList.add(log)
+                }
+            }
+            logAdapter.submitList(logList)
+
+            if (adapterPosition == this@LogStageAdapter.itemCount - 1) {
                 binding.greyLine7.visibility = View.GONE
             }
         }

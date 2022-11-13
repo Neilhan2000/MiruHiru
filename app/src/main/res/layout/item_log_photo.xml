@@ -14,8 +14,7 @@
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/image_placeholder" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/taskPhoto"
@@ -40,8 +39,7 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/taskPhoto"
-        app:layout_constraintTop_toBottomOf="@+id/taskPhoto"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/taskPhotoBorder"
         app:srcCompat="@drawable/image_placeholder" />
 
     <TextView

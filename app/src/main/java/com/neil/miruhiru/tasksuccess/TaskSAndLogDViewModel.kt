@@ -3,6 +3,7 @@ package com.neil.miruhiru.tasksuccess
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
@@ -132,6 +133,9 @@ class TaskSAndLogDViewModel(): ViewModel() {
         val isCompleted = hashMapOf(
             "isCompleted" to true
         )
+        val endTime = hashMapOf(
+            "endTime" to Timestamp.now()
+        )
         var eventDocumentId = ""
 
         db.collection("events").whereEqualTo("id" ,UserManager.user.currentEvent)
@@ -145,26 +149,33 @@ class TaskSAndLogDViewModel(): ViewModel() {
                 db.collection("events").document(eventDocumentId)
                     .set(isCompleted, SetOptions.merge())
 
-                // clean user current event data
-                var userDocumentId = ""
+                // update user endTime
+                db.collection("events").document(eventDocumentId)
+                    .set(endTime, SetOptions.merge())
+                    .addOnSuccessListener {
 
-                db.collection("users").whereEqualTo("id", UserManager.userId)
-                    .get()
-                    .addOnSuccessListener { result ->
-                        userDocumentId = result.documents[0].id
+                        // clean user current event data
+                        var userDocumentId = ""
 
-                        Timber.i("complete event userid = ${UserManager.userId}")
-                        db.collection("users").document(userDocumentId)
-                            .update("currentEvent", "")
-                            .addOnSuccessListener {
+                        db.collection("users").whereEqualTo("id", UserManager.userId)
+                            .get()
+                            .addOnSuccessListener { result ->
+                                userDocumentId = result.documents[0].id
 
-                                // add event to user completedEvents list
+                                Timber.i("complete event userid = ${UserManager.userId}")
                                 db.collection("users").document(userDocumentId)
-                                    .update("completedEvents", FieldValue.arrayUnion(UserManager.user.currentEvent))
+                                    .update("currentEvent", "")
                                     .addOnSuccessListener {
-                                        // clean local user current event data
-                                        getUser()
+
+                                        // add event to user completedEvents list
+                                        db.collection("users").document(userDocumentId)
+                                            .update("completedEvents", FieldValue.arrayUnion(UserManager.user.currentEvent))
+                                            .addOnSuccessListener {
+                                                // clean local user current event data
+                                                getUser()
+                                            }
                                     }
+
                             }
 
                     }

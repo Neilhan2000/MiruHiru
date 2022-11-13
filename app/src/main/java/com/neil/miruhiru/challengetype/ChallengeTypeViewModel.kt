@@ -37,7 +37,8 @@ class ChallengeTypeViewModel() : ViewModel() {
             "challengeId" to challenge.id,
             "progress" to listOf<Int>(),
             "stage" to challenge.stage,
-            "status" to "prepare"
+            "status" to "prepare",
+            "endTime" to Timestamp.now()
         )
 
         val db = Firebase.firestore

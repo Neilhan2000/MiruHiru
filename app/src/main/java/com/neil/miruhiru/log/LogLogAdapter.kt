@@ -27,14 +27,16 @@ class LogLogAdapter(viewModel: LogViewModel, adapterPosition: Int) : ListAdapter
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Log) {
 
-            if (stage == item.stage) {
+//            if (stage == item.stage) {
                 // photo
                 if (item.photo.isNotEmpty()) {
                     Glide.with(binding.taskPhoto.context).load(item.photo).centerCrop().apply(
                         RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
                     ).into(binding.taskPhoto)
+                    Timber.i("photo not empty ${item.photo}")
                 } else {
                     binding.taskPhoto.layoutParams.height = 0
+                    binding.taskPhotoBorder.layoutParams.height = 0
                 }
 
                 // user
@@ -47,9 +49,9 @@ class LogLogAdapter(viewModel: LogViewModel, adapterPosition: Int) : ListAdapter
                     }
                 }
                 binding.userText.text = item.text
-            } else {
-                itemView.layoutParams.height = 0
-            }
+//            } else {
+//                itemView.layoutParams.height = 0
+//            }
         }
     }
 

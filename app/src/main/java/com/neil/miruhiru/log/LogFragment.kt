@@ -7,9 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentLogBinding
-import com.neil.miruhiru.explore.ExploreViewModel
+import java.text.SimpleDateFormat
 
 class LogFragment : Fragment() {
 
@@ -24,7 +23,7 @@ class LogFragment : Fragment() {
     ): View? {
         binding = FragmentLogBinding.inflate(inflater, container, false)
 
-
+        // observe log
         val stageAdapter = LogStageAdapter(viewModel)
         binding.recyclerStage.adapter = stageAdapter
         viewModel.userInfoList.observe(viewLifecycleOwner, Observer {
@@ -32,6 +31,10 @@ class LogFragment : Fragment() {
         })
         viewModel.loadCompletedChallenge()
 
+        // observe timeSpent
+        viewModel.timeSpent.observe(viewLifecycleOwner, Observer {
+            binding.timeSpent.text = viewModel.convertSecondsToHours(it)
+        })
 
 
 

@@ -1,25 +1,17 @@
 package com.neil.miruhiru.log
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.location.Location
 import android.net.Uri
-import android.provider.MediaStore
-import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.core.graphics.TypefaceCompatUtil.getTempFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 
@@ -27,7 +19,6 @@ import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.*
 import timber.log.Timber
-import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -52,6 +43,9 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
     val userInfoList: LiveData<List<User>>
         get() = _userInfoList
 
+    private val _timeSpent = MutableLiveData<Long>()
+    val timeSpent: LiveData<Long>
+        get() = _timeSpent
 
 
     lateinit var imageUri: Uri
@@ -159,6 +153,14 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
             .addOnSuccessListener {
                 eventDocumentId = it.documents[0].id
 
+                // get total time Spent
+                val event = it.documents[0].toObject<Event>()
+                val startTime = event?.startTime
+                val endTime = event?.endTime
+                val timeSpent = startTime?.seconds?.let { startTime -> endTime?.seconds?.minus(startTime) }
+                Timber.i("start $startTime, end $endTime")
+                timeSpent?.let { _timeSpent.value = it }
+
                 db.collection("events").document(eventDocumentId)
                     .collection("logs")
                     .get()
@@ -173,6 +175,13 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                         loadUserInfo()
                     }
             }
+    }
+
+    fun convertSecondsToHours(seconds: Long): String {
+        val hours = seconds / 3600
+        val minutes = (seconds % 3600) / 60
+        val seconds = seconds % 60
+        return String.format("總共花費 %02d 小時 %02d 分 %02d 秒", hours, minutes, seconds)
     }
 
     // 所有參加者的資料

@@ -11,6 +11,7 @@ data class Event(
     val challengeId: String = "",
     val progress: List<Int> = mutableListOf(0),
     val stage: Int = 0,
-    val status: String = ""
+    val status: String = "",
+    val endTime: Timestamp = Timestamp(Date(0))
 )
 
