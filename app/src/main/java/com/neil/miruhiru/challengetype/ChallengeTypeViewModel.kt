@@ -38,7 +38,8 @@ class ChallengeTypeViewModel() : ViewModel() {
             "progress" to listOf<Int>(),
             "stage" to challenge.stage,
             "status" to "prepare",
-            "endTime" to Timestamp.now()
+            "endTime" to Timestamp.now(),
+            "currentMembers" to listOf<String>()
         )
 
         val db = Firebase.firestore
@@ -67,6 +68,16 @@ class ChallengeTypeViewModel() : ViewModel() {
             .addOnFailureListener { e ->
                 Timber.i(e, "Error adding document")
             }
+        // add event currentMembers
+        db.collection("events").document(eventDocumentId)
+            .update("currentMembers", FieldValue.arrayUnion(UserManager.userId))
+            .addOnSuccessListener { documentReference ->
+                Timber.i("DocumentSnapshot added with ID: %s", documentReference)
+            }
+            .addOnFailureListener { e ->
+                Timber.i(e, "Error adding document")
+            }
+
         // initialize progress
         db.collection("events").document(eventDocumentId)
             .update("progress", FieldValue.arrayUnion(1))

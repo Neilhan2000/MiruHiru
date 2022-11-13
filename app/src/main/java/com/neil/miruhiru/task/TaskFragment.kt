@@ -237,6 +237,8 @@ class TaskFragment : Fragment() {
         viewModel.detectUserKicked()
 
 
+
+
         return binding.root
     }
 

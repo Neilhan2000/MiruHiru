@@ -113,10 +113,10 @@ class LogDialogFragment : DialogFragment() {
         }
 
         binding.uploadedImage.setOnClickListener {
-            val language = arrayOf("從相簿上傳", "開啟相機")
+            val choice = arrayOf("從相簿上傳", "開啟相機")
             val builder = AlertDialog.Builder(requireContext())
             builder.setTitle("選擇上傳方式")
-            builder.setSingleChoiceItems(language, -1) { dialog, which ->
+            builder.setSingleChoiceItems(choice, -1) { dialog, which ->
                 if (which == 0) {
                     selectImage()
                 } else if (which == 1) {

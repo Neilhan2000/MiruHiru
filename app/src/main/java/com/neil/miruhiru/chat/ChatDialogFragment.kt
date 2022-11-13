@@ -3,6 +3,7 @@ package com.neil.miruhiru.chat
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
@@ -43,6 +44,9 @@ class ChatDialogFragment : DialogFragment() {
         binding.closeIcon.setOnClickListener {
             this.findNavController().navigateUp()
         }
+        binding.removePersonIcon.setOnClickListener {
+            viewModel.kickUser()
+        }
 
         // observe message and update
         viewModel.messageList.observe(this, Observer {
@@ -56,6 +60,12 @@ class ChatDialogFragment : DialogFragment() {
                     delay(100)
                     binding.recyclerMessage.smoothScrollToPosition(messageAdapter.itemCount - 1)
                 }
+            }
+        })
+        // Main user can kick other users
+        viewModel.isMainUser.observe(this, Observer { isMainUser ->
+            if (isMainUser) {
+                binding.removePersonIcon.visibility = View.VISIBLE
             }
         })
 

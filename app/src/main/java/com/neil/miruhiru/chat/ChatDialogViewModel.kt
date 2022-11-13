@@ -1,9 +1,12 @@
 package com.neil.miruhiru.chat
 
+import android.app.Application
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -12,14 +15,15 @@ import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.Message
 import com.neil.miruhiru.data.User
-import timber.log.Timber
 import java.util.*
 
-class ChatDialogViewModel : ViewModel() {
+class ChatDialogViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         detectUserMessages()
     }
+
+    private val viewModelApplication = application
 
     private val _messageList = MutableLiveData<List<MessageAdapter.MessageItem>>()
     val messageList: LiveData<List<MessageAdapter.MessageItem>>
@@ -32,10 +36,12 @@ class ChatDialogViewModel : ViewModel() {
     private var userIdList = listOf<String>()
     val memberList = mutableListOf<User>()
 
+    private val _isMainUser = MutableLiveData<Boolean>()
+    val isMainUser: LiveData<Boolean>
+        get() = _isMainUser
+
     private fun detectUserMessages() {
         val db = Firebase.firestore
-
-
 
         db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
             .get()
@@ -56,6 +62,7 @@ class ChatDialogViewModel : ViewModel() {
                             }
 
                             if (memberList.size == event?.members?.size) {
+                                _isMainUser.value = event.members.first() == UserManager.userId
                                 // load message
                                 db.collection("events").document(eventDocumentId).collection("messages").orderBy("time", Query.Direction.ASCENDING)
                                     .addSnapshotListener { messages, error ->
@@ -103,5 +110,40 @@ class ChatDialogViewModel : ViewModel() {
                     .add(message)
             }
 
+    }
+
+    fun kickUser() {
+        val db = Firebase.firestore
+
+        val users = mutableListOf<String>()
+
+        for (user in memberList) {
+            if (user.id != UserManager.userId) {
+                users.add(user.name)
+            }
+        }
+
+        val builder = AlertDialog.Builder(viewModelApplication)
+        builder.setTitle("選擇要移除的使用者")
+        builder.setSingleChoiceItems(users.toTypedArray(), -1) { dialog, which ->
+            kick(users[which])
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.show()
+
+
+    }
+
+    fun kick(userId: String) {
+        val db = Firebase.firestore
+        db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+            .get()
+            .addOnSuccessListener {
+                val eventDocumentId = it.documents[0].id
+
+                db.collection("events").document(eventDocumentId)
+                    .update("currentMembers", FieldValue.arrayRemove(userId))
+            }
     }
 }

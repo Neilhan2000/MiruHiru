@@ -49,8 +49,21 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
             .addSnapshotListener { value, error ->
                 value?.documents?.get(0)?.let {
                     val event = it.toObject<Event>()
-                    _isKicked.value != event?.members?.contains(UserManager.userId)
+                    _isKicked.value != event?.currentMembers?.contains(UserManager.userId)
                 }
+            }
+    }
+
+    fun kickUser(userId: String) {
+        val db = Firebase.firestore
+
+        db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+            .get()
+            .addOnSuccessListener {
+                val eventDocumentId = it.documents[0].id
+
+                db.collection("events").document(eventDocumentId)
+                    .update("currentMembers", FieldValue.arrayRemove(userId))
             }
     }
 

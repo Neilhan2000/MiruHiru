@@ -60,4 +60,15 @@
         app:layout_constraintTop_toTopOf="@+id/editTextMessage"
         app:srcCompat="@drawable/ic_send_blue" />
 
+    <ImageView
+        android:id="@+id/removePersonIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_person_remove" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

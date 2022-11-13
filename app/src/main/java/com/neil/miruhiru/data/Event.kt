@@ -12,6 +12,7 @@ data class Event(
     val progress: List<Int> = mutableListOf(0),
     val stage: Int = 0,
     val status: String = "",
-    val endTime: Timestamp = Timestamp(Date(0))
+    val endTime: Timestamp = Timestamp(Date(0)),
+    val currentMembers: List<String> = listOf()
 )
 

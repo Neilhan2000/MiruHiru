@@ -82,6 +82,10 @@ class JoinEventViewModel(application: Application) : AndroidViewModel(applicatio
                         .addOnFailureListener { e ->
                             Timber.i(e, "Error adding document")
                         }
+                    // add event currentMembers
+                    db.collection("events").document(eventDocumentId)
+                        .update("currentMembers", FieldValue.arrayUnion(userId))
+
                     // update progress, here we read progress array and reset it on firebase
                     db.collection("events").document(eventDocumentId)
                         .get()
