@@ -118,4 +118,8 @@
         tools:layout="@layout/fragment_scan" />
     <action android:id="@+id/action_global_joinFragment" app:destination="@id/joinFragment"/>
     <action android:id="@+id/action_global_scanFragment" app:destination="@id/scanFragment"/>
+    <dialog
+        android:id="@+id/chatDialogFragment"
+        android:name="com.neil.miruhiru.chat.ChatDialogFragment"
+        android:label="ChatDialogFragment" /><action android:id="@+id/action_global_chatDialogFragment" app:destination="@id/chatDialogFragment"/>
 </navigation>

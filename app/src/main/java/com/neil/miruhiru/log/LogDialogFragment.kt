@@ -33,7 +33,7 @@ class LogDialogFragment : DialogFragment() {
         private const val CAMERA_CODE = 2
     }
 
-    lateinit var binding: FragmentLogDialogBinding
+    private lateinit var binding: FragmentLogDialogBinding
     private lateinit var dialog: AlertDialog
     private val viewModel: LogViewModel by lazy {
         ViewModelProvider(this).get(LogViewModel::class.java)

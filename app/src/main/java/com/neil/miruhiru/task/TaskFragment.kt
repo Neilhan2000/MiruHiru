@@ -98,7 +98,7 @@ class TaskFragment : Fragment() {
             onAddButtonClick()
         }
         binding.fabChat.setOnClickListener {
-            Toast.makeText(requireContext(), "chat clicked", Toast.LENGTH_SHORT).show()
+            this.findNavController().navigate(NavGraphDirections.actionGlobalChatDialogFragment())
         }
         binding.fabAndroid.setOnClickListener {
             binding.guideTextRecycler.scrollToPosition(1)

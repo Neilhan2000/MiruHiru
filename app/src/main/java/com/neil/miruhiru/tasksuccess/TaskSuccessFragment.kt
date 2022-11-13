@@ -64,8 +64,8 @@ class TaskSuccessFragment : Fragment() {
         // button clickable set button
         viewModel.isButtonClickable.observe(viewLifecycleOwner, Observer { buttonClickable ->
 
-            if (binding.continueButton.text != "挑戰完成") {
-                if (buttonClickable) {
+            if (buttonClickable) {
+                if (viewModel.currentStage < viewModel.stageNumber) {
                     Timber.i("isButtonClickable set 繼續挑戰")
                     binding.continueButton.text = "繼續挑戰"
                     binding.continueButton.setBackgroundResource(R.drawable.button_border)
@@ -73,11 +73,19 @@ class TaskSuccessFragment : Fragment() {
                     // remove snapshot listener
                     viewModel.removeDetectUsersProgress()
                 } else {
-                    binding.continueButton.text = "等待同伴挑戰中"
-                    binding.continueButton.setBackgroundResource(R.drawable.button_disable_border)
-                    binding.continueButton.isEnabled = false
+                    Timber.i("isButtonClickable set 挑戰完成")
+                    binding.continueButton.text = "挑戰完成"
+                    binding.continueButton.setBackgroundResource(R.drawable.button_border)
+                    binding.continueButton.isEnabled = true
+                    // remove snapshot listener
+                    viewModel.removeDetectUsersProgress()
                 }
+            } else {
+                binding.continueButton.text = "等待同伴挑戰中"
+                binding.continueButton.setBackgroundResource(R.drawable.button_disable_border)
+                binding.continueButton.isEnabled = false
             }
+
         })
 
         // disable back press

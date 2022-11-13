@@ -41,15 +41,18 @@ class MainViewModel: ViewModel() {
                     .get()
                     .addOnSuccessListener {
                         eventDocumentId = it.documents[0].id
+                        val event = it.documents[0].toObject<Event>()
+                        val progress = event?.progress as MutableList<Int>
+                        progress.remove(UserManager.currentStage)
+
+                        // remove progress
+                        db.collection("events").document(eventDocumentId)
+                            .update("progress", progress)
+                            .addOnSuccessListener { UserManager.currentStage = null }
 
                         // remove member
                         db.collection("events").document(eventDocumentId)
                             .update("members", FieldValue.arrayRemove(UserManager.userId))
-
-                        // remove progress
-                        db.collection("events").document(eventDocumentId)
-                            .update("progress", FieldValue.arrayRemove(UserManager.currentStage))
-                            .addOnSuccessListener { UserManager.currentStage = null }
 
                         // remove user current event
                         db.collection("users").document(userDocumented)
