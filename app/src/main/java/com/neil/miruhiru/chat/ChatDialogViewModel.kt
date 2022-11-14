@@ -66,7 +66,7 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
                             if (user != null) {
                                 memberList.add(user)
                             }
-
+     
                             if (memberList.size == event?.members?.size) {
                                 _isMainUser.value = event.members.first() == UserManager.userId
                                 // load message

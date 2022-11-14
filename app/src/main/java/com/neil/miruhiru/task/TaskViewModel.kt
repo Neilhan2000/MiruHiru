@@ -43,6 +43,9 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
     var totalStage = -1
     var isMultiple: Boolean? = null
 
+    // we use this number to make sure that user be kicked only once
+    var kickNumber = 1
+
     fun detectUserKicked() {
         val db = Firebase.firestore
 
@@ -54,7 +57,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                     Timber.i("is kicked ${_isKicked.value}")
                 }
 
-                if (_isKicked.value == true) {
+                if (kickNumber == 1) {
                     db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
                         .get()
                         .addOnSuccessListener {
@@ -79,7 +82,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                                                 .update("currentEvent", "")
                                                 .addOnSuccessListener {
                                                     UserManager.getUser()
-                                                    _isKicked.value = false
+                                                    kickNumber ++
                                                 }
                                         }
                                 }
