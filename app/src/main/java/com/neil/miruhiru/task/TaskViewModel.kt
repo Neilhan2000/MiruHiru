@@ -2,6 +2,7 @@ package com.neil.miruhiru.task
 
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -49,8 +50,43 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
             .addSnapshotListener { value, error ->
                 value?.documents?.get(0)?.let {
                     val event = it.toObject<Event>()
-                    _isKicked.value != event?.currentMembers?.contains(UserManager.userId)
+                    event?.currentMembers?.contains(UserManager.userId)?.let {  _isKicked.value = !it }
+                    Timber.i("is kicked ${_isKicked.value}")
                 }
+
+                if (_isKicked.value == true) {
+                    db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+                        .get()
+                        .addOnSuccessListener {
+                            val eventDocumentId = it.documents[0].id
+                            val event = it.documents[0].toObject<Event>()
+                            val progress: MutableList<Int> = event?.progress as MutableList<Int>
+                            progress.remove(UserManager.currentStage)
+                            Timber.i("progress $progress")
+
+                            // remove progress
+                            db.collection("events").document(eventDocumentId)
+                                .update("progress", progress)
+                                .addOnSuccessListener {
+
+                                    // remove user current Event
+                                    db.collection("users").whereEqualTo("id", UserManager.userId)
+                                        .get()
+                                        .addOnSuccessListener {
+                                            val userDocumentId = it.documents[0].id
+
+                                            db.collection("users").document(userDocumentId)
+                                                .update("currentEvent", "")
+                                                .addOnSuccessListener {
+                                                    UserManager.getUser()
+                                                    _isKicked.value = false
+                                                }
+                                        }
+                                }
+
+                        }
+                }
+
             }
     }
 

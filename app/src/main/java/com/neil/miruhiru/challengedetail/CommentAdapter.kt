@@ -13,6 +13,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Comment
 import com.neil.miruhiru.databinding.ItemChallengeCommentBinding
+import timber.log.Timber
 
 
 class CommentAdapter(
@@ -29,7 +30,15 @@ class CommentAdapter(
             binding.userName.text = item.userId
             binding.ratingBar.rating = item.rating
             binding.comment.text = item.text
-            Glide.with(binding.userIcon.context).load(viewModel.commentUsers.value?.get(adapterPosition)?.icon).circleCrop().apply(
+
+            var userIcon = ""
+            viewModel.commentUsers.value?.forEach { user ->
+                if (item.userId == user.id) {
+                    userIcon = user.icon
+                }
+            }
+
+            Glide.with(binding.userIcon.context).load(userIcon).circleCrop().apply(
                 RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
             ).into(binding.userIcon)
             binding.reportIcon.setOnClickListener {

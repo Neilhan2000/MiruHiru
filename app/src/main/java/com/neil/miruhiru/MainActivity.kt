@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private lateinit var instance: MainActivity
 
-        fun getInstanceFromViewModel(): MainActivity? {
+        fun getInstanceFromMainActivity(): MainActivity {
             return instance
         }
     }
@@ -47,8 +47,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
         // set activity instance
         instance = this
 
@@ -57,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         setupBottomNav()
 
         // login
-        userLogin("user1")
+        userLogin("user2")
 
         // Timber
         if (BuildConfig.DEBUG) {

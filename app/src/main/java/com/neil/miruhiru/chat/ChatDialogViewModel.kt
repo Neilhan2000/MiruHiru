@@ -1,6 +1,7 @@
 package com.neil.miruhiru.chat
 
 import android.app.Application
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -11,10 +12,15 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.Message
 import com.neil.miruhiru.data.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.util.*
 
 class ChatDialogViewModel(application: Application) : AndroidViewModel(application) {
@@ -112,28 +118,7 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
 
     }
 
-    fun kickUser() {
-        val db = Firebase.firestore
 
-        val users = mutableListOf<String>()
-
-        for (user in memberList) {
-            if (user.id != UserManager.userId) {
-                users.add(user.name)
-            }
-        }
-
-        val builder = AlertDialog.Builder(viewModelApplication)
-        builder.setTitle("選擇要移除的使用者")
-        builder.setSingleChoiceItems(users.toTypedArray(), -1) { dialog, which ->
-            kick(users[which])
-            dialog.dismiss()
-        }
-        val dialog = builder.create()
-        dialog.show()
-
-
-    }
 
     fun kick(userId: String) {
         val db = Firebase.firestore
@@ -141,9 +126,24 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
             .get()
             .addOnSuccessListener {
                 val eventDocumentId = it.documents[0].id
+                val event = it.documents[0].toObject<Event>()
 
+
+                // remove user from event
                 db.collection("events").document(eventDocumentId)
                     .update("currentMembers", FieldValue.arrayRemove(userId))
+
+                // remove user's currentEvent
+                db.collection("users").whereEqualTo("id", userId)
+                    .get()
+                    .addOnSuccessListener {
+                        val userDocumentId = it.documents[0].id
+
+                        db.collection("users").document(userDocumentId)
+                            .update("currentEvent", "")
+                    }
+
+                // we do not remove user progress and currentEvent here, just let kicked user remove themself in TaskViewModel(fun detectUserKick)
             }
     }
 }

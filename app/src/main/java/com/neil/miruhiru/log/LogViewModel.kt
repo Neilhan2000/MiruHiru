@@ -56,11 +56,11 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
     fun selectImage() {
         val intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
             .addFlags(FLAG_ACTIVITY_NEW_TASK)
-        MainActivity.getInstanceFromViewModel()?.startActivityForResult(intent, 100)
+        MainActivity.getInstanceFromMainActivity()?.startActivityForResult(intent, 100)
     }
 
     fun uploadImageAndText() {
-        progressDialog = ProgressDialog(MainActivity.getInstanceFromViewModel())
+        progressDialog = ProgressDialog(MainActivity.getInstanceFromMainActivity())
         progressDialog.setMessage("上傳中...")
         progressDialog.setCancelable(false)
         progressDialog.show()

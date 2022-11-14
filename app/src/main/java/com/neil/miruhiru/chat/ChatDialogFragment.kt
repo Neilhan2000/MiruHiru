@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
@@ -11,7 +12,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.challengetype.ChallengeTypeViewModel
 import com.neil.miruhiru.data.Message
 import com.neil.miruhiru.databinding.FragmetChatDialogBinding
@@ -45,7 +49,7 @@ class ChatDialogFragment : DialogFragment() {
             this.findNavController().navigateUp()
         }
         binding.removePersonIcon.setOnClickListener {
-            viewModel.kickUser()
+//            kickUser()
         }
 
         // observe message and update
@@ -69,8 +73,30 @@ class ChatDialogFragment : DialogFragment() {
             }
         })
 
-
         return dialog
+    }
+
+    private fun kickUser() {
+
+        val db = Firebase.firestore
+
+        val arrayAdapter = ArrayAdapter<String>(requireContext(),
+            android.R.layout.select_dialog_singlechoice)
+        for (user in viewModel.memberList) {
+            if (user.id != UserManager.userId) {
+                arrayAdapter.add(user.name)
+            }
+        }
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("選擇要移除的使用者")
+        builder.setSingleChoiceItems(arrayAdapter, -1) { dialog, which ->
+            Toast.makeText(requireContext(), "kick ${viewModel.memberList[which].name}", Toast.LENGTH_SHORT).show()
+            viewModel.kick(viewModel.memberList[which].id)
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
 
 }
