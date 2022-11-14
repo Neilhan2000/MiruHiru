@@ -2,6 +2,7 @@ package com.neil.miruhiru.chat
 
 import android.app.Application
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -21,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 class ChatDialogViewModel(application: Application) : AndroidViewModel(application) {
@@ -49,9 +51,11 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
     private fun detectUserMessages() {
         val db = Firebase.firestore
 
+
         db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
             .get()
             .addOnSuccessListener {
+
                 val eventDocumentId = it.documents[0].id
                 val event = it.documents[0].toObject<Event>()
                 event?.members?.let { userIdList = it }

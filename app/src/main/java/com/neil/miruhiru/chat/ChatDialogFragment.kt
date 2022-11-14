@@ -49,7 +49,7 @@ class ChatDialogFragment : DialogFragment() {
             this.findNavController().navigateUp()
         }
         binding.removePersonIcon.setOnClickListener {
-//            kickUser()
+            kickUser()
         }
 
         // observe message and update
@@ -91,8 +91,8 @@ class ChatDialogFragment : DialogFragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("選擇要移除的使用者")
         builder.setSingleChoiceItems(arrayAdapter, -1) { dialog, which ->
-            Toast.makeText(requireContext(), "kick ${viewModel.memberList[which].name}", Toast.LENGTH_SHORT).show()
-            viewModel.kick(viewModel.memberList[which].id)
+            Toast.makeText(requireContext(), "踢除 ${viewModel.memberList[which].name}", Toast.LENGTH_SHORT).show()
+            viewModel.kick(viewModel.memberList[which + 1].id)
             dialog.dismiss()
         }
         val dialog = builder.create()

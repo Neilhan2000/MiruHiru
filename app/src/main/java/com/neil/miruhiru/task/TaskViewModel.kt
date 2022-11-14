@@ -53,41 +53,42 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
             .addSnapshotListener { value, error ->
                 value?.documents?.get(0)?.let {
                     val event = it.toObject<Event>()
-                    event?.currentMembers?.contains(UserManager.userId)?.let {  _isKicked.value = !it }
-                    Timber.i("is kicked ${_isKicked.value}")
-                }
 
-                if (kickNumber == 1) {
-                    db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
-                        .get()
-                        .addOnSuccessListener {
-                            val eventDocumentId = it.documents[0].id
-                            val event = it.documents[0].toObject<Event>()
-                            val progress: MutableList<Int> = event?.progress as MutableList<Int>
-                            progress.remove(UserManager.currentStage)
-                            Timber.i("progress $progress")
-
-                            // remove progress
-                            db.collection("events").document(eventDocumentId)
-                                .update("progress", progress)
+                    if (event?.currentMembers?.contains(UserManager.userId) == false) {
+                        if (kickNumber == 1) {
+                            db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+                                .get()
                                 .addOnSuccessListener {
+                                    val eventDocumentId = it.documents[0].id
+                                    val event = it.documents[0].toObject<Event>()
+                                    val progress: MutableList<Int> = event?.progress as MutableList<Int>
+                                    progress.remove(UserManager.currentStage)
+                                    Timber.i("kick number $kickNumber progress $progress")
 
-                                    // remove user current Event
-                                    db.collection("users").whereEqualTo("id", UserManager.userId)
-                                        .get()
+                                    kickNumber ++
+                                    _isKicked.value = true
+                                    // remove progress
+                                    db.collection("events").document(eventDocumentId)
+                                        .update("progress", progress)
                                         .addOnSuccessListener {
-                                            val userDocumentId = it.documents[0].id
 
-                                            db.collection("users").document(userDocumentId)
-                                                .update("currentEvent", "")
+                                            // remove user current Event
+                                            db.collection("users").whereEqualTo("id", UserManager.userId)
+                                                .get()
                                                 .addOnSuccessListener {
-                                                    UserManager.getUser()
-                                                    kickNumber ++
+                                                    val userDocumentId = it.documents[0].id
+
+                                                    db.collection("users").document(userDocumentId)
+                                                        .update("currentEvent", "")
+                                                        .addOnSuccessListener {
+                                                            UserManager.getUser()
+                                                        }
                                                 }
                                         }
-                                }
 
+                                }
                         }
+                    }
                 }
 
             }

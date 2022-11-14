@@ -89,6 +89,7 @@ class TaskFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = FragmentTaskBinding.inflate(inflater, container, false)
 
         // factory
