@@ -5,23 +5,20 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.mapbox.geojson.Point
-import com.neil.miruhiru.data.Challenge
-import com.neil.miruhiru.data.Comment
-import com.neil.miruhiru.data.Task
-import com.neil.miruhiru.data.User
+import com.neil.miruhiru.UserManager
+import com.neil.miruhiru.data.*
+import timber.log.Timber
 
-class ChallengeDetailViewModel : ViewModel() {
+class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
     init {
-        val challengeId = "2WBySSd68w3VrA08eLGj"
         loadChallenge(challengeId)
-        loadTasks(challengeId)
-//        loadComments(challengeId)
     }
 
     private val _challenge = MutableLiveData<Challenge>()
@@ -42,28 +39,73 @@ class ChallengeDetailViewModel : ViewModel() {
     val commentUsers: LiveData<List<User>>
         get() = _commentUsers
 
+    private val _hasCurrentEvent = MutableLiveData<Boolean>()
+    val hasCurrentEvent: LiveData<Boolean>
+        get() = _hasCurrentEvent
+
+    fun checkHasCurrentEvent(challengeId: String) {
+        val db = Firebase.firestore
+
+        if (UserManager.user.currentEvent.isNotEmpty()) {
+            db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+                .get()
+                .addOnSuccessListener {
+                    val event = it.documents[0].toObject<Event>()
+                    _hasCurrentEvent.value = event?.challengeId == challengeId
+                }
+        } else {
+            _hasCurrentEvent.value = false
+        }
+    }
+
+    fun cleanEventSingle() {
+        val db = Firebase.firestore
+        var userDocumented = ""
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                userDocumented = it.documents[0].id
+
+                db.collection("users").document(userDocumented)
+                    .update("currentEvent", "")
+                UserManager.getUser()
+            }
+    }
+
+
+
+
+
+
+
+    private var challengeDocumentId = ""
+
     private fun loadChallenge(challengeId: String) {
         val db = Firebase.firestore
 
-        db.collection("challenges").document(challengeId)
+        db.collection("challenges").whereEqualTo("id", challengeId)
             .get()
             .addOnSuccessListener { result ->
-                val challenge = result.toObject<Challenge>()
+                val challenge = result.documents[0].toObject<Challenge>()
                 _challenge.value = challenge!!
+                challengeDocumentId = result.documents[0].id
 
-//                Log.i("neil", "success load documents = ${_challenge.value}")
+                loadTasks()
+
+                Timber.tag("neil").i("success load documents = %s", _challenge.value)
             }
             .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
+                Timber.tag("neil").i(exception, "Error getting documents.")
             }
 
     }
 
-    private fun loadTasks(challengeId: String) {
+    private fun loadTasks() {
         val db = Firebase.firestore
         val taskList = mutableListOf<Task>()
 
-        db.collection("challenges").document(challengeId)
+        db.collection("challenges").document(challengeDocumentId)
             .collection("tasks")
             .get()
             .addOnSuccessListener { result ->
@@ -72,19 +114,19 @@ class ChallengeDetailViewModel : ViewModel() {
                     taskList.add(task)
                 }
                 _taskList.value = taskList
-//                Log.i("neil", "success load documents = ${taskList}")
+                Timber.i("success load documents = %s", taskList)
             }
             .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
+                Timber.i(exception, "Error getting documents.")
             }
 
     }
 
-    fun loadComments(challengeId: String) {
+    fun loadComments() {
         val db = Firebase.firestore
         val commentList = mutableListOf<Comment>()
 
-        db.collection("challenges").document(challengeId)
+        db.collection("challenges").document(challengeDocumentId)
             .collection("comments")
             .get()
             .addOnSuccessListener { result ->
@@ -94,10 +136,10 @@ class ChallengeDetailViewModel : ViewModel() {
                     addUserToCommentUsersList(comment.userId)
                 }
                 _commentList.value = commentList
-                Log.i("neil", "success load documents = ${commentList}")
+                Timber.tag("neil").i("success load documents = %s", commentList)
             }
             .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
+                Timber.tag("neil").i(exception, "Error getting documents.")
             }
 
     }
@@ -113,7 +155,7 @@ class ChallengeDetailViewModel : ViewModel() {
                     commentUsers.add(user)
                 }
                 _commentUsers.value = commentUsers
-                Log.i("neil", "success load documents = ${commentUsers}")
+                Timber.tag("neil").i("success load documents = %s", commentUsers)
 
             }
     }

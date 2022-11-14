@@ -5,33 +5,65 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerPhotoComment"
+    <ImageView
+        android:id="@+id/taskPhotoBorder"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_height="200dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:visibility="visible"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/photo_log_border"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/taskPhoto" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/taskPhoto"
         android:layout_width="0dp"
-        android:layout_height="250dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
         android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/taskPhotoBorder"
+        app:layout_constraintEnd_toEndOf="@+id/taskPhotoBorder"
+        app:layout_constraintStart_toStartOf="@+id/taskPhotoBorder"
+        app:layout_constraintTop_toTopOf="@+id/taskPhotoBorder"
         app:srcCompat="@drawable/image_placeholder" />
+
+    <ImageView
+        android:id="@+id/userIconLog"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/taskPhoto"
+        app:layout_constraintTop_toBottomOf="@+id/taskPhotoBorder"
+        app:srcCompat="@drawable/image_placeholder" />
+
+    <TextView
+        android:id="@+id/userText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="照片留言"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="@+id/taskPhoto"
+        app:layout_constraintStart_toEndOf="@+id/userIconLog"
+        app:layout_constraintTop_toBottomOf="@+id/userNameLog" />
+
+    <TextView
+        android:id="@+id/userNameLog"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="使用者名稱"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="@+id/taskPhoto"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/userIconLog"
+        app:layout_constraintTop_toTopOf="@+id/userIconLog" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

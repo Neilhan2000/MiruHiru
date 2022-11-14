@@ -29,7 +29,11 @@
         android:id="@+id/challengeDetailFragment"
         android:name="com.neil.miruhiru.challengedetail.ChallengeDetailFragment"
         android:label="fragment_challenge_detail"
-        tools:layout="@layout/fragment_challenge_detail" />
+        tools:layout="@layout/fragment_challenge_detail" >
+        <argument
+            android:name="challengeId"
+            app:argType="string" />
+    </fragment>
     <action android:id="@+id/action_global_challengeDetailFragment" app:destination="@id/challengeDetailFragment"/>
     <fragment
         android:id="@+id/taskFragment"
@@ -71,7 +75,7 @@
     <action android:id="@+id/action_global_taskSuccessFragment" app:destination="@id/taskSuccessFragment" />
     <dialog
         android:id="@+id/logDialogFragment"
-        android:name="com.neil.miruhiru.tasksuccess.LogDialogFragment"
+        android:name="com.neil.miruhiru.log.LogDialogFragment"
         android:label="LogDialogFragment" /><action android:id="@+id/action_global_logDialogFragment" app:destination="@id/logDialogFragment"/>
     <fragment
         android:id="@+id/challengeSuccessFragment"
@@ -88,10 +92,34 @@
         android:id="@+id/challengeTypeFragment"
         android:name="com.neil.miruhiru.challengetype.ChallengeTypeFragment"
         android:label="fragment_challenge_type"
-        tools:layout="@layout/fragment_challenge_type" />
+        tools:layout="@layout/fragment_challenge_type" >
+        <argument
+            android:name="challenge"
+            app:argType="com.neil.miruhiru.data.ChallengeInfo" />
+    </fragment>
     <fragment
         android:id="@+id/inviteFragment"
         android:name="com.neil.miruhiru.invite.InviteFragment"
         android:label="fragment_invite"
-        tools:layout="@layout/fragment_invite" /><action android:id="@+id/action_global_challengeTypeFragment" app:destination="@id/challengeTypeFragment"/><action android:id="@+id/action_global_inviteFragment" app:destination="@id/inviteFragment"/>
+        tools:layout="@layout/fragment_invite" >
+        <argument
+            android:name="eventId"
+            app:argType="string" />
+    </fragment><action android:id="@+id/action_global_challengeTypeFragment" app:destination="@id/challengeTypeFragment"/><action android:id="@+id/action_global_inviteFragment" app:destination="@id/inviteFragment"/>
+    <fragment
+        android:id="@+id/joinFragment"
+        android:name="com.neil.miruhiru.join.JoinFragment"
+        android:label="fragment_join"
+        tools:layout="@layout/fragment_join" />
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="com.neil.miruhiru.scan.ScanFragment"
+        android:label="fragment_scan"
+        tools:layout="@layout/fragment_scan" />
+    <action android:id="@+id/action_global_joinFragment" app:destination="@id/joinFragment"/>
+    <action android:id="@+id/action_global_scanFragment" app:destination="@id/scanFragment"/>
+    <dialog
+        android:id="@+id/chatDialogFragment"
+        android:name="com.neil.miruhiru.chat.ChatDialogFragment"
+        android:label="ChatDialogFragment" /><action android:id="@+id/action_global_chatDialogFragment" app:destination="@id/chatDialogFragment"/>
 </navigation>

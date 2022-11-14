@@ -70,6 +70,7 @@ import com.neil.miruhiru.NavGraphDirections
 
 
 import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.databinding.FragmentExploreBinding
@@ -185,8 +186,8 @@ class ExploreFragment : Fragment(), PermissionsListener {
         routeLineView = routeLineOptions?.let { it1 -> MapboxRouteLineView(it1) }
 
         binding.button.setOnClickListener {
-            val destination = Point.fromLngLat(121.53234019230837, 25.03844419092961)
-            startNavigation(destination)
+//            val destination = Point.fromLngLat(121.53234019230837, 25.03844419092961)
+//            startNavigation(destination)
         }
 
         binding.myLocationIcon.setOnClickListener {
@@ -279,7 +280,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
                     // this fun will show distance the between your location and challenge in the cardView
                     calculateAndShowDistance(challenge.location)
                     binding.locationCardView.setOnClickListener {
-                        this@ExploreFragment.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment())
+                        this@ExploreFragment.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(challenge.id ?: "null"))
                     }
                     binding.locationCardView.visibility = View.VISIBLE
                     return false

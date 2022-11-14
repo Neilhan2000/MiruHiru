@@ -7,16 +7,12 @@ data class Event(
     val id: String = "",
     val members: List<String> = mutableListOf(""),
     val startTime: Timestamp = Timestamp(Date(0)),
-    val isComplete: Boolean = false,
+    val isCompleted: Boolean = false,
     val challengeId: String = "",
     val progress: List<Int> = mutableListOf(0),
-    val messages: List<Message> = mutableListOf(),
-    val photos: List<Photo> = mutableListOf()
-)
-
-data class Message(
-    val senderId: String = "",
-    val text: String = "",
-    val time: Timestamp = Timestamp(Date(0))
+    val stage: Int = 0,
+    val status: String = "",
+    val endTime: Timestamp = Timestamp(Date(0)),
+    val currentMembers: List<String> = listOf()
 )
 

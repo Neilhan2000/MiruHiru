@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.User
 import com.neil.miruhiru.databinding.ItemInviteUserBinding
@@ -16,8 +18,10 @@ class UserAdapter: ListAdapter<User, UserAdapter.ViewHolder>(DiffCallBack()) {
     inner class ViewHolder(private val binding: ItemInviteUserBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: User) {
-
-
+            Glide.with(binding.userIconInvite.context).load(item.icon).circleCrop().apply(
+                RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
+            ).into(binding.userIconInvite)
+            binding.userNameInvite.text = item.name
         }
     }
 

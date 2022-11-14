@@ -3,6 +3,7 @@ package com.neil.miruhiru.challengedetail
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -16,8 +17,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -32,20 +35,28 @@ import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.data.ChallengeInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
+import com.neil.miruhiru.factory.ChallengeDetailViewModelFactory
+import com.neil.miruhiru.taskdetail.TaskDetailFragmentArgs
+import timber.log.Timber
 import kotlin.math.roundToInt
 
 class ChallengeDetailFragment : Fragment() {
 
+    private lateinit var factory: ChallengeDetailViewModelFactory
     private val viewModel: ChallengeDetailViewModel by lazy {
-        ViewModelProvider(this).get(ChallengeDetailViewModel::class.java)
+        ViewModelProvider(this, factory).get(ChallengeDetailViewModel::class.java)
     }
+
     private lateinit var binding: FragmentChallengeDetailBinding
     private lateinit var mapView: MapView
     private lateinit var pointAnnotationManager: PointAnnotationManager
     private lateinit var firstStagePoint: Point
+    private lateinit var challengeId: String
     private var show = true
 
     override fun onCreateView(
@@ -54,6 +65,10 @@ class ChallengeDetailFragment : Fragment() {
     ): View? {
         binding = FragmentChallengeDetailBinding.inflate(inflater, container, false)
         mapView = binding.mapView
+
+        // get args from last fragment and pass it to viewModel
+        challengeId = ChallengeDetailFragmentArgs.fromBundle(requireArguments()).challengeId
+        factory = ChallengeDetailViewModelFactory(challengeId)
 
         // observer challenge data and setup screen
         viewModel.challenge.observe(viewLifecycleOwner, Observer {
@@ -65,9 +80,10 @@ class ChallengeDetailFragment : Fragment() {
             it.forEach {
                 addAnnotationToMap(it)
             }
+            Timber.i("$it")
             firstStagePoint = Point.fromLngLat(
-                it[0].location?.longitude!!,
-                it[0].location?.latitude!!
+                it[0].location.longitude,
+                it[0].location.latitude
             )
             setLocation()
         })
@@ -80,7 +96,7 @@ class ChallengeDetailFragment : Fragment() {
 
         // click to show and hide comments
         binding.seeComment.setOnClickListener {
-            viewModel.loadComments("2WBySSd68w3VrA08eLGj")
+            viewModel.loadComments()
             if (show) {
                 binding.recyclerComment.visibility = View.VISIBLE
             } else {
@@ -127,9 +143,36 @@ class ChallengeDetailFragment : Fragment() {
         binding.challengeDescription.text = challenge.description
         binding.typeText.text = challenge.type
         calculateAndShowDistance(challenge.location!!)
+
         binding.startButton.setOnClickListener {
-            this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment())
+            viewModel.checkHasCurrentEvent(challengeId)
         }
+
+        // observe if has uncompleted event
+        viewModel.hasCurrentEvent.observe(viewLifecycleOwner, Observer { hasEvent ->
+            if (hasEvent) {
+                val defaultBuilder = AlertDialog.Builder(requireContext())
+                    .setTitle("發現上次儲存的紀錄")
+                    .setMessage("要繼續上次的挑戰嗎?")
+                    .setPositiveButton("確定", object: DialogInterface.OnClickListener{
+                        override fun onClick(p0: DialogInterface?, p1: Int) {
+                            this@ChallengeDetailFragment.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
+                        }
+                    })
+                    .setNeutralButton("清除紀錄", object: DialogInterface.OnClickListener{
+                        override fun onClick(p0: DialogInterface?, p1: Int) {
+                            viewModel.cleanEventSingle()
+                        }
+                    }) .show()
+                defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
+                    .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+            } else {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment(
+                    ChallengeInfo(challenge.id, challenge.stage)))
+            }
+        })
     }
 
     @SuppressLint("MissingPermission")

@@ -2,8 +2,10 @@ package com.neil.miruhiru.task
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
@@ -16,10 +18,14 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -39,11 +45,13 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListen
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentTaskBinding
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 class TaskFragment : Fragment() {
 
@@ -83,12 +91,14 @@ class TaskFragment : Fragment() {
     ): View? {
         binding = FragmentTaskBinding.inflate(inflater, container, false)
 
+        // factory
+
         // floating action button
         binding.fabAdd.setOnClickListener {
             onAddButtonClick()
         }
         binding.fabChat.setOnClickListener {
-            Toast.makeText(requireContext(), "chat clicked", Toast.LENGTH_SHORT).show()
+            this.findNavController().navigate(NavGraphDirections.actionGlobalChatDialogFragment())
         }
         binding.fabAndroid.setOnClickListener {
             binding.guideTextRecycler.scrollToPosition(1)
@@ -124,42 +134,108 @@ class TaskFragment : Fragment() {
 
         // observe taskList and setup screen
         viewModel.taskList.observe(viewLifecycleOwner, Observer {
-//            taskAdapter.submitList(it)
+            taskAdapter.submitList(it)
             taskAdapter.notifyDataSetChanged()
-            binding.progressBar.width = (binding.progressBarBorder.width - 16) / 5 * (viewModel.event.value?.progress?.minOrNull() ?: 0)
-            binding.progressText.text = "${it[0].stage} / 5"
+            binding.progressBar.layoutParams.width = ((binding.progressBar.width) / viewModel.totalStage) * viewModel.currentStage
+            binding.progressText.text = "${viewModel.currentStage} / ${viewModel.totalStage}"
 
             val guildTextList = listOf<Task>(Task(), it[0], Task())
             guideAdapter.submitList(guildTextList)
             binding.guideTextRecycler.scrollToPosition(1)
 
-            val fakeTaskList = listOf(Task(answer = "99", question = "單點一次多少元", introduction = "漢堡加薯餅",name = "脆薯雙牛堡好ㄘ",location = GeoPoint(25.038439309230398, 121.53236337071075), stage = 1, image = "https://www.mcdonalds.com/content/dam/sites/tw/carousel/desktop/2022/0928-%E9%A6%96%E9%A0%81%E8%BC%AA%E6%92%ADBanner_2336x1040_1.png"),
-            Task(location = GeoPoint(25.037096571143664, 121.53151283294005), stage = 2),
-            Task(location = GeoPoint(25.04247038998423, 121.53276152239846), stage = 3)
-            )
-            val currentStage = 2
-            for (task in fakeTaskList) {
-                addAnnotationToMap(task, currentStage)
-            }
-            taskAdapter.submitList(fakeTaskList)
         })
 
-        // navigation to TaskDetailFragment
+        viewModel.annotationList.observe(viewLifecycleOwner, Observer {
+            for (task in it) {
+                addAnnotationToMap(task, viewModel.currentStage)
+            }
+        })
+        viewModel.loadEventsWithTask(UserManager.userChallengeDocumentId ?: "null",
+            UserManager.user.currentEvent)
 
         // setup map
         mapView = binding.mapView
         initLocationComponent()
         mapView?.gestures?.addOnMoveListener(onMoveListener)
 
+        // override back press
+        requireActivity().onBackPressedDispatcher
+            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                @SuppressLint("ResourceAsColor")
+                override fun handleOnBackPressed() {
 
+                    if (viewModel.isMultiple == true) {
+                        val defaultBuilder = AlertDialog.Builder(requireContext())
+                            .setTitle("要退出挑戰嗎?")
+                            .setMessage("發現挑戰有其他玩家，退出後將無法再參與歐")
+                            .setPositiveButton("確定", object: DialogInterface.OnClickListener{
+                                override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    viewModel.cleanEventMultiple()
+                                }
+                            })
+                            .setNegativeButton("取消", object: DialogInterface.OnClickListener{
+                                override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    // do nothing
+                                }
+                            })
+                            .show()
+                        defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
+                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                        defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
+                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
 
-        // draw stage annotation
+                    } else if (viewModel.isMultiple == false) {
+                        val defaultBuilder = AlertDialog.Builder(requireContext())
+                            .setTitle("要退出挑戰嗎?")
+                            .setMessage("退出後進度會自動儲存歐")
+                            .setPositiveButton("確定", object: DialogInterface.OnClickListener{
+                                override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    this@TaskFragment.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+                                }
+                            })
+                            .setNeutralButton("不要儲存", object: DialogInterface.OnClickListener{
+                                override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    viewModel.cleanEventSingle()
+                                }
+                            })
+                            .setNegativeButton("取消", object: DialogInterface.OnClickListener{
+                                override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    // do nothing
+                                }
+                            })
+                            .show()
+                        defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
+                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                        defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
+                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                        defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
+                            .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                    }
+//                    // if you want onBackPressed() to be called as normal afterwards
+//                    if (isEnabled) {
+//                        isEnabled = false
+//                        requireActivity().onBackPressed()
+//                    }
+                }
+            })
 
-        // calculate and show stage distance
+        // observer clean user current event
+        viewModel.navigateUp.observe(viewLifecycleOwner, Observer { backPressSuccess ->
+            if (backPressSuccess) {
+                this@TaskFragment.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+                viewModel.navigateUpCompleted()
+            }
+        })
 
-        // mutable stages recyclerView
+        // observer if user is kicked out of challenge
+        viewModel.isKicked.observe(viewLifecycleOwner, Observer { isKicked ->
+            if (isKicked) {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+                Toast.makeText(requireContext(), "你已被移出挑戰", Toast.LENGTH_SHORT).show()
+            }
+        })
+        viewModel.detectUserKicked()
 
-        // start navigation and calculate distance to stage location, using notifidatachage to bind recyclerview
 
 
 
@@ -274,7 +350,10 @@ class TaskFragment : Fragment() {
             // add annotation click listener.
             pointAnnotationManager?.addClickListener(object : OnPointAnnotationClickListener {
                 override fun onAnnotationClick(annotation: PointAnnotation): Boolean {
-                    binding.TaskRecycler.smoothScrollToPosition(task.stage - 1)
+                    val position = currentStage - task.stage
+                    if (position >= 0) {
+                        binding.TaskRecycler.smoothScrollToPosition(position)
+                    }
                     return false
                 }
             })
@@ -306,5 +385,6 @@ class TaskFragment : Fragment() {
             bitmap
         }
     }
+
 
 }

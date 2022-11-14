@@ -146,7 +146,7 @@
         app:layout_constraintTop_toTopOf="@+id/successText2" />
 
     <EditText
-        android:id="@+id/editTextTextMultiLine"
+        android:id="@+id/editTextComment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@null"

@@ -1,169 +1,261 @@
 package com.neil.miruhiru.task
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.location.Location
 import android.util.Log
-import android.view.View
-import android.view.animation.AnimationUtils
-import androidx.annotation.DrawableRes
-import androidx.appcompat.content.res.AppCompatResources
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.google.android.gms.location.LocationServices
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.snapshots
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
-import com.google.gson.JsonParser
-import com.mapbox.geojson.Point
-import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
-import com.neil.miruhiru.NavGraphDirections
-import com.neil.miruhiru.R
-import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Event
-import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.data.Task
-import kotlinx.coroutines.*
+import com.neil.miruhiru.data.User
+import timber.log.Timber
 
 class TaskViewModel(application: Application): AndroidViewModel(application) {
 
     val viewModelApplication = application
-    init {
-        val challengeId = "2WBySSd68w3VrA08eLGj"
-//        loadTasks(challengeId)
-//        loadEvents()
-        loadEventsWithTask(challengeId)
-    }
 
     private val _taskList = MutableLiveData<List<Task>>()
     val taskList: LiveData<List<Task>>
         get() = _taskList
 
+    private val _annotationList = MutableLiveData<List<Task>>()
+    val annotationList: LiveData<List<Task>>
+        get() = _annotationList
+
     private val _event = MutableLiveData<Event>()
     val event: LiveData<Event>
         get() = _event
 
-    val currentStage = 2
+    private val _isKicked = MutableLiveData<Boolean>()
+    val isKicked: LiveData<Boolean>
+        get() = _isKicked
 
-//    private fun loadTasks(challengeId: String) {
-//        val db = Firebase.firestore
-//        val taskList = mutableListOf<Task>()
-//
-//        db.collection("challenges").document(challengeId)
-//            .collection("tasks")
-//            .get()
-//            .addOnSuccessListener { result ->
-//                for (document in result) {
-//                    val task = document.toObject<Task>()
-//                    taskList.add(task)
-//                }
-//                _taskList.value = taskList
-////                Log.i("neil", "success load documents = ${taskList}")
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.i("neil", "Error getting documents.", exception)
-//            }
-//
-//    }
-//
-//    private fun loadEvents() {
-//        val db = Firebase.firestore
-//
-//        db.collection("events").whereEqualTo("id" ,"0")
-//            .get()
-//            .addOnSuccessListener { result ->
-//                for (document in result) {
-//                    val event = document.toObject<Event>()
-//                    _event.value = event
-//                }
-//                Log.i("neil", "success load documents = ${event.value}")
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.i("neil", "Error getting documents.", exception)
-//            }
-//
-//    }
+    var currentStage = -1
+    var totalStage = -1
+    var isMultiple: Boolean? = null
 
-    private fun loadEventsWithTask(challengeId: String) {
+    fun detectUserKicked() {
         val db = Firebase.firestore
-        val taskList = mutableListOf<Task>()
 
-        db.collection("events").whereEqualTo("id" ,"0")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    val event = document.toObject<Event>()
-                    _event.value = event
+        db.collection("events").whereEqualTo("id" , UserManager.user.currentEvent)
+            .addSnapshotListener { value, error ->
+                value?.documents?.get(0)?.let {
+                    val event = it.toObject<Event>()
+                    event?.currentMembers?.contains(UserManager.userId)?.let {  _isKicked.value = !it }
+                    Timber.i("is kicked ${_isKicked.value}")
                 }
 
-                Log.i("neil", "success load documents = ${event.value}")
-                db.collection("challenges").document(challengeId)
-                    .collection("tasks")
-                    .get()
-                    .addOnSuccessListener { result ->
-                        for (document in result) {
-                            val task = document.toObject<Task>()
-                            taskList.add(task)
+                if (_isKicked.value == true) {
+                    db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+                        .get()
+                        .addOnSuccessListener {
+                            val eventDocumentId = it.documents[0].id
+                            val event = it.documents[0].toObject<Event>()
+                            val progress: MutableList<Int> = event?.progress as MutableList<Int>
+                            progress.remove(UserManager.currentStage)
+                            Timber.i("progress $progress")
+
+                            // remove progress
+                            db.collection("events").document(eventDocumentId)
+                                .update("progress", progress)
+                                .addOnSuccessListener {
+
+                                    // remove user current Event
+                                    db.collection("users").whereEqualTo("id", UserManager.userId)
+                                        .get()
+                                        .addOnSuccessListener {
+                                            val userDocumentId = it.documents[0].id
+
+                                            db.collection("users").document(userDocumentId)
+                                                .update("currentEvent", "")
+                                                .addOnSuccessListener {
+                                                    UserManager.getUser()
+                                                    _isKicked.value = false
+                                                }
+                                        }
+                                }
+
                         }
-                        _taskList.value = taskList
-//                Log.i("neil", "success load documents = ${taskList}")
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.i("neil", "Error getting documents.", exception)
-                    }
+                }
+
+            }
+    }
+
+    fun kickUser(userId: String) {
+        val db = Firebase.firestore
+
+        db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+            .get()
+            .addOnSuccessListener {
+                val eventDocumentId = it.documents[0].id
+
+                db.collection("events").document(eventDocumentId)
+                    .update("currentMembers", FieldValue.arrayRemove(userId))
+            }
+    }
+
+
+    fun loadEventsWithTask(challengeDocumentId: String, eventId: String) {
+        val db = Firebase.firestore
+        val taskList = mutableListOf<Task>()
+        val annotationList = mutableListOf<Task>()
+
+        Timber.i("challenge document id $challengeDocumentId, event id $eventId")
+        db.collection("events").whereEqualTo("id" , eventId)
+            .get()
+            .addOnSuccessListener { result ->
+                Timber.i("result size ${result.documents.size}")
+                Timber.i("get document success")
+                for (document in result) {
+                    Timber.i("go into for loop")
+                    val event = document.toObject<Event>()
+                    _event.value = event
+                    currentStage = event.progress.minOrNull() ?: -1
+                    UserManager.currentStage = currentStage
+                    Timber.i("set current stage ${UserManager.currentStage}")
+                    totalStage = event.stage
+                    isMultiple = event.progress.size > 1
+
+//                    Timber.i("task list event progress ${event.progress}")
+//                    Timber.i("current stage $currentStage")
+
+
+                    db.collection("challenges").document(challengeDocumentId)
+                        .collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
+                        .get()
+                        .addOnSuccessListener { result ->
+                            Timber.i("challenge document id = $challengeDocumentId, result ${result.documents.size}")
+                            for (document in result) {
+                                val task = document.toObject<Task>()
+                                if (task.stage <= currentStage) {
+                                    taskList.add(task)
+                                }
+                                annotationList.add(task)
+                            }
+                            Timber.i("task list size ${taskList.size} current stage$currentStage")
+                            _taskList.value = taskList
+                            _annotationList.value = annotationList
+                        }
+                        .addOnFailureListener { exception ->
+                            Timber.i(exception, "Error getting documents.")
+                        }
+                }
+
+
             }
             .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
+                Timber.tag("neil").i(exception, "Error getting documents.")
             }
 
     }
 
-//    private fun calculateDistance(currentPoint: Point?, destinationPoint: GeoPoint): Float {
-//        val current = Location("current")
-//        current.latitude = currentPoint?.latitude()!!
-//        current.longitude = currentPoint.latitude()
-//
-//        val destination = Location("current")
-//        destination.latitude = destinationPoint.latitude
-//        destination.longitude = destinationPoint.longitude
-//
-//        val result =  floatArrayOf(0.0F)
-//        val distance = Location.distanceBetween(currentPoint.latitude(), currentPoint.longitude(),
-//            destinationPoint.latitude, destinationPoint.longitude, result)
-//
-//        return result[0]
-//
-//    }
-//
-//    @SuppressLint("MissingPermission")
-//    fun calculateAndShowDistance(destination: GeoPoint) {
-//        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(viewModelApplication)
-//        var currentPoint: Point? = null
-//        fusedLocationClient.lastLocation
-//            .addOnSuccessListener { location : Location? ->
-//                Log.i("neil", "current location = ${location?.latitude}, ${location?.longitude}")
-//                currentPoint = Point.fromLngLat(
-//                    location!!.longitude,
-//                    location!!.latitude
-//                )
-//                val distance = calculateDistance(currentPoint, destination)
-//                Log.i("neil", "time $distance")
-//            }
-//    }
+    private fun addTask(challengeId: String) {
+        val user = hashMapOf(
+            "answer" to "Ada",
+            "guide" to "Lovelace",
+            "id" to "1815",
+            "image" to "",
+            "introduction" to "",
+            "location" to GeoPoint(0.0, 0.0),
+            "name" to "",
+            "question" to "",
+            "stage" to -1
+        )
+
+        val db = Firebase.firestore
+        db.collection("challenges").document(challengeId)
+            .collection("tasks")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                Timber.tag("neil").d("DocumentSnapshot added with ID: %s", documentReference.id)
+            }
+            .addOnFailureListener { e ->
+                Timber.tag("neil").w(e, "Error adding document")
+            }
+    }
+
+    private val _navigateUp = MutableLiveData<Boolean>()
+    val navigateUp: LiveData<Boolean>
+        get() = _navigateUp
+
+    fun cleanEventSingle() {
+        val db = Firebase.firestore
+        var userDocumented = ""
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                userDocumented = it.documents[0].id
+
+                db.collection("users").document(userDocumented)
+                    .update("currentEvent", "")
+                    .addOnSuccessListener {
+                        UserManager.getUser()
+                        _navigateUp.value = true
+                    }
+            }
+    }
+
+    fun cleanEventMultiple() {
+        val db = Firebase.firestore
+        var userDocumented = ""
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                userDocumented = it.documents[0].id
+
+                db.collection("users").document(userDocumented)
+                    .get()
+                    .addOnSuccessListener {
+                        val user = it.toObject<User>()
+                        Timber.i("user id ${user?.currentEvent}")
+
+                        db.collection("events").whereEqualTo("id", user?.currentEvent)
+                            .get()
+                            .addOnSuccessListener {
+                                val eventDocumented = it.documents[0].id
+                                val event = it.documents[0].toObject<Event>()
+
+
+                                // remove progress
+                                val progressList = event?.progress as MutableList<Int>
+                                progressList.remove(currentStage)
+
+                                db.collection("events").document(eventDocumented)
+                                    .update("progress", progressList)
+                                    .addOnSuccessListener {
+
+                                        // remove current
+                                        db.collection("users").document(userDocumented)
+                                            .update("currentEvent", "")
+                                            .addOnSuccessListener {
+                                                UserManager.getUser()
+                                                _navigateUp.value = true
+                                            }
+
+                                    }
+
+
+
+                            }
+
+                    }
+
+            }
+
+    }
+
+    fun navigateUpCompleted() {
+        _navigateUp.value = false
+    }
 }
