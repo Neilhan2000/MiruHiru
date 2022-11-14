@@ -48,6 +48,8 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
     val isMainUser: LiveData<Boolean>
         get() = _isMainUser
 
+    var event: Event? = Event()
+
     private fun detectUserMessages() {
         val db = Firebase.firestore
 
@@ -57,7 +59,7 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
             .addOnSuccessListener {
 
                 val eventDocumentId = it.documents[0].id
-                val event = it.documents[0].toObject<Event>()
+                event = it.documents[0].toObject<Event>()
                 event?.members?.let { userIdList = it }
 
 
@@ -72,7 +74,7 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
                             }
      
                             if (memberList.size == event?.members?.size) {
-                                _isMainUser.value = event.members.first() == UserManager.userId
+                                _isMainUser.value = event?.members?.first() == UserManager.userId
                                 // load message
                                 db.collection("events").document(eventDocumentId).collection("messages").orderBy("time", Query.Direction.ASCENDING)
                                     .addSnapshotListener { messages, error ->

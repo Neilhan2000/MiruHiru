@@ -33,8 +33,6 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     val commentList: LiveData<List<Comment>>
         get() = _commentList
 
-    lateinit var user: User
-
     private val _commentUsers = MutableLiveData<List<User>>()
     val commentUsers: LiveData<List<User>>
         get() = _commentUsers
@@ -130,35 +128,31 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
             .collection("comments")
             .get()
             .addOnSuccessListener { result ->
+                val commentUsers = mutableListOf<User>()
+
                 for (document in result) {
                     val comment = document.toObject<Comment>()
                     commentList.add(comment)
-                    addUserToCommentUsersList(comment.userId)
+
+                    // add user to comment user list
+                    db.collection("users").whereEqualTo("id", comment.userId)
+                        .get().addOnSuccessListener {
+                            val user = it.documents[0].toObject<User>()
+                            if (user != null) {
+                                commentUsers.add(user)
+                                _commentUsers.value = commentUsers
+                                _commentList.value = commentList
+                            }
+
+                        }
+
                 }
-                _commentList.value = commentList
-                Timber.tag("neil").i("success load documents = %s", commentList)
+
             }
-            .addOnFailureListener { exception ->
-                Timber.tag("neil").i(exception, "Error getting documents.")
-            }
+
 
     }
 
-    private fun addUserToCommentUsersList(userId: String) {
-        val db = Firebase.firestore
-        val commentUsers = mutableListOf<User>()
-        db.collection("users")
-            .whereEqualTo("id", userId)
-            .get().addOnSuccessListener {
-                for (result in it.documents) {
-                    user = result.toObject<User>()!!
-                    commentUsers.add(user)
-                }
-                _commentUsers.value = commentUsers
-                Timber.tag("neil").i("success load documents = %s", commentUsers)
-
-            }
-    }
 
     fun calculateDistance(currentPoint: Point?, destinationPoint: GeoPoint): Float {
         val current = Location("current")

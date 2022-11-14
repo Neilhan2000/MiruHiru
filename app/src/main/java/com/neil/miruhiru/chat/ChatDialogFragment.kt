@@ -91,8 +91,8 @@ class ChatDialogFragment : DialogFragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("選擇要移除的使用者")
         builder.setSingleChoiceItems(arrayAdapter, -1) { dialog, which ->
-            Toast.makeText(requireContext(), "踢除 ${viewModel.memberList[which].name}", Toast.LENGTH_SHORT).show()
-            viewModel.kick(viewModel.memberList[which + 1].id)
+            Toast.makeText(requireContext(), "移除 ${viewModel.event?.members?.get(which + 1)}", Toast.LENGTH_SHORT).show()
+            viewModel.event?.members?.get(which + 1)?.let { viewModel.kick(it) }
             dialog.dismiss()
         }
         val dialog = builder.create()

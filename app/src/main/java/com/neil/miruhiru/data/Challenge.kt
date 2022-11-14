@@ -51,5 +51,6 @@ data class Challenge(
     val timeSpent: Long? = null,
     val totalRating: Float? = null,
     val type: String? = null,
-    val completedList: List<String>? = null
+    val completedList: List<String>? = null,
+    val commentQuantity: Long? = null
 ) : Parcelable

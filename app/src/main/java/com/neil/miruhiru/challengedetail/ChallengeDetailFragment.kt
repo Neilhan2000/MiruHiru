@@ -43,6 +43,8 @@ import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
 import com.neil.miruhiru.factory.ChallengeDetailViewModelFactory
 import com.neil.miruhiru.taskdetail.TaskDetailFragmentArgs
 import timber.log.Timber
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 class ChallengeDetailFragment : Fragment() {
@@ -116,6 +118,7 @@ class ChallengeDetailFragment : Fragment() {
         // observer commentUsers and show in recyclerView
         viewModel.commentUsers.observe(viewLifecycleOwner, Observer {
             adapter.submitList(viewModel.commentList.value)
+            adapter.notifyDataSetChanged()
         })
 
         return binding.root
@@ -131,18 +134,24 @@ class ChallengeDetailFragment : Fragment() {
         }
     }
 
+    private fun roundOffDecimal(number: Float): Float? {
+        val df = DecimalFormat("#.#")
+        df.roundingMode = RoundingMode.CEILING
+        return df.format(number).toFloat()
+    }
+
     private fun setupScreen(challenge: Challenge) {
         binding.ChallengeTitle.text = challenge.name
         Glide.with(binding.challengeMainImage.context).load(challenge.image).centerCrop().apply(
             RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
         ).into(binding.challengeMainImage)
-        binding.ratingBar.rating = challenge.totalRating!!
-        binding.ratingText.text = challenge.totalRating.toString()
+        challenge.totalRating?.let { binding.ratingBar.rating  = it }
+        binding.ratingText.text = "${challenge.totalRating?.let { roundOffDecimal(it) }} (${challenge.commentQuantity})"
         binding.stageText.text = challenge.stage.toString()
         binding.timeText.text = "${challenge.timeSpent?.div(3600)} Hrs"
         binding.challengeDescription.text = challenge.description
         binding.typeText.text = challenge.type
-        calculateAndShowDistance(challenge.location!!)
+        challenge.location?.let { calculateAndShowDistance(it) }
 
         binding.startButton.setOnClickListener {
             viewModel.checkHasCurrentEvent(challengeId)

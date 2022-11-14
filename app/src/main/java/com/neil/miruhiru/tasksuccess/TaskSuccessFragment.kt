@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -90,6 +91,15 @@ class TaskSuccessFragment : Fragment() {
             }
 
         })
+
+        // observer if user is kicked out of challenge
+        viewModel.isKicked.observe(viewLifecycleOwner, Observer { isKicked ->
+            if (isKicked) {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+                Toast.makeText(requireContext(), "你已被移出挑戰", Toast.LENGTH_SHORT).show()
+            }
+        })
+        viewModel.detectUserKicked()
 
         // disable back press
         requireActivity().onBackPressedDispatcher
