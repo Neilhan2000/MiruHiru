@@ -96,4 +96,8 @@ dependencies {
     // Bottom Sheet Spinner
     implementation 'com.github.nestoleh:bottomsheet-spinner:0.1.5'
 
+    // Google Login
+    implementation 'com.google.android.gms:play-services-auth:20.3.0'
+
+
 }

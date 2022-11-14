@@ -27,17 +27,19 @@ class CommentAdapter(
     inner class ViewHolder(private val binding: ItemChallengeCommentBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Comment) {
-            binding.userName.text = item.userId
             binding.ratingBar.rating = item.rating
             binding.comment.text = item.text
 
             var userIcon = ""
+            var userName = ""
             viewModel.commentUsers.value?.forEach { user ->
                 if (item.userId == user.id) {
                     userIcon = user.icon
+                    userName = user.name
                 }
             }
 
+            binding.userName.text = userName
             Glide.with(binding.userIcon.context).load(userIcon).circleCrop().apply(
                 RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
             ).into(binding.userIcon)

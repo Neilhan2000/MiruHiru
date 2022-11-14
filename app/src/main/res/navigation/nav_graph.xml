@@ -122,4 +122,10 @@
         android:id="@+id/chatDialogFragment"
         android:name="com.neil.miruhiru.chat.ChatDialogFragment"
         android:label="ChatDialogFragment" /><action android:id="@+id/action_global_chatDialogFragment" app:destination="@id/chatDialogFragment"/>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.neil.miruhiru.login.SignInFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
+    <action android:id="@+id/action_global_loginFragment" app:destination="@id/loginFragment" />
 </navigation>

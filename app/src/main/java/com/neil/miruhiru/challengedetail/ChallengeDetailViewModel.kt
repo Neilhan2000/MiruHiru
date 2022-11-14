@@ -14,6 +14,8 @@ import com.mapbox.geojson.Point
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.*
 import timber.log.Timber
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
@@ -54,6 +56,10 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
         } else {
             _hasCurrentEvent.value = false
         }
+    }
+
+    fun navigateToChallengeTypeFragmentCompleted() {
+        _hasCurrentEvent.value = false
     }
 
     fun cleanEventSingle() {
@@ -169,6 +175,12 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
         return result[0]
 
+    }
+
+    fun roundOffDecimal(number: Float): Float? {
+        val df = DecimalFormat("#.#")
+        df.roundingMode = RoundingMode.CEILING
+        return df.format(number).toFloat()
     }
 
 }

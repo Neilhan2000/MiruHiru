@@ -11,6 +11,8 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.mapbox.geojson.Point
 import com.neil.miruhiru.data.Challenge
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 class ExploreViewModel: ViewModel() {
 
@@ -57,5 +59,11 @@ class ExploreViewModel: ViewModel() {
 
         return result[0]
 
+    }
+
+    fun roundOffDecimal(number: Float): Float? {
+        val df = DecimalFormat("#.#")
+        df.roundingMode = RoundingMode.CEILING
+        return df.format(number).toFloat()
     }
 }

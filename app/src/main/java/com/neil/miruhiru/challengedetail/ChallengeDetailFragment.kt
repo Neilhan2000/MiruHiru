@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
@@ -134,19 +135,13 @@ class ChallengeDetailFragment : Fragment() {
         }
     }
 
-    private fun roundOffDecimal(number: Float): Float? {
-        val df = DecimalFormat("#.#")
-        df.roundingMode = RoundingMode.CEILING
-        return df.format(number).toFloat()
-    }
-
     private fun setupScreen(challenge: Challenge) {
         binding.ChallengeTitle.text = challenge.name
         Glide.with(binding.challengeMainImage.context).load(challenge.image).centerCrop().apply(
             RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
         ).into(binding.challengeMainImage)
         challenge.totalRating?.let { binding.ratingBar.rating  = it }
-        binding.ratingText.text = "${challenge.totalRating?.let { roundOffDecimal(it) }} (${challenge.commentQuantity})"
+        binding.ratingText.text = "${challenge.totalRating?.let { viewModel.roundOffDecimal(it) }} (${challenge.commentQuantity})"
         binding.stageText.text = challenge.stage.toString()
         binding.timeText.text = "${challenge.timeSpent?.div(3600)} Hrs"
         binding.challengeDescription.text = challenge.description

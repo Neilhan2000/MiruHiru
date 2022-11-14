@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.fragment_custom -> {
-//                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalChallengeDetailFragment())
+                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalLoginFragment())
 //                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCustomFragment())
                     return@setOnItemSelectedListener true
                 }
@@ -132,7 +132,6 @@ class MainActivity : AppCompatActivity() {
                     })
                     .setNeutralButton("清除紀錄", object : DialogInterface.OnClickListener{
                         override fun onClick(p0: DialogInterface?, p1: Int) {
-                            Log.i("Main", "current ${UserManager.currentStage}")
                             viewModel.cleanEventMultiple()
                         }
                     })
