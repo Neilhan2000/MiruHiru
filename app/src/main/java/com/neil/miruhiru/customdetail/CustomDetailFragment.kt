@@ -3,7 +3,6 @@ package com.neil.miruhiru.customdetail
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -14,9 +13,9 @@ import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavDeepLinkRequest
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
@@ -25,8 +24,10 @@ import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
+import com.neil.miruhiru.customdetail.item.CustomViewModel
+import com.neil.miruhiru.data.ParcelableGeoPoint
 import com.neil.miruhiru.databinding.FragmentCustomDetailBinding
-import kotlin.concurrent.fixedRateTimer
+import timber.log.Timber
 
 class CustomDetailFragment : Fragment() {
 
@@ -35,6 +36,9 @@ class CustomDetailFragment : Fragment() {
     private lateinit var pointAnnotationManager: PointAnnotationManager
     private lateinit var mapBoxMap: MapboxMap
     private lateinit var binding: FragmentCustomDetailBinding
+    private val viewModel: CustomViewModel by lazy {
+        ViewModelProvider(this).get(CustomViewModel::class.java)
+    }
 
 
     override fun onCreateView(
@@ -51,6 +55,8 @@ class CustomDetailFragment : Fragment() {
             pointAnnotationManager.deleteAll()
             addAnnotationToMap(point)
             changeButtonStatus()
+            viewModel.setTaskLocation(point)
+            val geopoint = ParcelableGeoPoint
             false
         }
 
@@ -62,7 +68,7 @@ class CustomDetailFragment : Fragment() {
             changeButtonStatus()
         }
         binding.nextButton.setOnClickListener {
-
+            Timber.i("task = ${viewModel.task}")
         }
 
 

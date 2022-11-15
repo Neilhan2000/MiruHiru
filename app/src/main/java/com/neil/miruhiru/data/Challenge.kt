@@ -5,6 +5,7 @@ import android.os.Parcelable
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
+import kotlinx.parcelize.Parceler
 import kotlin.math.ln
 
 class ParcelableGeoPoint() : Parcelable {
@@ -40,17 +41,17 @@ class ParcelableGeoPoint() : Parcelable {
 
 @Parcelize
 data class Challenge(
-    val description: String? = null,
-    val id: String? = null,
-    val image: String? = null,
-    val isUpload: Boolean? = null,
-    val likeList: List<String>? = null,
-    val location:  @RawValue GeoPoint? = null,
-    val name: String? = null,
-    val stage: Int? = null,
-    val timeSpent: Long? = null,
-    val totalRating: Float? = null,
-    val type: String? = null,
-    val completedList: List<String>? = null,
-    val commentQuantity: Long? = null
+    var description: String? = null,
+    var id: String? = null,
+    var image: String? = null,
+    var isUpload: Boolean? = null,
+    var likeList: List<String>? = null,
+    var location:  @RawValue GeoPoint? = null,
+    var name: String? = null,
+    var stage: Int? = null,
+    var timeSpent: Long? = null,
+    var totalRating: Float? = null,
+    var type: String? = null,
+    var completedList: List<String>? = null,
+    var commentQuantity: Long? = null
 ) : Parcelable

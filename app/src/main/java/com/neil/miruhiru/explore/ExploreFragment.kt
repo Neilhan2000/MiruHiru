@@ -281,8 +281,8 @@ class ExploreFragment : Fragment(), PermissionsListener {
                     Glide.with(binding.challengeImage.context).load(challenge.image).centerCrop().apply(
                         RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
                     ).into(binding.challengeImage)
-                    // this fun will show distance the between your location and challenge in the cardView
-                    calculateAndShowDistance(challenge.location)
+                    // this function will show distance the between your location and challenge in the cardView
+                    challenge.location?.let { calculateAndShowDistance(it) }
                     binding.locationCardView.setOnClickListener {
                         this@ExploreFragment.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(challenge.id ?: "null"))
                     }
