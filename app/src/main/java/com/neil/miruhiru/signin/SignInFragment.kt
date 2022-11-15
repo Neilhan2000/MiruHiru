@@ -1,4 +1,4 @@
-package com.neil.miruhiru.login
+package com.neil.miruhiru.signin
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,22 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
-import com.neil.miruhiru.databinding.FragmentLogBinding
-import com.neil.miruhiru.databinding.FragmentLoginBinding
-import com.neil.miruhiru.log.LogViewModel
-import timber.log.Timber
+import com.neil.miruhiru.databinding.FragmentSignInBinding
 
 
 class SignInFragment : Fragment() {
@@ -30,6 +22,7 @@ class SignInFragment : Fragment() {
     private val viewModel: SignInViewModel by lazy {
         ViewModelProvider(this).get(SignInViewModel::class.java)
     }
+    private val googleSignInAccount = GoogleSignIn.getLastSignedInAccount(MainActivity.getInstanceFromMainActivity())
 
     companion object {
         private const val GOOGLE_SIGN_IN_CODE = 3
@@ -39,14 +32,25 @@ class SignInFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentLoginBinding.inflate(inflater, container, false)
+        val binding = FragmentSignInBinding.inflate(inflater, container, false)
 
         val googleTextView: TextView = binding.signInButton.getChildAt(0) as TextView
         googleTextView.text = getString(R.string.sign_in_with_google)
 
+        if (googleSignInAccount != null) {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+        }
+
+        viewModel.navigateToExploreFragment.observe(viewLifecycleOwner, Observer { signIn ->
+            if (signIn) {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+            }
+        })
+
         binding.signInButton.setOnClickListener {
             viewModel.signIn(this)
         }
+
         return binding.root
     }
 

@@ -1,28 +1,19 @@
-package com.neil.miruhiru.login
+package com.neil.miruhiru.signin
 
-import android.content.Context
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.neil.miruhiru.MainActivity
-import com.neil.miruhiru.MainViewModel
-import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.UserManager
-import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.User
-import com.neil.miruhiru.login.SignInViewModel.Companion.GOOGLE_SIGN_IN_CODE
 import timber.log.Timber
 
 class SignInViewModel : ViewModel() {
@@ -39,10 +30,8 @@ class SignInViewModel : ViewModel() {
         .requestEmail()
         .build()
 
-    private val mGoogleSignInClient = GoogleSignIn.getClient(
+    private val googleSignInClient = GoogleSignIn.getClient(
         MainActivity.getInstanceFromMainActivity(), googleSignInOptions)
-
-//    private val googleSignInAccount = GoogleSignIn.getLastSignedInAccount(requireContext())
 
     fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
@@ -55,11 +44,11 @@ class SignInViewModel : ViewModel() {
     }
 
     fun signIn(fragment: SignInFragment) {
-        val signInIntent = mGoogleSignInClient.signInIntent
+        val signInIntent = googleSignInClient.signInIntent
         fragment.startActivityForResult(signInIntent, GOOGLE_SIGN_IN_CODE)
     }
 
-    // check if already register MiruHiru account
+    // check if user already register MiruHiru account
     private fun checkHasAccount(account: GoogleSignInAccount): Boolean? {
         val db = Firebase.firestore
         var hasAccount: Boolean? = null
@@ -97,7 +86,7 @@ class SignInViewModel : ViewModel() {
             }
     }
 
-    // register account and update local account
+    // register an account and update local account
     private fun registerAccount(account: GoogleSignInAccount) {
         val db = Firebase.firestore
         val user = hashMapOf(
@@ -134,7 +123,7 @@ class SignInViewModel : ViewModel() {
         get() = _navigateToSignInFragment
 
     fun signOut() {
-        mGoogleSignInClient.signOut().addOnCompleteListener {
+        googleSignInClient.signOut().addOnCompleteListener {
             _navigateToSignInFragment.value = true
         }
     }
