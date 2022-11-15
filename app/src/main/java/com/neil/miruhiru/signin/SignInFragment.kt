@@ -22,7 +22,7 @@ class SignInFragment : Fragment() {
     private val viewModel: SignInViewModel by lazy {
         ViewModelProvider(this).get(SignInViewModel::class.java)
     }
-    private val googleSignInAccount = GoogleSignIn.getLastSignedInAccount(MainActivity.getInstanceFromMainActivity())
+
 
     companion object {
         private const val GOOGLE_SIGN_IN_CODE = 3
@@ -37,6 +37,7 @@ class SignInFragment : Fragment() {
         val googleTextView: TextView = binding.signInButton.getChildAt(0) as TextView
         googleTextView.text = getString(R.string.sign_in_with_google)
 
+        val googleSignInAccount = GoogleSignIn.getLastSignedInAccount(requireContext())
         if (googleSignInAccount != null) {
             this.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
         }

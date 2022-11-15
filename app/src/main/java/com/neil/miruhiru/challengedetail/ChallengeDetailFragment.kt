@@ -120,6 +120,9 @@ class ChallengeDetailFragment : Fragment() {
         viewModel.commentUsers.observe(viewLifecycleOwner, Observer {
             adapter.submitList(viewModel.commentList.value)
             adapter.notifyDataSetChanged()
+            if (adapter.itemCount > 2) {
+                binding.recyclerComment.layoutParams.height = 450
+            }
         })
 
         return binding.root

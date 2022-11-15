@@ -1,10 +1,7 @@
 package com.neil.miruhiru.challengedetail
 
-import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.*
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +10,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Comment
 import com.neil.miruhiru.databinding.ItemChallengeCommentBinding
-import timber.log.Timber
 
 
 class CommentAdapter(
@@ -22,7 +18,6 @@ class CommentAdapter(
 ): ListAdapter<Comment, CommentAdapter.ViewHolder>(DiffCallBack()) {
 
     private val viewModel = viewModel
-    private lateinit var mRecyclerView: RecyclerView
 
     inner class ViewHolder(private val binding: ItemChallengeCommentBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -46,16 +41,7 @@ class CommentAdapter(
             binding.reportIcon.setOnClickListener {
                 onClick(adapterPosition)
             }
-
-            if (adapterPosition > 2) {
-                mRecyclerView.layoutParams.height = 174
-            }
         }
-    }
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        mRecyclerView = recyclerView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentAdapter.ViewHolder {

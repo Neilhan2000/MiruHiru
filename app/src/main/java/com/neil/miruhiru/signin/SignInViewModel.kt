@@ -1,5 +1,7 @@
 package com.neil.miruhiru.signin
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,15 +14,18 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.MainActivity
+import com.neil.miruhiru.MiruHiruApplication
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.User
 import timber.log.Timber
 
-class SignInViewModel : ViewModel() {
+class SignInViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
         private const val GOOGLE_SIGN_IN_CODE = 3
     }
+
+    private val viewModelApplication = application
 
     private val _navigateToExploreFragment = MutableLiveData<Boolean>()
     val navigateToExploreFragment: LiveData<Boolean>
@@ -31,7 +36,7 @@ class SignInViewModel : ViewModel() {
         .build()
 
     private val googleSignInClient = GoogleSignIn.getClient(
-        MainActivity.getInstanceFromMainActivity(), googleSignInOptions)
+        viewModelApplication, googleSignInOptions)
 
     fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
