@@ -5,24 +5,37 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.neil.miruhiru.R
-import com.neil.miruhiru.customdetail.item.CustomViewModel
-import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.customdetail.item.BottomSheetViewModel
+import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentCustomBottomSheetBinding
 import timber.log.Timber
 
 class CustomBottomSheetFragment : BottomSheetDialogFragment() {
 
-    private val viewModel: CustomViewModel by lazy {
-        ViewModelProvider(this).get(CustomViewModel::class.java)
+    private val viewModel: BottomSheetViewModel by lazy {
+        ViewModelProvider(this).get(BottomSheetViewModel::class.java)
     }
     private lateinit var binding: FragmentCustomBottomSheetBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
+
+        setFragmentResultListener("bottomSheet") { requestKey, bundle ->
+            // any type that can be put in a Bundle is supported
+            val result = bundle.getParcelable<Task>("task")
+            Timber.i("result $result")
+            if (result != null) {
+                viewModel.task = result
+
+            }
+        }
     }
 
 
@@ -52,7 +65,9 @@ class CustomBottomSheetFragment : BottomSheetDialogFragment() {
                 binding.editBackButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
                 currentItem ++
                 binding.editNextButton.setOnClickListener {
-                    // post task
+                    // pass task to CustomDetailFragment
+                    val result = viewModel.task
+                    setFragmentResult("customDetail", bundleOf("task" to result))
                     this.dismiss()
                 }
             }

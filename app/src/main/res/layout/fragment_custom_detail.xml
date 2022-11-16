@@ -74,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/grey"
                 android:enabled="false"
-                android:text="取消"
+                android:text="刪除"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 mapbox:layout_constraintBottom_toBottomOf="parent"

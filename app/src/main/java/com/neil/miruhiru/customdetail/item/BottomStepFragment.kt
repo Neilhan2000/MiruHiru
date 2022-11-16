@@ -7,14 +7,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
 import com.neil.miruhiru.customdetail.BottomSheetTypeFilter
 import com.neil.miruhiru.databinding.*
-import com.neil.miruhiru.log.LogDialogFragment
 
 
-class BottomStepFragment(private val step: BottomSheetTypeFilter, private val viewModel: CustomViewModel) : Fragment() {
+class BottomStepFragment(private val step: BottomSheetTypeFilter, private val viewModel: BottomSheetViewModel) : Fragment() {
 
     companion object {
         private const val GALLERY_CODE = 1
@@ -25,7 +24,7 @@ class BottomStepFragment(private val step: BottomSheetTypeFilter, private val vi
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GALLERY_CODE && resultCode == Activity.RESULT_OK) {
-            (binding as FragmentBottomStepBinding).uploadedChallengeImage.setImageURI(data?.data)
+            (binding as FragmentBottomStepBinding).uploadedTaskImage.setImageURI(data?.data)
             data?.data?.let { viewModel.setTaskImage(it) }
         }
     }
@@ -40,13 +39,20 @@ class BottomStepFragment(private val step: BottomSheetTypeFilter, private val vi
                 binding = FragmentBottomStepBinding.inflate(inflater, container, false)
                 val step1Binding = binding as FragmentBottomStepBinding
 
-                step1Binding.editTextChallengeName.addTextChangedListener {
+                // set bottom sheet content
+                step1Binding.uploadedTaskImage.setImageURI(viewModel.task.image.toUri())
+                step1Binding.editTextTaskName.setText(viewModel.task.name)
+                step1Binding.editTextIntroduction.setText(viewModel.task.introduction)
+
+
+                // listener
+                step1Binding.editTextTaskName.addTextChangedListener {
                     viewModel.setTaskName(it.toString())
                 }
                 step1Binding.editTextIntroduction.addTextChangedListener {
                     viewModel.setTaskIntroduction(it.toString())
                 }
-                step1Binding.uploadedChallengeImage.setOnClickListener {
+                step1Binding.uploadedTaskImage.setOnClickListener {
                     viewModel.selectImage(this)
                 }
 
@@ -57,6 +63,12 @@ class BottomStepFragment(private val step: BottomSheetTypeFilter, private val vi
                 binding =  FragmentBottomStep2Binding.inflate(inflater, container, false)
                 val step2Binding = binding as FragmentBottomStep2Binding
 
+                // set bottom sheet content
+                step2Binding.editTextGuide.setText(viewModel.task.guide)
+                step2Binding.editTextQuestion.setText(viewModel.task.question)
+                step2Binding.editTextAns.setText(viewModel.task.answer)
+
+                // listener
                 step2Binding.editTextGuide.addTextChangedListener {
                     viewModel.setTaskGuide(it.toString())
                 }

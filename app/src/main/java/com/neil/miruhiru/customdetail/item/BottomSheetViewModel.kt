@@ -10,7 +10,7 @@ import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.log.LogDialogFragment
 
-class CustomViewModel : ViewModel() {
+class BottomSheetViewModel : ViewModel() {
 
     companion object {
         private const val GALLERY_CODE = 1
@@ -19,10 +19,6 @@ class CustomViewModel : ViewModel() {
     val challenge = Challenge()
 
     var task = Task()
-
-    fun setTaskLocation(point: Point) {
-        task.location = GeoPoint(point.latitude(), point.longitude())
-    }
 
     fun setTaskName(name: String) {
         task.name = name
@@ -53,9 +49,6 @@ class CustomViewModel : ViewModel() {
         fragment.startActivityForResult(Intent.createChooser(intent,"gallery"), GALLERY_CODE)
     }
 
-    fun deleteTask() {
-        task = Task()
-    }
 
 
 

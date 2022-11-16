@@ -13,9 +13,11 @@ import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
@@ -24,20 +26,38 @@ import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
-import com.neil.miruhiru.customdetail.item.CustomViewModel
+import com.neil.miruhiru.customdetail.item.BottomSheetViewModel
 import com.neil.miruhiru.data.ParcelableGeoPoint
+import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentCustomDetailBinding
 import timber.log.Timber
 
 class CustomDetailFragment : Fragment() {
 
-
     private lateinit var mapView: MapView
     private lateinit var pointAnnotationManager: PointAnnotationManager
     private lateinit var mapBoxMap: MapboxMap
     private lateinit var binding: FragmentCustomDetailBinding
-    private val viewModel: CustomViewModel by lazy {
-        ViewModelProvider(this).get(CustomViewModel::class.java)
+    private val viewModel: CustomDetailViewModel by lazy {
+        ViewModelProvider(this).get(CustomDetailViewModel::class.java)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setFragmentResultListener("customDetail") { requestKey, bundle ->
+            val result = bundle.getParcelable<Task>("task")
+            Timber.i("result $result")
+            if (result != null) {
+                viewModel.task = result
+
+                if (viewModel.isInputValid()) {
+                    binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                } else {
+                    binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
+                }
+            }
+        }
     }
 
 
@@ -56,19 +76,24 @@ class CustomDetailFragment : Fragment() {
             addAnnotationToMap(point)
             changeButtonStatus()
             viewModel.setTaskLocation(point)
-            val geopoint = ParcelableGeoPoint
             false
         }
 
         binding.editButton.setOnClickListener {
+            val result = viewModel.task
+            // pass data to BottomSheetFragment
+            setFragmentResult("bottomSheet", bundleOf("task" to result))
             this.findNavController().navigate(NavGraphDirections.actionGlobalCustomBottomSheetFragment())
         }
         binding.editCancelButton.setOnClickListener {
             pointAnnotationManager.deleteAll()
             changeButtonStatus()
+            viewModel.deleteTask()
         }
         binding.nextButton.setOnClickListener {
-            Timber.i("task = ${viewModel.task}")
+            if (viewModel.isInputValid()) {
+//            viewModel.postTask()
+            }
         }
 
 

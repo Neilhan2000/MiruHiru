@@ -2,6 +2,7 @@ package com.neil.miruhiru.data
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
@@ -53,5 +54,6 @@ data class Challenge(
     var totalRating: Float? = null,
     var type: String? = null,
     var completedList: List<String>? = null,
-    var commentQuantity: Long? = null
+    var commentQuantity: Long? = null,
+    var createdTime: Timestamp? = null
 ) : Parcelable
