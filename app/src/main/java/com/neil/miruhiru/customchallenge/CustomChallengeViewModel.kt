@@ -30,6 +30,7 @@ class CustomChallengeViewModel(application: Application) : AndroidViewModel(appl
     }
 
     val challenge = Challenge(stage = 1, timeSpent = 0)
+    var customChallengeId = getRandomString()
 
     private val viewModelApplication = application
     private val _navigateToCustomDetailFragment = MutableLiveData<Boolean>()
@@ -42,7 +43,7 @@ class CustomChallengeViewModel(application: Application) : AndroidViewModel(appl
             "commentQuantity" to 0,
             "completedList" to listOf<String>(),
             "description" to challenge.description,
-            "id" to getRandomString(),
+            "id" to customChallengeId,
             "image" to "",
             "isUpload" to false,
             "likeList" to listOf<String>(),

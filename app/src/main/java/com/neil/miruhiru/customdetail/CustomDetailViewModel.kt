@@ -29,8 +29,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
     private val viewModelApplication = application
     var task = Task()
-    val customChallengeId = ""
-    val taskStage = 0
+    var customChallengeId = ""
 
     fun setTaskLocation(point: Point) {
         task.location = GeoPoint(point.latitude(), point.longitude())
@@ -49,11 +48,11 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
             "image" to "",
             "introduction" to task.introduction,
             "question" to task.question,
-            "stage" to taskStage,
+            "stage" to UserManager.customCurrentStage,
             "name" to task.name
         )
 
-        // post task content (excluding image) to user custom challenge
+        // post task content to user custom challenge
         val db = Firebase.firestore
 
         db.collection("users").whereEqualTo("id", UserManager.userId)
@@ -68,18 +67,8 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                         val customChallengeDocumentId = it.documents[0].id
 
                         db.collection("users").document(userDocumentId).collection("customChallenges")
-                            .document(customChallengeDocumentId).collection("tasks").whereEqualTo("stage", taskStage)
-                            .get()
-                            .addOnSuccessListener {
-                                val taskDocumentId = it.documents[0].id
-
-                                db.collection("users").document(userDocumentId).collection("customChallenges")
-                                    .document(customChallengeDocumentId).collection("tasks").document(taskDocumentId)
-                                    .set(customTask)
-                                    .addOnSuccessListener {
-                                        storeAndPostTaskImage()
-                                    }
-                            }
+                            .document(customChallengeDocumentId).collection("tasks")
+                            .add(customTask)
 
                         // add challenge location
                         if (UserManager.currentStage == 1) {
@@ -88,6 +77,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                 .update("location", task.location)
                         }
                     }
+
             }
 
     }
@@ -131,7 +121,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                         val customChallengeDocumentId = it.documents[0].id
 
                         db.collection("users").document(userDocumentId).collection("customChallenges")
-                            .document(customChallengeDocumentId).collection("tasks").whereEqualTo("stage", taskStage)
+                            .document(customChallengeDocumentId).collection("tasks").whereEqualTo("stage", UserManager.customCurrentStage)
                             .get()
                             .addOnSuccessListener {
                                 val taskDocumentId = it.documents[0].id
@@ -189,7 +179,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                 val userDocumentId = it.documents[0].id
 
                 db.collection("users").document(userDocumentId).collection("customChallenges")
-                    .whereEqualTo("id", UserManager.unFinishEditingId)
+                    .whereEqualTo("id", customChallengeId)
                     .get()
                     .addOnSuccessListener {
                         val customChallengeDocumentId = it.documents[0].id

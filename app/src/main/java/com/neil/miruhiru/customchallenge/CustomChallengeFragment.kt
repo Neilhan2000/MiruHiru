@@ -102,7 +102,7 @@ class CustomChallengeFragment : Fragment() {
 
         viewModel.navigateToCustomDetailFragment.observe(viewLifecycleOwner, Observer { postChallengeSuccess ->
             if (postChallengeSuccess) {
-                this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment())
+                this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment(viewModel.customChallengeId))
                 viewModel.navigateToCustomDetailFragmentCompleted()
             }
         })

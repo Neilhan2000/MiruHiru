@@ -173,7 +173,11 @@
         android:id="@+id/customDetailFragment"
         android:name="com.neil.miruhiru.customdetail.CustomDetailFragment"
         android:label="fragment_custom_detail"
-        tools:layout="@layout/fragment_custom_detail" />
+        tools:layout="@layout/fragment_custom_detail" >
+        <argument
+            android:name="customChallengeId"
+            app:argType="string" />
+    </fragment>
     <action android:id="@+id/action_global_customDetailFragment" app:destination="@id/customDetailFragment" />
     <dialog
         android:id="@+id/customBottomSheetFragment"

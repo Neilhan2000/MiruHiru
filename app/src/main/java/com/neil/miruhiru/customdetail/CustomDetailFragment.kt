@@ -41,6 +41,7 @@ class CustomDetailFragment : Fragment() {
     private lateinit var pointAnnotationManager: PointAnnotationManager
     private lateinit var mapBoxMap: MapboxMap
     private lateinit var binding: FragmentCustomDetailBinding
+    private lateinit var customChallengeID: String
     private val viewModel: CustomDetailViewModel by lazy {
         ViewModelProvider(this).get(CustomDetailViewModel::class.java)
     }
@@ -73,6 +74,7 @@ class CustomDetailFragment : Fragment() {
         mapBoxMap = mapView.getMapboxMap()
         val annotationApi = mapView.annotations
         pointAnnotationManager = annotationApi.createPointAnnotationManager(mapView)
+        viewModel.customChallengeId = CustomDetailFragmentArgs.fromBundle(requireArguments()).customChallengeId
 
         mapBoxMap.addOnMapClickListener { point ->
             pointAnnotationManager.deleteAll()
@@ -95,13 +97,13 @@ class CustomDetailFragment : Fragment() {
         }
         binding.nextButton.setOnClickListener {
             if (viewModel.isInputValid()) {
-//            viewModel.postTask()
+                viewModel.postTask()
             }
         }
 
         viewModel.navigateToCustomDetailFragment.observe(viewLifecycleOwner, Observer { postTaskSuccess ->
             if (postTaskSuccess) {
-                this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment())
+                this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment(viewModel.customChallengeId))
                 viewModel.navigateToCustomDetailFragmentCompleted()
             }
         })
