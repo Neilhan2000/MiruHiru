@@ -10,12 +10,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.mapbox.geojson.Point
@@ -26,6 +28,7 @@ import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.customdetail.item.BottomSheetViewModel
 import com.neil.miruhiru.data.ParcelableGeoPoint
 import com.neil.miruhiru.data.Task
@@ -93,6 +96,27 @@ class CustomDetailFragment : Fragment() {
         binding.nextButton.setOnClickListener {
             if (viewModel.isInputValid()) {
 //            viewModel.postTask()
+            }
+        }
+
+        viewModel.navigateToCustomDetailFragment.observe(viewLifecycleOwner, Observer { postTaskSuccess ->
+            if (postTaskSuccess) {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment())
+                viewModel.navigateToCustomDetailFragmentCompleted()
+            }
+        })
+
+        // update current stage value(from 0 to total stage),
+        // and determine should we need to load firebase data(only first time and continue unfinished editing)
+        when (UserManager.customCurrentStage) {
+            -1 -> {
+//                viewModel.loadUnfinishedEditing()
+            }
+            UserManager.customTotalStage -> {
+                binding.nextButton.text = "完成"
+            }
+            else -> {
+                UserManager.customCurrentStage = UserManager.customCurrentStage?.plus(1)
             }
         }
 

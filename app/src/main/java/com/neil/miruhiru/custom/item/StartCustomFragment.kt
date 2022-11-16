@@ -21,7 +21,7 @@ class StartCustomFragment : Fragment() {
         val binding = FragmentStartCustomBinding.inflate(inflater, container, false)
 
         binding.startCreateButton.setOnClickListener {
-            this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment())
+            this.findNavController().navigate(NavGraphDirections.actionGlobalCustomChallengeFragment())
         }
 
 

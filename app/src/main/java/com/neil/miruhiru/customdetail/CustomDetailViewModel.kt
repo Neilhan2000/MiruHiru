@@ -9,10 +9,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.mapbox.geojson.Point
 import com.neil.miruhiru.UserManager
+import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Task
 import java.text.SimpleDateFormat
 import java.util.*
@@ -50,8 +53,6 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
             "name" to task.name
         )
 
-
-
         // post task content (excluding image) to user custom challenge
         val db = Firebase.firestore
 
@@ -79,8 +80,16 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                         storeAndPostTaskImage()
                                     }
                             }
+
+                        // add challenge location
+                        if (UserManager.currentStage == 1) {
+                            db.collection("users").document(userDocumentId).collection("customChallenges")
+                                .document(customChallengeDocumentId)
+                                .update("location", task.location)
+                        }
                     }
             }
+
     }
 
     // post task image
@@ -104,8 +113,6 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                 .addOnFailureListener {
                     Toast.makeText(viewModelApplication, "上傳失敗，原因:${it.message}", Toast.LENGTH_SHORT).show()
                 }
-        } else {
-            _navigateToCustomDetailFragment.value = true
         }
     }
 
@@ -144,7 +151,10 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
 
     fun isInputValid(): Boolean {
-        if (task.image.isEmpty()) {
+        if (task.location.latitude == 0.0) {
+            Toast.makeText(viewModelApplication, "還未選擇關卡地點歐", Toast.LENGTH_SHORT).show()
+            return false
+        } else if (task.image.isEmpty()) {
             Toast.makeText(viewModelApplication, "還未上傳關卡相片歐", Toast.LENGTH_SHORT).show()
             return false
         } else if (task.name.isEmpty()) {
@@ -168,4 +178,33 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
         }
         return true
     }
+
+
+    fun loadUnfinishedEditing() {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                val userDocumentId = it.documents[0].id
+
+                db.collection("users").document(userDocumentId).collection("customChallenges")
+                    .whereEqualTo("id", UserManager.unFinishEditingId)
+                    .get()
+                    .addOnSuccessListener {
+                        val customChallengeDocumentId = it.documents[0].id
+                        val challenge = it.documents[0].toObject<Challenge>()
+                        UserManager.customTotalStage = challenge?.stage
+
+                        db.collection("users").document(userDocumentId).collection("customChallenges")
+                            .document(customChallengeDocumentId).collection("tasks")
+                            .get()
+                            .addOnSuccessListener {
+                                UserManager.customCurrentStage = it.documents.size + 1
+                            }
+                    }
+
+            }
+    }
+
 }

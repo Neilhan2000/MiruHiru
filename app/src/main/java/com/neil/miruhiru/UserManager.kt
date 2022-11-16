@@ -17,6 +17,8 @@ object UserManager {
     private const val USER_ID = "user_token"
     private const val USER_CHALLENGE_ID = "user_challenge_id"
     private const val CURRENT_STAGE= "current_stage"
+    private const val CUSTOM_CURRENT_STAGE = "custom_current_stage"
+    private const val CUSTOM_TOTAL_STAGE = "custom_total_stage"
 
 
 
@@ -97,6 +99,55 @@ object UserManager {
                 }
             }
         }
+
+    // For Custom Fragment(record current task stage and total stage)
+    var unFinishEditingId = ""
+
+    var customCurrentStage: Int? = null
+        get() = MiruHiruApplication.instance
+            .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE)
+            .getInt(CUSTOM_CURRENT_STAGE, -1)
+        set(value) {
+            field = when (value) {
+                null -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .remove(CUSTOM_CURRENT_STAGE)
+                        .apply()
+                    null
+                }
+                else -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .putInt(CUSTOM_CURRENT_STAGE, value)
+                        .apply()
+                    value
+                }
+            }
+        }
+    var customTotalStage: Int? = null
+        get() = MiruHiruApplication.instance
+            .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE)
+            .getInt(CUSTOM_TOTAL_STAGE, -1)
+        set(value) {
+            field = when (value) {
+                null -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .remove(CUSTOM_TOTAL_STAGE)
+                        .apply()
+                    null
+                }
+                else -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .putInt(CUSTOM_TOTAL_STAGE, value)
+                        .apply()
+                    value
+                }
+            }
+        }
+
 
     /**
      * It can be use to check login status directly

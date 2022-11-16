@@ -180,4 +180,9 @@
         android:name="com.neil.miruhiru.customdetail.CustomBottomSheetFragment"
         android:label="fragment_custom_bottom_sheet"
         tools:layout="@layout/fragment_custom_bottom_sheet" /><action android:id="@+id/action_global_customBottomSheetFragment" app:destination="@id/customBottomSheetFragment"/>
+    <fragment
+        android:id="@+id/customChallengeFragment"
+        android:name="com.neil.miruhiru.customchallenge.CustomChallengeFragment"
+        android:label="fragment_custom_challenge"
+        tools:layout="@layout/fragment_custom_challenge" /><action android:id="@+id/action_global_customChallengeFragment" app:destination="@id/customChallengeFragment"/>
 </navigation>
