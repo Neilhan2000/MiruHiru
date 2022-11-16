@@ -15,15 +15,30 @@
             android:layout_width="0dp"
             android:layout_height="200dp"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/edit_text_border_log"
             android:gravity="center"
             android:text="點擊上傳挑戰封面"
             android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/ChallnegeNextButton"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/chipGroup" />
+
+        <TextView
+            android:id="@+id/imageBorder2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/edit_text_border_log"
+            android:gravity="center"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/stageNumberPicker"
+            app:layout_constraintEnd_toEndOf="@+id/StageNumberText"
+            app:layout_constraintStart_toStartOf="@+id/StageNumberText"
+            app:layout_constraintTop_toTopOf="@+id/stageNumberPicker" />
 
         <ImageView
             android:id="@+id/uploadedChallengeImage"
@@ -37,9 +52,10 @@
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/imageBorder"
             app:layout_constraintEnd_toEndOf="@+id/imageBorder"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/imageBorder"
             app:layout_constraintTop_toTopOf="@+id/imageBorder"
+            app:layout_constraintVertical_bias="0.0"
             tools:srcCompat="@null" />
 
         <EditText
@@ -49,13 +65,15 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
+            android:background="@drawable/edit_text_border"
             android:ems="10"
-            android:gravity="start|top"
+            android:gravity="center"
             android:hint="輸入挑戰標題"
             android:inputType="textMultiLine"
+            android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageBorder" />
+            app:layout_constraintTop_toBottomOf="@+id/challengeNameText" />
 
         <EditText
             android:id="@+id/editTextChallengeDescription"
@@ -64,26 +82,52 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
+            android:background="@drawable/edit_text_border"
             android:ems="10"
-            android:gravity="bottom|start"
+            android:gravity="center"
             android:hint="輸入挑戰描述"
             android:inputType="textMultiLine"
+            android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextChallengeName" />
+            app:layout_constraintTop_toBottomOf="@+id/challengeDescriptionText" />
 
         <TextView
             android:id="@+id/StageNumberText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:text="選擇關卡數量"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextChallengeDescription" />
+
+        <TextView
+            android:id="@+id/challengeNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="設定挑戰標題"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/challengeDescriptionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="設定挑戰描述"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextChallengeName" />
 
         <NumberPicker
             android:id="@+id/stageNumberPicker"
@@ -116,12 +160,12 @@
             android:id="@+id/ChallengeTimeSpentText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
             android:text="輸入挑戰花費時間"
             android:textColor="@color/black"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@+id/minuteNumberPicker"
-            app:layout_constraintStart_toStartOf="@+id/hourNumberPicker"
+            app:layout_constraintStart_toEndOf="@+id/StageNumberText"
             app:layout_constraintTop_toBottomOf="@+id/editTextChallengeDescription" />
 
         <TextView
@@ -137,44 +181,74 @@
             app:layout_constraintTop_toBottomOf="@+id/stageNumberPicker" />
 
         <com.google.android.material.chip.ChipGroup
-            android:layout_width="338dp"
+            android:id="@+id/chipGroup"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/ChallnegeNextButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/challengeTagText">
+            app:layout_constraintTop_toBottomOf="@+id/challengeTagText"
+            app:singleSelection="true">
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/foodTag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="美食" />
+                android:checkable="true"
+                android:tag="美食"
+                android:text="美食"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/bg_food_chip_state"
+                app:chipEndPadding="10dp"
+                app:chipStartPadding="10dp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/historyTag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="歷史" />
+                android:checkable="true"
+                android:tag="歷史"
+                android:text="歷史"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/bg_history_chip_state"
+                app:chipEndPadding="10dp"
+                app:chipStartPadding="10dp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/coupleTag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="情侶" />
+                android:checkable="true"
+                android:tag="情侶"
+                android:text="情侶"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/bg_couple_chip_state"
+                app:chipEndPadding="10dp"
+                app:chipStartPadding="10dp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/travelTag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="旅遊" />
+                android:checkable="true"
+                android:tag="旅遊"
+                android:text="旅遊"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/bg_travel_chip_state"
+                app:chipEndPadding="10dp"
+                app:chipStartPadding="10dp" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/specalTag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="特殊" />
+                android:checkable="true"
+                android:tag="特殊"
+                android:text="特殊"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/bg_special_chip_state"
+                app:chipEndPadding="10dp"
+                app:chipStartPadding="10dp" />
         </com.google.android.material.chip.ChipGroup>
 
         <Button
@@ -195,7 +269,7 @@
             android:id="@+id/minuteText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="24dp"
             android:text="分鐘"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/minuteNumberPicker"

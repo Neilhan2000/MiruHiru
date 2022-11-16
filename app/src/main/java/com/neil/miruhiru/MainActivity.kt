@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         setupBottomNav()
 
         // login
-        userLogin("user1")
+        userLogin()
 
         // Timber
         if (BuildConfig.DEBUG) {
@@ -88,10 +88,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun userLogin(userId: String) {
-        UserManager.userId = userId
+    private fun userLogin() {
         UserManager.getUser()
-
         // check if has uncompleted event
         UserManager.hasCurrentEvent.observe(this, Observer { event ->
             if (event.progress.size == 1) {
