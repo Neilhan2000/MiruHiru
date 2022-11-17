@@ -40,7 +40,6 @@ class CustomDetailFragment : Fragment() {
     private lateinit var pointAnnotationManager: PointAnnotationManager
     private lateinit var mapBoxMap: MapboxMap
     private lateinit var binding: FragmentCustomDetailBinding
-    private lateinit var customChallengeID: String
     private val viewModel: CustomDetailViewModel by lazy {
         ViewModelProvider(this).get(CustomDetailViewModel::class.java)
     }
@@ -109,8 +108,7 @@ class CustomDetailFragment : Fragment() {
 
         viewModel.navigateToOverviewFragment.observe(viewLifecycleOwner, Observer { postLastTaskSuccess ->
             if (postLastTaskSuccess) {
-                this.findNavController()
-                Toast.makeText(requireContext(), "to over view page", Toast.LENGTH_SHORT).show()
+                this.findNavController().navigate(NavGraphDirections.actionGlobalOverviewFragment(viewModel.customChallengeId))
                 viewModel.navigateToOverviewFragmentCompleted()
             }
         })

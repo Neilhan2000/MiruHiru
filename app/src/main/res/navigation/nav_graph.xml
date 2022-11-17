@@ -189,4 +189,14 @@
         android:name="com.neil.miruhiru.customchallenge.CustomChallengeFragment"
         android:label="fragment_custom_challenge"
         tools:layout="@layout/fragment_custom_challenge" /><action android:id="@+id/action_global_customChallengeFragment" app:destination="@id/customChallengeFragment"/>
+    <fragment
+        android:id="@+id/overviewFragment"
+        android:name="com.neil.miruhiru.overview.OverviewFragment"
+        android:label="fragment_overview"
+        tools:layout="@layout/fragment_overview" >
+        <argument
+            android:name="customChallengeId"
+            app:argType="string" />
+    </fragment>
+    <action android:id="@+id/action_global_overviewFragment" app:destination="@id/overviewFragment" />
 </navigation>

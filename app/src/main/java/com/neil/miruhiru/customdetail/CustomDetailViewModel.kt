@@ -16,6 +16,7 @@ import com.mapbox.geojson.Point
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Task
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -78,8 +79,10 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                             .add(customTask)
                             .addOnSuccessListener { storeAndPostTaskImage() }
 
+                        Timber.i("post task first ${UserManager.customCurrentStage}")
+
                         // add challenge location
-                        if (UserManager.currentStage == 1) {
+                        if (UserManager.customCurrentStage == 1 || UserManager.customTotalStage == -1) {
                             db.collection("users").document(userDocumentId).collection("customChallenges")
                                 .document(customChallengeDocumentId)
                                 .update("location", task.location)
