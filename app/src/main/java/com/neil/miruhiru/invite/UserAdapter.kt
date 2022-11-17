@@ -12,7 +12,7 @@ import com.neil.miruhiru.data.User
 import com.neil.miruhiru.databinding.ItemInviteUserBinding
 
 
-class UserAdapter: ListAdapter<User, UserAdapter.ViewHolder>(DiffCallBack()) {
+class UserAdapter : ListAdapter<User, UserAdapter.ViewHolder>(DiffCallBack()) {
 
 
     inner class ViewHolder(private val binding: ItemInviteUserBinding) :

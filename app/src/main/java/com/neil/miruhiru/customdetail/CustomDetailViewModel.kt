@@ -82,7 +82,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                         Timber.i("post task first ${UserManager.customCurrentStage}")
 
                         // add challenge location
-                        if (UserManager.customCurrentStage == 1 || UserManager.customTotalStage == -1) {
+                        if (UserManager.customCurrentStage == 1) {
                             db.collection("users").document(userDocumentId).collection("customChallenges")
                                 .document(customChallengeDocumentId)
                                 .update("location", task.location)
@@ -140,6 +140,8 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                     .update("image", uri)
                                     .addOnSuccessListener {
                                         if (isLastStage.value == true) {
+                                            UserManager.customCurrentStage = null
+                                            UserManager.customTotalStage = null
                                             _navigateToOverviewFragment.value = true
                                         } else {
                                             _navigateToCustomDetailFragment.value = true

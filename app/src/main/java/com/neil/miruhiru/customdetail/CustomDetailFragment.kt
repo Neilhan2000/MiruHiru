@@ -135,8 +135,6 @@ class CustomDetailFragment : Fragment() {
         viewModel.isLastStage.observe(viewLifecycleOwner, Observer { isLastStage ->
             if (isLastStage) {
                 binding.nextButton.text = "完成"
-                UserManager.customCurrentStage = null
-                UserManager.customTotalStage = null
                 Timber.i("is last stage -> current stage ${UserManager.customCurrentStage}, total stage ${UserManager.customTotalStage}")
             }
         })

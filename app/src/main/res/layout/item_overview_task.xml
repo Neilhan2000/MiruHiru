@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/customLocationIcon"
-        android:layout_width="28dp"
+        android:layout_width="25dp"
         android:layout_height="28dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -17,14 +17,24 @@
 
     <View
         android:id="@+id/redLineView"
-        android:layout_width="4dp"
+        android:layout_width="2dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:background="@android:color/holo_red_light"
         app:layout_constraintBottom_toBottomOf="@+id/overviewImageBorder"
         app:layout_constraintEnd_toEndOf="@+id/customLocationIcon"
         app:layout_constraintStart_toStartOf="@+id/customLocationIcon"
         app:layout_constraintTop_toBottomOf="@+id/customLocationIcon" />
+
+    <View
+        android:id="@+id/customTaskBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/overviewTaskBorder"
+        app:layout_constraintEnd_toEndOf="@+id/overviewTaskBorder"
+        app:layout_constraintStart_toStartOf="@+id/overviewTaskBorder"
+        app:layout_constraintTop_toTopOf="@+id/overviewTaskBorder" />
 
     <ImageView
         android:id="@+id/overviewTaskImage"
@@ -45,8 +55,10 @@
         android:id="@+id/overviewImageBorder"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/edit_text_border_log"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/customLocationIcon"
         app:layout_constraintTop_toTopOf="@+id/customLocationIcon" />
 
@@ -54,7 +66,7 @@
         android:id="@+id/overviewTaskBorder"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/edit_text_border_log"
         app:layout_constraintBottom_toBottomOf="@+id/overviewImageBorder"
@@ -78,18 +90,18 @@
         app:layout_constraintTop_toTopOf="@+id/overviewTaskBorder" />
 
     <TextView
-        android:id="@+id/taskNameText2"
+        android:id="@+id/taskDistanceText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="距離起點??? Ms"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
-        app:layout_constraintStart_toEndOf="@+id/imageView4"
-        app:layout_constraintTop_toTopOf="@+id/imageView4" />
+        app:layout_constraintBottom_toBottomOf="@+id/overviewDistanceIcon"
+        app:layout_constraintStart_toEndOf="@+id/overviewDistanceIcon"
+        app:layout_constraintTop_toTopOf="@+id/overviewDistanceIcon" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/overviewDistanceIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
