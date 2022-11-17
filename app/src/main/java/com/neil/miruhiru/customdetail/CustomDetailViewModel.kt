@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.mapbox.geojson.Point
@@ -27,9 +26,17 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     val navigateToCustomDetailFragment: LiveData<Boolean>
         get() = _navigateToCustomDetailFragment
 
+    private val _navigateToOverviewFragment = MutableLiveData<Boolean>()
+    val navigateToOverviewFragment: LiveData<Boolean>
+        get() = _navigateToOverviewFragment
+
     private val viewModelApplication = application
     var task = Task()
     var customChallengeId = ""
+
+    private val _isLastStage = MutableLiveData<Boolean>()
+    val isLastStage: LiveData<Boolean>
+        get() = _isLastStage
 
     fun setTaskLocation(point: Point) {
         task.location = GeoPoint(point.latitude(), point.longitude())
@@ -69,6 +76,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                         db.collection("users").document(userDocumentId).collection("customChallenges")
                             .document(customChallengeDocumentId).collection("tasks")
                             .add(customTask)
+                            .addOnSuccessListener { storeAndPostTaskImage() }
 
                         // add challenge location
                         if (UserManager.currentStage == 1) {
@@ -100,9 +108,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                         postTaskImage(it)
                     }
                 }
-                .addOnFailureListener {
-                    Toast.makeText(viewModelApplication, "上傳失敗，原因:${it.message}", Toast.LENGTH_SHORT).show()
-                }
+
         }
     }
 
@@ -129,7 +135,13 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                 db.collection("users").document(userDocumentId).collection("customChallenges")
                                     .document(customChallengeDocumentId).collection("tasks").document(taskDocumentId)
                                     .update("image", uri)
-                                    .addOnSuccessListener { _navigateToCustomDetailFragment.value = true }
+                                    .addOnSuccessListener {
+                                        if (isLastStage.value == true) {
+                                            _navigateToOverviewFragment.value = true
+                                        } else {
+                                            _navigateToCustomDetailFragment.value = true
+                                        }
+                                    }
                             }
                     }
             }
@@ -137,6 +149,10 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
     fun navigateToCustomDetailFragmentCompleted() {
         _navigateToCustomDetailFragment.value = false
+    }
+
+    fun navigateToOverviewFragmentCompleted() {
+        _navigateToOverviewFragment.value = false
     }
 
 
@@ -170,7 +186,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     }
 
 
-    fun loadUnfinishedEditing() {
+    fun loadFirstOrUnfinishedEditing() {
         val db = Firebase.firestore
 
         db.collection("users").whereEqualTo("id", UserManager.userId)
@@ -191,10 +207,15 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                             .get()
                             .addOnSuccessListener {
                                 UserManager.customCurrentStage = it.documents.size + 1
+                                if (challenge?.stage == 1) { _isLastStage.value = true }
                             }
                     }
 
             }
+    }
+
+    fun setLastStage() {
+        _isLastStage.value = true
     }
 
 }

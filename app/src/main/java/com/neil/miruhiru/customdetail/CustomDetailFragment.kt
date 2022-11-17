@@ -29,10 +29,9 @@ import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
-import com.neil.miruhiru.customdetail.item.BottomSheetViewModel
-import com.neil.miruhiru.data.ParcelableGeoPoint
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentCustomDetailBinding
+import kotlinx.coroutines.*
 import timber.log.Timber
 
 class CustomDetailFragment : Fragment() {
@@ -108,20 +107,41 @@ class CustomDetailFragment : Fragment() {
             }
         })
 
-        // update current stage value(from 0 to total stage),
+        viewModel.navigateToOverviewFragment.observe(viewLifecycleOwner, Observer { postLastTaskSuccess ->
+            if (postLastTaskSuccess) {
+                this.findNavController()
+                Toast.makeText(requireContext(), "to over view page", Toast.LENGTH_SHORT).show()
+                viewModel.navigateToOverviewFragmentCompleted()
+            }
+        })
+
+        // update current stage value from 0 to total stage(excluding total 1),
         // and determine should we need to load firebase data(only first time and continue unfinished editing)
         when (UserManager.customCurrentStage) {
             -1 -> {
-//                viewModel.loadUnfinishedEditing()
-            }
-            UserManager.customTotalStage -> {
-                binding.nextButton.text = "完成"
+                viewModel.loadFirstOrUnfinishedEditing()
+                Timber.i("-1 -> current stage ${UserManager.customCurrentStage}, total stage ${UserManager.customTotalStage}")
             }
             else -> {
                 UserManager.customCurrentStage = UserManager.customCurrentStage?.plus(1)
+                Timber.i("else -> current stage ${UserManager.customCurrentStage}, total stage ${UserManager.customTotalStage}")
+
+                if (UserManager.customCurrentStage == UserManager.customTotalStage) {
+                    viewModel.setLastStage()
+                }
             }
         }
 
+
+        // in the editing of last stage, we change the next button content via live data
+        viewModel.isLastStage.observe(viewLifecycleOwner, Observer { isLastStage ->
+            if (isLastStage) {
+                binding.nextButton.text = "完成"
+                UserManager.customCurrentStage = null
+                UserManager.customTotalStage = null
+                Timber.i("is last stage -> current stage ${UserManager.customCurrentStage}, total stage ${UserManager.customTotalStage}")
+            }
+        })
 
         return binding.root
     }
