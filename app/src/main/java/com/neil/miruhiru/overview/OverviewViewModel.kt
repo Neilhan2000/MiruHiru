@@ -21,10 +21,14 @@ class OverviewViewModel : ViewModel() {
     val customTaskList: LiveData<List<Task>>
         get() = _customTaskList
 
+    private val _resetStartButton = MutableLiveData<Boolean>()
+    val resetStartButton: LiveData<Boolean>
+        get() = _resetStartButton
+
     fun loadCustomTasks() {
         val db = Firebase.firestore
 
-        db.collection("users").whereEqualTo("id", "anyaforgergon@gmail.com")
+        db.collection("users").whereEqualTo("id", UserManager.userId)
             .get()
             .addOnSuccessListener {
                 val userDocumentId = it.documents[0].id
@@ -50,4 +54,51 @@ class OverviewViewModel : ViewModel() {
             }
     }
 
+    fun updateCustomChallenge() {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                val userDocumentId = it.documents[0].id
+
+                db.collection("users").document(userDocumentId).collection("customChallenges")
+                    .whereEqualTo("id", customChallengeId)
+                    .get()
+                    .addOnSuccessListener {
+                        val customChallengeDocumentId = it.documents[0].id
+
+                        db.collection("users").document(userDocumentId).collection("customChallenges")
+                            .document(customChallengeDocumentId).collection("tasks")
+                            .get()
+                            .addOnSuccessListener { result ->
+                                for (document in result.documents) {
+                                    val remoteTask = document.toObject<Task>()
+                                    _customTaskList.value?.forEach { localTask ->
+                                        if (remoteTask?.id == localTask.id) {
+                                            document.reference.update("stage", localTask.stage)
+                                                .addOnSuccessListener {
+                                                    if (remoteTask.stage == result.documents.size) {
+                                                        _resetStartButton.value = true
+                                                    }
+                                                }
+                                        }
+                                    }
+                                }
+                            }
+                    }
+            }
+    }
+
+    fun resetStartButtonCompleted() {
+        _resetStartButton.value = false
+    }
+
+    fun resetTasksStages(position: Int) {
+        // called in adapter onBind method
+        _customTaskList.value?.let { customTaskList ->
+            customTaskList[position].stage = position + 1
+        }
+        Timber.i("list = ${_customTaskList.value}")
+    }
 }

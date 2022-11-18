@@ -26,6 +26,7 @@ class OverViewAdapter(private val viewModel: OverviewViewModel) : ListAdapter<Ta
             ).into(binding.overviewTaskImage)
             binding.taskNameText.text = item.name
             setDistanceText(item)
+            viewModel.resetTasksStages(adapterPosition)
         }
 
         private fun setDistanceText(item: Task) {

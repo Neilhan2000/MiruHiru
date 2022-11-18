@@ -50,6 +50,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     fun postTask() {
 
         val customTask = hashMapOf(
+            "id" to UserManager.customCurrentStage.toString(),
             "location" to task.location,
             "answer" to task.answer,
             "guide" to task.guide,

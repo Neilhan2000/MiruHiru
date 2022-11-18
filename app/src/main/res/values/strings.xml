@@ -16,4 +16,6 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="sign_in_with_google">Sign In with Google</string>
+    <string name="update">更新</string>
+    <string name="challenge">挑戰</string>
 </resources>
