@@ -81,7 +81,8 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.fragment_profile -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalProfileFragment())
+                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalOverviewFragment("8d4bde98-fc97-48f5-b04d-c1746cffe101"))
+//                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalProfileFragment())
                     return@setOnItemSelectedListener true
                 }
             }

@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentOverviewBinding
+import kotlinx.coroutines.*
 import okhttp3.internal.notifyAll
 import timber.log.Timber
 import java.util.*
@@ -22,6 +24,9 @@ class OverviewFragment : Fragment() {
     private val viewModel: OverviewViewModel by lazy {
         ViewModelProvider(this).get(OverviewViewModel::class.java)
     }
+    private val scope = CoroutineScope(Job() + Dispatchers.Main)
+    private lateinit var job: Job
+    private var jobInitialized = false
     private lateinit var taskAdapter: OverViewAdapter
     private val simpleCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP.or(ItemTouchHelper.DOWN), 0) {
         override fun onMove(
@@ -33,15 +38,24 @@ class OverviewFragment : Fragment() {
             val endPosition = target.adapterPosition
 
             Collections.swap(viewModel.customTaskList.value, startPosition, endPosition)
-            recyclerView.adapter?.notifyItemMoved(startPosition, endPosition)
-            if (endPosition == 0) {
-                recyclerView.adapter?.notifyDataSetChanged()
-            } else {
-                recyclerView.adapter?.notifyItemChanged(startPosition)
-                recyclerView.adapter?.notifyItemChanged(endPosition)
+            recyclerView.itemAnimator = DefaultItemAnimator()
+            if (jobInitialized) {
+                job.cancel()
             }
+            recyclerView.adapter?.notifyItemMoved(startPosition, endPosition)
+            Timber.i("duration ${recyclerView.itemAnimator?.moveDuration}")
 
-
+            recyclerView.adapter?.itemCount?.let { itemCount ->
+                scope.launch {
+                    job = launch {
+                        jobInitialized = true
+                        delay(250)
+                        recyclerView.itemAnimator = null
+                        recyclerView.adapter?.notifyItemRangeChanged(0, itemCount)
+                        this.cancel()
+                    }
+                }
+            }
             return true
         }
 
@@ -61,6 +75,7 @@ class OverviewFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(binding.customTaskRecycler)
         taskAdapter = OverViewAdapter(viewModel)
         binding.customTaskRecycler.adapter = taskAdapter
+//        binding.customTaskRecycler.itemAnimator = null
         viewModel.customTaskList.observe(viewLifecycleOwner, Observer {
             taskAdapter.submitList(it)
         })

@@ -24,7 +24,7 @@ class OverviewViewModel : ViewModel() {
     fun loadCustomTasks() {
         val db = Firebase.firestore
 
-        db.collection("users").whereEqualTo("id", UserManager.userId)
+        db.collection("users").whereEqualTo("id", "anyaforgergon@gmail.com")
             .get()
             .addOnSuccessListener {
                 val userDocumentId = it.documents[0].id
