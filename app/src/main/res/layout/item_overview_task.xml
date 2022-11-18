@@ -71,8 +71,10 @@
         android:background="@drawable/edit_text_border_log"
         app:layout_constraintBottom_toBottomOf="@+id/overviewImageBorder"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/overviewImageBorder"
-        app:layout_constraintTop_toTopOf="@+id/overviewImageBorder" />
+        app:layout_constraintTop_toTopOf="@+id/overviewImageBorder"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/taskNameText"
@@ -94,11 +96,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="距離起點??? Ms"
+        android:text="距離起點 > 1000 Ms"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/overviewDistanceIcon"
         app:layout_constraintStart_toEndOf="@+id/overviewDistanceIcon"
         app:layout_constraintTop_toTopOf="@+id/overviewDistanceIcon" />
+
+    <TextView
+        android:id="@+id/taskStage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="18dp"
+        android:text="5"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/taskDistanceText"
+        app:layout_constraintEnd_toEndOf="@+id/customTaskBackground"
+        app:layout_constraintTop_toTopOf="@+id/taskDistanceText" />
 
     <ImageView
         android:id="@+id/overviewDistanceIcon"
@@ -108,4 +121,14 @@
         app:layout_constraintStart_toStartOf="@+id/taskNameText"
         app:layout_constraintTop_toBottomOf="@+id/taskNameText"
         app:srcCompat="@drawable/ic_baseline_location" />
+
+    <ImageView
+        android:id="@+id/overviewStageIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/taskStage"
+        app:layout_constraintEnd_toStartOf="@+id/taskStage"
+        app:layout_constraintTop_toTopOf="@+id/taskStage"
+        app:srcCompat="@drawable/ic_stage" />
 </androidx.constraintlayout.widget.ConstraintLayout>

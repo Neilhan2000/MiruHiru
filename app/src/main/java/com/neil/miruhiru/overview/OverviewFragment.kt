@@ -5,11 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentOverviewBinding
@@ -75,7 +79,11 @@ class OverviewFragment : Fragment() {
 
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
         itemTouchHelper.attachToRecyclerView(binding.customTaskRecycler)
-        taskAdapter = OverViewAdapter(viewModel)
+        taskAdapter = OverViewAdapter(viewModel)  { task ->
+            // send task and navigate to custom detail page
+            setFragmentResult("fromOverview", bundleOf("task" to task))
+            this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment(viewModel.customChallengeId))
+        }
         binding.customTaskRecycler.adapter = taskAdapter
 
         viewModel.customTaskList.observe(viewLifecycleOwner, Observer {

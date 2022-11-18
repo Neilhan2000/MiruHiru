@@ -15,7 +15,8 @@ import com.neil.miruhiru.databinding.ItemOverviewTaskBinding
 import com.neil.miruhiru.invite.UserAdapter
 import kotlin.math.roundToInt
 
-class OverViewAdapter(private val viewModel: OverviewViewModel) : ListAdapter<Task, OverViewAdapter.ViewHolder>(DiffCallBack()) {
+class OverViewAdapter(private val viewModel: OverviewViewModel,
+                      val onClick: (Task) -> Unit) : ListAdapter<Task, OverViewAdapter.ViewHolder>(DiffCallBack()) {
 
 
     inner class ViewHolder(private val binding: ItemOverviewTaskBinding) :
@@ -25,8 +26,12 @@ class OverViewAdapter(private val viewModel: OverviewViewModel) : ListAdapter<Ta
                 RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
             ).into(binding.overviewTaskImage)
             binding.taskNameText.text = item.name
+            binding.taskStage.text = (adapterPosition + 1).toString()
             setDistanceText(item)
             viewModel.resetTasksStages(adapterPosition)
+            itemView.setOnClickListener {
+                onClick(item)
+            }
         }
 
         private fun setDistanceText(item: Task) {
@@ -43,7 +48,12 @@ class OverViewAdapter(private val viewModel: OverviewViewModel) : ListAdapter<Ta
                         destination.latitude, destination.longitude, result
                     )
                 }
-                binding.taskDistanceText.text = "距離起點 ${result[0].roundToInt()} Ms"
+                val distance = result[0].roundToInt()
+                if (distance <= 1000) {
+                    binding.taskDistanceText.text = "距離起點 $distance Ms"
+                } else {
+                    binding.taskDistanceText.text = "距離起點 > 1000 Ms"
+                }
             }
         }
     }

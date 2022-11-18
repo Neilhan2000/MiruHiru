@@ -7,8 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.URLUtil
 import androidx.core.net.toUri
 import androidx.core.widget.addTextChangedListener
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.neil.miruhiru.R
 import com.neil.miruhiru.customdetail.BottomSheetTypeFilter
 import com.neil.miruhiru.databinding.*
 
@@ -40,7 +44,13 @@ class BottomStepFragment(private val step: BottomSheetTypeFilter, private val vi
                 val step1Binding = binding as FragmentBottomStepBinding
 
                 // set bottom sheet content
-                step1Binding.uploadedTaskImage.setImageURI(viewModel.task.image.toUri())
+                if (URLUtil.isValidUrl(viewModel.task.image)) {
+                    Glide.with(step1Binding.uploadedTaskImage.context).load(viewModel.task.image).centerCrop().apply(
+                        RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
+                    ).into(step1Binding.uploadedTaskImage)
+                } else {
+                    step1Binding.uploadedTaskImage.setImageURI(viewModel.task.image.toUri())
+                }
                 step1Binding.editTextTaskName.setText(viewModel.task.name)
                 step1Binding.editTextIntroduction.setText(viewModel.task.introduction)
 

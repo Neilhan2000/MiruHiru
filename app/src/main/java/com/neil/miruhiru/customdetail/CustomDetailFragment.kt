@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
@@ -58,6 +59,27 @@ class CustomDetailFragment : Fragment() {
                 } else {
                     binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
                 }
+            }
+        }
+
+        setFragmentResultListener("fromOverview") { requestKey, bundle ->
+            val result = bundle.getParcelable<Task>("task")
+            Timber.i("result $result")
+            if (result != null) {
+                viewModel.task = result
+                addAnnotationToMap(Point.fromLngLat(result.location.longitude, result.location.latitude))
+                binding.editButton.isEnabled = true
+                binding.editButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                binding.editCancelButton.isEnabled = true
+                binding.editCancelButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+
+                binding.nextButton.text = getString(R.string.update)
+                binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                binding.nextButton.setOnClickListener(null)
+                binding.nextButton.setOnClickListener {
+                    viewModel.updateTask()
+                }
+
             }
         }
     }
@@ -132,8 +154,9 @@ class CustomDetailFragment : Fragment() {
 
 
         // in the editing of last stage, we change the next button content via live data
+        // is not valid url means that the task is come from overview page, so we don't change the next button text to 完成
         viewModel.isLastStage.observe(viewLifecycleOwner, Observer { isLastStage ->
-            if (isLastStage) {
+            if (isLastStage && !URLUtil.isValidUrl(viewModel.task.image)) {
                 binding.nextButton.text = "完成"
                 Timber.i("is last stage -> current stage ${UserManager.customCurrentStage}, total stage ${UserManager.customTotalStage}")
             }

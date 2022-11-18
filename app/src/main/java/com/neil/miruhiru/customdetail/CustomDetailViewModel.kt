@@ -214,6 +214,11 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                             .addOnSuccessListener {
                                 UserManager.customCurrentStage = it.documents.size + 1
                                 if (challenge?.stage == 1) { _isLastStage.value = true }
+
+                                // load unfinished editing data
+                                if (it.documents.isNotEmpty()) {
+
+                                }
                             }
                     }
 
@@ -222,6 +227,11 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
     fun setLastStage() {
         _isLastStage.value = true
+    }
+
+    fun updateTask() {
+        UserManager.customCurrentStage = null
+        UserManager.customTotalStage = null
     }
 
 }
