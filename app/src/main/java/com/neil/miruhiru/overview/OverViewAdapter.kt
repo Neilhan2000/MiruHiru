@@ -26,9 +26,9 @@ class OverViewAdapter(private val viewModel: OverviewViewModel,
                 RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
             ).into(binding.overviewTaskImage)
             binding.taskNameText.text = item.name
-            binding.taskStage.text = (adapterPosition + 1).toString()
             setDistanceText(item)
             viewModel.resetTasksStages(adapterPosition)
+            binding.taskStage.text = item.stage.toString()
             itemView.setOnClickListener {
                 onClick(item)
             }

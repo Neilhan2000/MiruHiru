@@ -67,6 +67,7 @@ class CustomDetailFragment : Fragment() {
             Timber.i("result $result")
             if (result != null) {
                 viewModel.task = result
+                viewModel.orginalUrl = result.image
                 addAnnotationToMap(Point.fromLngLat(result.location.longitude, result.location.latitude))
                 binding.editButton.isEnabled = true
                 binding.editButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
@@ -79,7 +80,6 @@ class CustomDetailFragment : Fragment() {
                 binding.nextButton.setOnClickListener {
                     viewModel.updateTask()
                 }
-
             }
         }
     }
