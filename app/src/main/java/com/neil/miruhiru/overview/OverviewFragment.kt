@@ -98,6 +98,11 @@ class OverviewFragment : Fragment() {
             }
         })
 
+        binding.startCustomButton.setOnClickListener {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(viewModel.customChallengeId))
+        }
+
+
 
         return binding.root
     }
@@ -120,6 +125,7 @@ class OverviewFragment : Fragment() {
         binding.startCustomButton.setOnClickListener(null)
         binding.startCustomButton.setOnClickListener {
             // navigate to challenge detail
+            this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(viewModel.customChallengeId))
         }
     }
 }

@@ -46,13 +46,10 @@ class ChallengeTypeViewModel() : ViewModel() {
         db.collection("events")
             .add(event)
             .addOnSuccessListener { documentReference ->
-                Timber.i("DocumentSnapshot added with ID: %s", documentReference.id)
+
                 eventDocumentId = documentReference.id
                 addMainUserToEvent()
                 updateUserCurrentEvent(eventId, type)
-            }
-            .addOnFailureListener { e ->
-                Timber.i(e, "Error adding document")
             }
     }
 
@@ -118,9 +115,6 @@ class ChallengeTypeViewModel() : ViewModel() {
                     Timber.i("get user $user")
                     _navigateToTaskFragment.value = type
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
             }
     }
 
@@ -194,14 +188,31 @@ class ChallengeTypeViewModel() : ViewModel() {
                     .get()
                     .addOnSuccessListener { result->
                         val event = result.toObject<Event>()
-                        challengeId = event?.challengeId ?: ""
+                        event?.challengeId?.let { challengeId = it }
 
-                        db.collection("challenges").whereEqualTo("id", challengeId)
-                            .get().addOnSuccessListener { result ->
-                                challengeDocumentId = result.documents[0].id
-                                UserManager.userChallengeDocumentId = challengeDocumentId
-                                getUser(type)
-                            }
+                        if (UserManager.isPersonal == false) {
+                            db.collection("challenges").whereEqualTo("id", challengeId)
+                                .get().addOnSuccessListener { result ->
+                                    challengeDocumentId = result.documents[0].id
+                                    UserManager.userChallengeDocumentId = challengeDocumentId
+                                    getUser(type)
+                                }
+                        } else {
+                            db.collection("users").whereEqualTo("id", UserManager.userId)
+                                .get()
+                                .addOnSuccessListener {
+                                    val userDocumentId = it.documents[0].id
+
+                                    db.collection("users").document(userDocumentId).collection("customChallenges")
+                                        .whereEqualTo("id", challengeId)
+                                        .get()
+                                        .addOnSuccessListener {
+                                            val customDocumentId = it.documents[0].id
+                                            UserManager.userChallengeDocumentId = customDocumentId
+                                            getUser(type)
+                                        }
+                                }
+                        }
                     }
             }
     }

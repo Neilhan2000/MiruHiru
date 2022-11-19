@@ -10,6 +10,7 @@ import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.mapbox.geojson.Point
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.*
@@ -18,10 +19,6 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 
 class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
-
-    init {
-        loadChallenge(challengeId)
-    }
 
     private val _challenge = MutableLiveData<Challenge>()
     val challenge: LiveData<Challenge>
@@ -85,7 +82,7 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
     private var challengeDocumentId = ""
 
-    private fun loadChallenge(challengeId: String) {
+    fun loadChallenge(challengeId: String) {
         val db = Firebase.firestore
 
         db.collection("challenges").whereEqualTo("id", challengeId)
@@ -103,6 +100,28 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
                 Timber.tag("neil").i(exception, "Error getting documents.")
             }
 
+    }
+
+    fun loadPersonalChallenge(customChallengeId: String) {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id" , UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                val userDocumentId = it.documents[0].id
+                UserManager.userChallengeDocumentId = userDocumentId
+
+                db.collection("users").document(userDocumentId).collection("customChallenges")
+                    .whereEqualTo("id", customChallengeId)
+                    .get()
+                    .addOnSuccessListener {
+                        val customDocumentId = it.documents[0].id
+                        val customChallenge = it.documents[0].toObject<Challenge>()
+                        _challenge.value = customChallenge!!
+
+                        loadPersonalTasks(userDocumentId, customDocumentId)
+                    }
+            }
     }
 
     private fun loadTasks() {
@@ -124,6 +143,26 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
                 Timber.i(exception, "Error getting documents.")
             }
 
+    }
+
+    private fun loadPersonalTasks(userDocumentId: String, customDocumentId: String) {
+        val db = Firebase.firestore
+
+        db.collection("users").document(userDocumentId).collection("customChallenges")
+            .document(customDocumentId).collection("tasks")
+            .get()
+            .addOnSuccessListener {
+                val taskList = mutableListOf<Task>()
+                Timber.i("documents ${it.documents}")
+
+                it.documents.forEach { document ->
+                    val task = document.toObject<Task>()
+                    if (task != null) {
+                        taskList.add(task)
+                    }
+                }
+                _taskList.value = taskList
+            }
     }
 
     fun loadComments() {

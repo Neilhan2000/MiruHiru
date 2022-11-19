@@ -151,8 +151,19 @@ class TaskFragment : Fragment() {
                 addAnnotationToMap(task, viewModel.currentStage)
             }
         })
-        viewModel.loadEventsWithTask(UserManager.userChallengeDocumentId ?: "null",
-            UserManager.user.currentEvent)
+        if (UserManager.isPersonal == true) {
+            UserManager.userChallengeDocumentId?.let {
+                viewModel.loadEventsWithPersonalTask(
+                    it,
+                    UserManager.user.currentEvent)
+            }
+        } else {
+            UserManager.userChallengeDocumentId?.let {
+                viewModel.loadEventsWithTask(
+                    it,
+                    UserManager.user.currentEvent)
+            }
+        }
 
         // setup map
         mapView = binding.mapView

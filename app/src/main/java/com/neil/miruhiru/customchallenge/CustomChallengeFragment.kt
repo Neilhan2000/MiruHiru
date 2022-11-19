@@ -107,7 +107,6 @@ class CustomChallengeFragment : Fragment() {
             }
         })
 
-
         return binding.root
     }
 }

@@ -1,10 +1,8 @@
 package com.neil.miruhiru.challengedetail
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
@@ -16,11 +14,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -42,10 +38,7 @@ import com.neil.miruhiru.data.ChallengeInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
 import com.neil.miruhiru.factory.ChallengeDetailViewModelFactory
-import com.neil.miruhiru.taskdetail.TaskDetailFragmentArgs
 import timber.log.Timber
-import java.math.RoundingMode
-import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 class ChallengeDetailFragment : Fragment() {
@@ -72,6 +65,17 @@ class ChallengeDetailFragment : Fragment() {
         // get args from last fragment and pass it to viewModel
         challengeId = ChallengeDetailFragmentArgs.fromBundle(requireArguments()).challengeId
         factory = ChallengeDetailViewModelFactory(challengeId)
+        val previousFragmentId  = this.findNavController().previousBackStackEntry?.destination?.id
+        if (previousFragmentId == R.id.exploreFragment) {
+            viewModel.loadChallenge(challengeId)
+            UserManager.isPersonal = false
+        } else if (previousFragmentId == R.id.overviewFragment) {
+            viewModel.loadPersonalChallenge(challengeId)
+            binding.seeComment.visibility = View.GONE
+            binding.ratingBar.visibility = View.GONE
+            binding.ratingText.visibility = View.GONE
+            UserManager.isPersonal = true
+        }
 
         // observer challenge data and setup screen
         viewModel.challenge.observe(viewLifecycleOwner, Observer {
@@ -146,7 +150,7 @@ class ChallengeDetailFragment : Fragment() {
         challenge.totalRating?.let { binding.ratingBar.rating  = it }
         binding.ratingText.text = "${challenge.totalRating?.let { viewModel.roundOffDecimal(it) }} (${challenge.commentQuantity})"
         binding.stageText.text = challenge.stage.toString()
-        binding.timeText.text = "${challenge.timeSpent?.div(3600)} Hrs"
+        binding.timeText.text = "${challenge.timeSpent?.toDouble().toBigDecimal().div(3600.toDouble().toBigDecimal())} Hrs"
         binding.challengeDescription.text = challenge.description
         binding.typeText.text = challenge.type
         challenge.location?.let { calculateAndShowDistance(it) }
@@ -251,8 +255,11 @@ class ChallengeDetailFragment : Fragment() {
 
     private fun determineTaskIcon(stage: Int): Int {
         val iconRes = when (stage) {
-            1 -> R.drawable.anya_icon
-            else -> R.drawable.anya_icon2
+            1 -> R.drawable.ic_stage_one_on
+            2 -> R.drawable.ic_stage_two_on
+            3 -> R.drawable.ic_stage_three_on
+            4 -> R.drawable.ic_stage_four_on
+            else -> R.drawable.ic_stage_five_on
         }
         return iconRes
     }
