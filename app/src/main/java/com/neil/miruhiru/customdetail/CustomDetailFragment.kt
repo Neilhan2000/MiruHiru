@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.URLUtil
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -21,6 +20,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
@@ -45,6 +45,7 @@ class CustomDetailFragment : Fragment() {
         ViewModelProvider(this).get(CustomDetailViewModel::class.java)
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -56,6 +57,27 @@ class CustomDetailFragment : Fragment() {
 
                 if (viewModel.isInputValid()) {
                     binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+
+                    Timber.i("original task${viewModel.originalTask} normal task ${viewModel.task}")
+                    // if the task do not change we don't change the button
+                    if (viewModel.originalTask != viewModel.task && binding.nextButton.text == getString(R.string.update)) {
+                            binding.nextButton.setOnClickListener {
+                                viewModel.updateTask()
+
+                                viewModel.originalTask.id = result.id
+                                // we set the image when we upload the image to firebase (in viewModel not here)
+                                viewModel.originalTask.stage = result.stage
+                                viewModel.originalTask.name = result.name
+                                viewModel.originalTask.question = result.question
+                                viewModel.originalTask.answer = result.answer
+                                viewModel.originalTask.location = result.location
+                                viewModel.originalTask.introduction = result.introduction
+                                viewModel.originalTask.guide = result.guide
+                            }
+
+                    } else if (viewModel.originalTask == viewModel.task && binding.nextButton.text == getString(R.string.update)){
+                        binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
+                    }
                 } else {
                     binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
                 }
@@ -64,10 +86,21 @@ class CustomDetailFragment : Fragment() {
 
         setFragmentResultListener("fromOverview") { requestKey, bundle ->
             val result = bundle.getParcelable<Task>("task")
-            Timber.i("result $result")
+            Timber.i("result from overview $result")
             if (result != null) {
+
                 viewModel.task = result
-                viewModel.orginalUrl = result.image
+
+                viewModel.originalTask.id = result.id
+                viewModel.originalTask.image = result.image
+                viewModel.originalTask.stage = result.stage
+                viewModel.originalTask.name = result.name
+                viewModel.originalTask.question = result.question
+                viewModel.originalTask.answer = result.answer
+                viewModel.originalTask.location = result.location
+                viewModel.originalTask.introduction = result.introduction
+                viewModel.originalTask.guide = result.guide
+
                 addAnnotationToMap(Point.fromLngLat(result.location.longitude, result.location.latitude))
                 binding.editButton.isEnabled = true
                 binding.editButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
@@ -75,11 +108,8 @@ class CustomDetailFragment : Fragment() {
                 binding.editCancelButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
 
                 binding.nextButton.text = getString(R.string.update)
-                binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
                 binding.nextButton.setOnClickListener(null)
-                binding.nextButton.setOnClickListener {
-                    viewModel.updateTask()
-                }
             }
         }
     }
@@ -100,7 +130,19 @@ class CustomDetailFragment : Fragment() {
             pointAnnotationManager.deleteAll()
             addAnnotationToMap(point)
             changeButtonStatus()
-            viewModel.setTaskLocation(point)
+            if (binding.nextButton.text == getString(R.string.update)) {
+                viewModel.setOriginalTaskLocation(point)
+                viewModel.setTaskLocation(point)
+
+                binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                binding.nextButton.setOnClickListener(null)
+                Timber.i("task image ${viewModel.task.image} original image ${viewModel.originalTask.image}")
+                binding.nextButton.setOnClickListener {
+                    viewModel.updateTask()
+                }
+            } else {
+                viewModel.setTaskLocation(point)
+            }
             false
         }
 
@@ -154,11 +196,19 @@ class CustomDetailFragment : Fragment() {
 
 
         // in the editing of last stage, we change the next button content via live data
-        // is not valid url means that the task is come from overview page, so we don't change the next button text to 完成
+        // is not valid url means that the task is come from overview page, we don't change the next button here
         viewModel.isLastStage.observe(viewLifecycleOwner, Observer { isLastStage ->
             if (isLastStage && !URLUtil.isValidUrl(viewModel.task.image)) {
-                binding.nextButton.text = "完成"
+                binding.nextButton.text = getString(R.string.complete)
                 Timber.i("is last stage -> current stage ${UserManager.customCurrentStage}, total stage ${UserManager.customTotalStage}")
+            }
+        })
+
+        // observe the isUpdated value and change the next button
+        viewModel.isUpdated.observe(viewLifecycleOwner, Observer { updateSuccess ->
+            if (updateSuccess) {
+                binding.nextButton.setOnClickListener(null)
+                binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
             }
         })
 
@@ -223,4 +273,5 @@ class CustomDetailFragment : Fragment() {
             bitmap
         }
     }
+
 }

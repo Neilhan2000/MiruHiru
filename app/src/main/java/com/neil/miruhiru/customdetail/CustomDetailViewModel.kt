@@ -2,7 +2,6 @@ package com.neil.miruhiru.customdetail
 
 import android.app.Application
 import android.net.Uri
-import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
@@ -40,10 +39,18 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     val isLastStage: LiveData<Boolean>
         get() = _isLastStage
 
-    var orginalUrl = ""
+    private val _isUpdated = MutableLiveData<Boolean>()
+    val isUpdated: LiveData<Boolean>
+        get() = _isUpdated
+
+    var originalTask = Task()
 
     fun setTaskLocation(point: Point) {
         task.location = GeoPoint(point.latitude(), point.longitude())
+    }
+
+    fun setOriginalTaskLocation(point: Point) {
+        originalTask.location = GeoPoint(point.latitude(), point.longitude())
     }
 
     fun deleteTask() {
@@ -264,24 +271,23 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                     "name" to task.name
                                 )
 
+                                Timber.i("update")
                                 it.documents[0].reference.update(customTask as Map<String, Any>)
                                     .addOnSuccessListener {
                                         // check if image the same, we don't want to upload same image again
-                                        if (task.image != orginalUrl) {
-                                            Timber.i("orgin url $orginalUrl task imaage ${task.image}")
+                                        Timber.i("task image ${task.image} original image ${originalTask.image}")
+                                        if (task.image != originalTask.image) {
                                             storeAndUpdateImage()
-                                            orginalUrl = task.image
+                                            originalTask.image = task.image
+                                        } else {
+                                            _isUpdated.value = true
                                         }
                                     }
                             }
                     }
             }
-
-
-
         UserManager.customCurrentStage = null
         UserManager.customTotalStage = null
-        // image need to reupdate
     }
 
     private fun storeAndUpdateImage() {
@@ -327,6 +333,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                             .get()
                             .addOnSuccessListener {
                                 it.documents[0].reference.update("image", uri)
+                                    .addOnSuccessListener { _isUpdated.value = true }
                             }
                     }
             }

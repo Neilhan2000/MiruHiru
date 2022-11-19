@@ -18,4 +18,5 @@
     <string name="sign_in_with_google">Sign In with Google</string>
     <string name="update">更新</string>
     <string name="challenge">挑戰</string>
+    <string name="complete">完成</string>
 </resources>
