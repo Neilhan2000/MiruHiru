@@ -41,10 +41,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/uploadCustomButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/uploadCustomButton3" />
+        app:layout_constraintStart_toEndOf="@+id/completeCustomButton" />
 
     <Button
-        android:id="@+id/uploadCustomButton3"
+        android:id="@+id/completeCustomButton"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

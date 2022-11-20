@@ -10,12 +10,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.ItemMyCustomChallengeBinding
 import timber.log.Timber
 import java.util.*
 
 
-class MyCustomAdapter  : ListAdapter<Challenge, MyCustomAdapter.ViewHolder>(DiffCallBack()) {
+class MyCustomAdapter(val onClick: (String) -> Unit)  : ListAdapter<Challenge, MyCustomAdapter.ViewHolder>(DiffCallBack()) {
 
 
     inner class ViewHolder(private val binding: ItemMyCustomChallengeBinding) :
@@ -33,6 +34,9 @@ class MyCustomAdapter  : ListAdapter<Challenge, MyCustomAdapter.ViewHolder>(Diff
             val address = geoCoder.getFromLocation(item.location.latitude, item.location.longitude, 1)
             if (address.size > 0) {
                 binding.locationText.text = "${address[0].countryName}, ${address[0].adminArea}"
+            }
+            itemView.setOnClickListener {
+                onClick(item.id)
             }
 
 

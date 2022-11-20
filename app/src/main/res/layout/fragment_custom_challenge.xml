@@ -262,6 +262,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/deep_yellow"
             android:text="繼續"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

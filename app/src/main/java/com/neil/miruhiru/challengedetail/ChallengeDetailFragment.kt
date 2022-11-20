@@ -153,6 +153,14 @@ class ChallengeDetailFragment : Fragment() {
         binding.timeText.text = "${challenge.timeSpent?.toDouble().toBigDecimal().div(3600.toDouble().toBigDecimal())} Hrs"
         binding.challengeDescription.text = challenge.description
         binding.typeText.text = challenge.type
+        binding.typeText.setBackgroundResource(when (challenge.type) {
+            getString(R.string.food) -> R.drawable.type_text_border
+            getString(R.string.history) -> R.drawable.type_history_border
+            getString(R.string.couple) -> R.drawable.type_couple_border
+            getString(R.string.travel) -> R.drawable.type_travel_border
+            getString(R.string.special) -> R.drawable.type_special_border
+            else -> R.drawable.type_text_border
+        })
         challenge.location?.let { calculateAndShowDistance(it) }
 
         binding.startButton.setOnClickListener {

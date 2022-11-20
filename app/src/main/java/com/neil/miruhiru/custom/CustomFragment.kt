@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
 import com.neil.miruhiru.R
 import com.neil.miruhiru.databinding.FragmentCustomBinding
@@ -25,6 +26,9 @@ class CustomFragment : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = CustomTypeFilter.values()[position].value
         }.attach()
+        if (this.findNavController().previousBackStackEntry?.destination?.id == R.id.overviewFragment) {
+            binding.viewPager.setCurrentItem(1, false)
+        }
 
 
         return binding.root

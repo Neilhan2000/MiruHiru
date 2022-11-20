@@ -226,7 +226,8 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
         db.collection("events").whereEqualTo("id", UserManager.user.completedEvents.last())
             .get()
             .addOnSuccessListener { result ->
-                result.documents[0].toObject<Event>()?.challengeId?.let {
+                val event = result.documents[0].toObject<Event>()
+                event?.challengeId?.let {
                     challengeId = it
 
                     if (UserManager.isPersonal == false) {
@@ -245,28 +246,55 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                                     }
                             }
                     } else {
-                        db.collection("users").whereEqualTo("id", UserManager.userId)
-                            .get()
-                            .addOnSuccessListener {
-                                val userDocumentId = it.documents[0].id
+                        if (event.members.first() == UserManager.userId) {
+                            db.collection("users").whereEqualTo("id", UserManager.userId)
+                                .get()
+                                .addOnSuccessListener {
+                                    val userDocumentId = it.documents[0].id
 
-                                db.collection("users").document(userDocumentId).collection("customChallenges")
-                                    .whereEqualTo("id", challengeId)
-                                    .get()
-                                    .addOnSuccessListener {
-                                        val customDocumentId = it.documents[0].id
+                                    db.collection("users").document(userDocumentId).collection("customChallenges")
+                                        .whereEqualTo("id", challengeId)
+                                        .get()
+                                        .addOnSuccessListener {
+                                            val customDocumentId = it.documents[0].id
 
-                                        db.collection("users").document(userDocumentId).collection("customChallenges")
-                                            .document(customDocumentId).collection("tasks")
-                                            .get()
-                                            .addOnSuccessListener { tasks ->
-                                                tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
-                                                _taskList.value = taskList
+                                            db.collection("users").document(userDocumentId).collection("customChallenges")
+                                                .document(customDocumentId).collection("tasks")
+                                                .get()
+                                                .addOnSuccessListener { tasks ->
+                                                    tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
+                                                    _taskList.value = taskList
 
-                                                loadNewestCompletedEventLog()
-                                            }
-                                    }
-                            }
+                                                    loadNewestCompletedEventLog()
+                                                }
+                                        }
+                                }
+                        } else {
+                            val hostUserId = event.members.first()
+                            db.collection("users").whereEqualTo("id", hostUserId)
+                                .get()
+                                .addOnSuccessListener {
+                                    val userDocumentId = it.documents[0].id
+
+                                    db.collection("users").document(userDocumentId).collection("customChallenges")
+                                        .whereEqualTo("id", challengeId)
+                                        .get()
+                                        .addOnSuccessListener {
+                                            val customDocumentId = it.documents[0].id
+
+                                            db.collection("users").document(userDocumentId).collection("customChallenges")
+                                                .document(customDocumentId).collection("tasks")
+                                                .get()
+                                                .addOnSuccessListener { tasks ->
+                                                    tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
+                                                    _taskList.value = taskList
+
+                                                    loadNewestCompletedEventLog()
+                                                }
+                                        }
+                                }
+                        }
+
                     }
                 }
             }

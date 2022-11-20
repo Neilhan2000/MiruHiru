@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.databinding.FragmentMyCustomBinding
 import com.neil.miruhiru.task.TaskViewModel
@@ -24,7 +26,9 @@ class MyCustomFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentMyCustomBinding.inflate(inflater, container, false)
-        val customAdapter = MyCustomAdapter()
+        val customAdapter = MyCustomAdapter { customChallengeId ->
+            this.findNavController().navigate(NavGraphDirections.actionGlobalOverviewFragment(customChallengeId))
+        }
         binding.myCustomRecycler.adapter = customAdapter
 
         viewModel.myCustomList.observe(viewLifecycleOwner, Observer {

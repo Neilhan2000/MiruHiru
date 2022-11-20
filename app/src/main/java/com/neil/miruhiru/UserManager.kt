@@ -27,6 +27,10 @@ object UserManager {
     val hasCurrentEvent: LiveData<Event>
         get() = _hasCurrentEvent
 
+    private val _userLiveData = MutableLiveData<User>()
+    val userLiveData: LiveData<User>
+        get() = _userLiveData
+
     var user = User()
     var isPersonal: Boolean? = null
     get() = MiruHiruApplication.instance
@@ -202,6 +206,7 @@ object UserManager {
                 for (document in result) {
                     val user = document.toObject<User>()
                     this.user = user
+                    _userLiveData.value = user
                 }
 
                 // if has event, we load it

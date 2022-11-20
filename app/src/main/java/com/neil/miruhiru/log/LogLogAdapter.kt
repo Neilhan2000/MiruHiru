@@ -44,7 +44,7 @@ class LogLogAdapter(viewModel: LogViewModel, adapterPosition: Int) : ListAdapter
                     if (it.id == item.senderId) {
                         binding.userNameLog.text = it.name
                         Glide.with(binding.userIconLog.context).load(it.icon).circleCrop().apply(
-                            RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
+                            RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
                         ).into(binding.userIconLog)
                     }
                 }

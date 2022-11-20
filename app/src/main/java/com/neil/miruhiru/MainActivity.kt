@@ -1,18 +1,24 @@
 package com.neil.miruhiru
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -42,15 +48,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // toolbar
+        UserManager.userLiveData.observe(this, Observer {
+            setupToolbar()
+        })
+
         // set activity instance
         instance = this
-        UserManager.customTotalStage = null
-        UserManager.customCurrentStage = null
+//        UserManager.customTotalStage = null
+//        UserManager.customCurrentStage = null
 
         // bottom navigation
         val navController = Navigation.findNavController(this, R.id.myNavHostFragment)
@@ -58,7 +70,6 @@ class MainActivity : AppCompatActivity() {
 
         // login
         userLogin()
-
 
         // Timber
         if (BuildConfig.DEBUG) {
@@ -83,13 +94,39 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.fragment_profile -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalOverviewFragment("8d4bde98-fc97-48f5-b04d-c1746cffe101"))
-//                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalProfileFragment())
+                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalProfileFragment())
                     return@setOnItemSelectedListener true
                 }
             }
             false
         }
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbar)
+
+        findNavController(R.id.myNavHostFragment).addOnDestinationChangedListener { navController: NavController, _: NavDestination, _: Bundle? ->
+            viewModel.currentFragmentType.value = when (navController.currentDestination?.id) {
+                R.id.exploreFragment -> CurrentFragmentType.EXPLORE
+                R.id.customFragment -> CurrentFragmentType.CUSTOM
+                R.id.communityFragment -> CurrentFragmentType.COMMUNITY
+                R.id.profileFragment -> CurrentFragmentType.PROFILE
+                else -> viewModel.currentFragmentType.value
+            }
+        }
+        viewModel.currentFragmentType.observe(this, Observer { fragmentType ->
+
+            if (fragmentType.value == getString(R.string.explore_fragment)) {
+                binding.userIconExplore.visibility = View.VISIBLE
+                Glide.with(binding.userIconExplore.context).load(UserManager.user.icon).circleCrop().apply(
+                    RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
+                ).into(binding.userIconExplore)
+                binding.toolbarTitle.text = UserManager.user.name
+            } else {
+                binding.toolbarTitle.text = fragmentType.value
+                binding.userIconExplore.visibility = View.GONE
+            }
+        })
     }
 
     private fun userLogin() {

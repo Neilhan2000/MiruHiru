@@ -57,10 +57,14 @@ class TaskSuccessFragment : Fragment() {
             }
         })
 
-        // observer event complete and navigate to log fragment
+        // observer event complete and navigate to challenge success or log fragment
         viewModel.navigateToLogFragment.observe(viewLifecycleOwner, Observer { completeEvent ->
-            if (completeEvent) {
+            if (completeEvent && UserManager.isPersonal == false) {
                 this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeSuccessFragment())
+                viewModel.navigateToLogFragmentCompleted()
+
+            } else if (completeEvent && UserManager.isPersonal == true) {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment())
                 viewModel.navigateToLogFragmentCompleted()
             }
         })

@@ -102,6 +102,10 @@ class OverviewFragment : Fragment() {
             this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(viewModel.customChallengeId))
         }
 
+        binding.completeCustomButton.setOnClickListener {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
+        }
+
 
 
         return binding.root

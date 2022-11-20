@@ -33,7 +33,7 @@ class MessageAdapter(viewModel: ChatDialogViewModel) : ListAdapter<MessageAdapte
             viewModel.memberList.forEach {
                 if (it.id == item.senderId) {
                     Glide.with(binding.userIconMine.context).load(it.icon).circleCrop().apply(
-                        RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
+                        RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
                     ).into(binding.userIconMine)
                 }
             }

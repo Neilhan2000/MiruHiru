@@ -41,13 +41,14 @@
         android:layout_marginBottom="8dp"
         android:clickable="true"
         android:focusable="true"
-        android:visibility="invisible"
-        app:maxImageSize="40dp"
-        app:tint="@android:color/white"
         android:src="@drawable/ic_target"
+        android:visibility="invisible"
         app:backgroundTint="@color/light_yellow"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toTopOf="@+id/fabAndroid"
-        app:layout_constraintEnd_toEndOf="@+id/fabAndroid" />
+        app:layout_constraintEnd_toEndOf="@+id/fabAndroid"
+        app:maxImageSize="40dp"
+        app:tint="@android:color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabChat"
@@ -58,6 +59,7 @@
         android:clickable="true"
         android:focusable="true"
         android:visibility="invisible"
+        app:borderWidth="0dp"
         app:maxImageSize="35dp"
         app:srcCompat="@drawable/ic_chat"
         app:tint="@android:color/white"
@@ -73,6 +75,7 @@
         android:clickable="true"
         android:focusable="true"
         android:visibility="invisible"
+        app:borderWidth="0dp"
         app:maxImageSize="40dp"
         app:srcCompat="@drawable/ic_android"
         app:tint="@android:color/white"
@@ -88,6 +91,7 @@
         android:backgroundTint="@color/light_yellow"
         android:clickable="true"
         android:focusable="true"
+        app:borderWidth="0dp"
         app:maxImageSize="45dp"
         app:srcCompat="@drawable/ic_add_white"
         app:tint="@android:color/white"

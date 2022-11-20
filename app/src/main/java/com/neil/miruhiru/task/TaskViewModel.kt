@@ -179,28 +179,54 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
 
 //                    Timber.i("task list event progress ${event.progress}")
 //                    Timber.i("current stage $currentStage")
-                    db.collection("users").whereEqualTo("id", UserManager.userId)
-                        .get()
-                        .addOnSuccessListener {
-                            val userDocumentId = it.documents[0].id
+                    if (UserManager.userId == event.members.first()) {
+                        db.collection("users").whereEqualTo("id", UserManager.userId)
+                            .get()
+                            .addOnSuccessListener {
+                                val userDocumentId = it.documents[0].id
 
-                            Timber.i("custom document $customDocumentId")
-                            db.collection("users").document(userDocumentId).collection("customChallenges")
-                                .document(customDocumentId).collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
-                                .get()
-                                .addOnSuccessListener { result ->
-                                    for (document in result) {
-                                        val task = document.toObject<Task>()
-                                        if (task.stage <= currentStage) {
-                                            taskList.add(task)
+                                Timber.i("custom document $customDocumentId")
+                                db.collection("users").document(userDocumentId).collection("customChallenges")
+                                    .document(customDocumentId).collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
+                                    .get()
+                                    .addOnSuccessListener { result ->
+                                        for (document in result) {
+                                            val task = document.toObject<Task>()
+                                            if (task.stage <= currentStage) {
+                                                taskList.add(task)
+                                            }
+                                            annotationList.add(task)
                                         }
-                                        annotationList.add(task)
+                                        Timber.i("task list size ${taskList.size} current stage$currentStage")
+                                        _taskList.value = taskList
+                                        _annotationList.value = annotationList
                                     }
-                                    Timber.i("task list size ${taskList.size} current stage$currentStage")
-                                    _taskList.value = taskList
-                                    _annotationList.value = annotationList
-                                }
-                        }
+                            }
+                    } else {
+                        val hostUserId = event.members.first()
+                        db.collection("users").whereEqualTo("id", hostUserId)
+                            .get()
+                            .addOnSuccessListener {
+                                val userDocumentId = it.documents[0].id
+
+                                Timber.i("custom document $customDocumentId")
+                                db.collection("users").document(userDocumentId).collection("customChallenges")
+                                    .document(customDocumentId).collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
+                                    .get()
+                                    .addOnSuccessListener { result ->
+                                        for (document in result) {
+                                            val task = document.toObject<Task>()
+                                            if (task.stage <= currentStage) {
+                                                taskList.add(task)
+                                            }
+                                            annotationList.add(task)
+                                        }
+                                        Timber.i("task list size ${taskList.size} current stage$currentStage")
+                                        _taskList.value = taskList
+                                        _annotationList.value = annotationList
+                                    }
+                            }
+                    }
 
                 }
             }

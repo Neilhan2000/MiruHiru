@@ -39,7 +39,8 @@ class ChallengeTypeViewModel() : ViewModel() {
             "stage" to challenge.stage,
             "status" to "prepare",
             "endTime" to Timestamp.now(),
-            "currentMembers" to listOf<String>()
+            "currentMembers" to listOf<String>(),
+            "personal" to UserManager.isPersonal
         )
 
         val db = Firebase.firestore
@@ -50,6 +51,10 @@ class ChallengeTypeViewModel() : ViewModel() {
                 eventDocumentId = documentReference.id
                 addMainUserToEvent()
                 updateUserCurrentEvent(eventId, type)
+                documentReference.get().addOnSuccessListener { val event = it.toObject<Event>()
+                    Timber.i("post event ${event}")}
+
+
             }
     }
 

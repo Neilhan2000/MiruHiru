@@ -36,7 +36,7 @@ class CommentAdapter(
 
             binding.userName.text = userName
             Glide.with(binding.userIcon.context).load(userIcon).circleCrop().apply(
-                RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
+                RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
             ).into(binding.userIcon)
             binding.reportIcon.setOnClickListener {
                 onClick(adapterPosition)
