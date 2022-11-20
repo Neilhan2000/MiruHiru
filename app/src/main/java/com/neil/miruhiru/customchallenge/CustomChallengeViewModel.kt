@@ -9,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -52,7 +53,8 @@ class CustomChallengeViewModel(application: Application) : AndroidViewModel(appl
             "stage" to challenge.stage,
             "timeSpent" to challenge.timeSpent,
             "totalRating" to 0,
-            "type" to challenge.type
+            "type" to challenge.type,
+            "createdTime" to Timestamp.now()
         )
 
         val db = Firebase.firestore

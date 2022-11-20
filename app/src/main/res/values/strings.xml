@@ -19,4 +19,6 @@
     <string name="update">更新</string>
     <string name="challenge">挑戰</string>
     <string name="complete">完成</string>
+    <string name="uploaded">已上傳</string>
+    <string name="unUpoladed">未上傳</string>
 </resources>
