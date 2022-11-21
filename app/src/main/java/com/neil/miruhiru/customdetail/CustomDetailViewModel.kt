@@ -22,7 +22,6 @@ import java.util.*
 
 class CustomDetailViewModel(application: Application) : AndroidViewModel(application) {
 
-
     private val _navigateToCustomDetailFragment = MutableLiveData<Boolean>()
     val navigateToCustomDetailFragment: LiveData<Boolean>
         get() = _navigateToCustomDetailFragment
@@ -38,6 +37,10 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     private val _isLastStage = MutableLiveData<Boolean>()
     val isLastStage: LiveData<Boolean>
         get() = _isLastStage
+
+    private val _loadCurrentStage = MutableLiveData<Int>()
+    val loadCurrentStage: LiveData<Int>
+        get() = _loadCurrentStage
 
     private val _isUpdated = MutableLiveData<Boolean>()
     val isUpdated: LiveData<Boolean>
@@ -154,11 +157,28 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                             UserManager.customCurrentStage = null
                                             UserManager.customTotalStage = null
                                             _navigateToOverviewFragment.value = true
+                                            customChallengeEditingCompleted()
                                         } else {
                                             _navigateToCustomDetailFragment.value = true
                                         }
                                     }
                             }
+                    }
+            }
+    }
+
+    private fun customChallengeEditingCompleted() {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference.collection("customChallenges").whereEqualTo("id", customChallengeId)
+                    .get()
+                    .addOnSuccessListener {
+
+                        it.documents[0].reference.update("finished", true)
                     }
             }
     }
@@ -223,11 +243,12 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                             .get()
                             .addOnSuccessListener {
                                 UserManager.customCurrentStage = it.documents.size + 1
+
                                 if (challenge?.stage == 1) { _isLastStage.value = true }
 
-                                // load unfinished editing data
-                                if (it.documents.isNotEmpty()) {
-
+                                // for unfinished editing
+                                if (challenge?.stage == it.documents.size + 1) {
+                                    _isLastStage.value = true
                                 }
                             }
                     }
@@ -290,6 +311,10 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
         UserManager.customTotalStage = null
     }
 
+    fun needToUpdate() {
+        _isUpdated.value = false
+    }
+
     private fun storeAndUpdateImage() {
 
         Timber.i("store image")
@@ -335,6 +360,22 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                 it.documents[0].reference.update("image", uri)
                                     .addOnSuccessListener { _isUpdated.value = true }
                             }
+                    }
+            }
+    }
+
+    fun cleanCustomChallenge(customChallengeId: String) {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference.collection("customChallenges").whereEqualTo("id", customChallengeId)
+                    .get()
+                    .addOnSuccessListener {
+
+                        it.documents[0].reference.delete()
                     }
             }
     }

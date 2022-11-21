@@ -2,6 +2,7 @@ package com.neil.miruhiru.task
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.location.Location
 import android.util.Log
 import android.view.LayoutInflater
@@ -41,8 +42,6 @@ class TaskAdapter(viewModel: TaskViewModel) : ListAdapter<Task, TaskAdapter.View
             binding.challengeTitle.text = item.name
             binding.challengeStage.text = item.stage.toString()
             startTrackingDistance(item.location)
-            Log.i("neilll", "dis $distanceGlobal")
-            Log.i("neilll", "dis ${item.location}")
             binding.startTaskButton.setOnClickListener {
                 val locationInfo = LocationInfo(
                     item.name, binding.challengeDistance.text.toString().filter { it.isDigit() }.toInt(),
@@ -51,6 +50,10 @@ class TaskAdapter(viewModel: TaskViewModel) : ListAdapter<Task, TaskAdapter.View
             }
             if (item.stage >= viewModel.currentStage) {
                 binding.cardTaskSuccessIcon.visibility = View.GONE
+            } else {
+                binding.startTaskButton.text = context.getString(R.string.task_success)
+                binding.startTaskButton.backgroundTintList = (ColorStateList.valueOf(itemView.context.resources.getColor(R.color.grey)))
+                binding.startTaskButton.setOnClickListener(null)
             }
         }
 

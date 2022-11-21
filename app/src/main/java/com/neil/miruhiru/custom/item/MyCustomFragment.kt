@@ -13,6 +13,7 @@ import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.databinding.FragmentMyCustomBinding
 import com.neil.miruhiru.task.TaskViewModel
+import timber.log.Timber
 import java.util.*
 
 class MyCustomFragment : Fragment() {

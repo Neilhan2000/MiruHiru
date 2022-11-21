@@ -59,10 +59,11 @@ class MainActivity : AppCompatActivity() {
             setupToolbar()
         })
 
+        UserManager.customCurrentStage = null
+        UserManager.customTotalStage = null
+
         // set activity instance
         instance = this
-        UserManager.customTotalStage = null
-        UserManager.customCurrentStage = null
 
         // bottom navigation
         val navController = Navigation.findNavController(this, R.id.myNavHostFragment)

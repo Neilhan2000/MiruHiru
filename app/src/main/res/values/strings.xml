@@ -29,4 +29,9 @@
     <string name="other">其他</string>
     <string name="customGuideTextOne">歡迎來到自定義挑戰的第</string>
     <string name="customGuideTextTwo">關，點擊地圖上的位置，並按下編輯按鈕以設定本次關卡的內容</string>
+    <string name="task_success">挑戰完成</string>
+    <string name="wait_for_editing">待編輯</string>
+    <string name="upload">上傳</string>
+    <string name="edit">編輯</string>
+    <string name="upload_challenge_success_toast">上傳成功，我們將在審核完成後通知你歐</string>
 </resources>

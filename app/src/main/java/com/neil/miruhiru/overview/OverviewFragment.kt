@@ -15,10 +15,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
-import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentOverviewBinding
 import kotlinx.coroutines.*
-import okhttp3.internal.notifyAll
 import timber.log.Timber
 import java.util.*
 
@@ -98,6 +96,29 @@ class OverviewFragment : Fragment() {
             }
         })
 
+        // observe editing status to determine button feacture
+        viewModel.editingCompleted.observe(viewLifecycleOwner, Observer { editingCompleted ->
+            if (editingCompleted) {
+                binding.editOrUploadButton.text = getString(R.string.upload)
+                binding.editOrUploadButton.setOnClickListener {
+                    viewModel.uploadCustomChallengeBeVerified()
+                }
+            } else {
+                binding.editOrUploadButton.text = getString(R.string.edit)
+                binding.editOrUploadButton.setOnClickListener {
+                    this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment(viewModel.customChallengeId))
+                }
+            }
+        })
+
+        // observe upload to change button
+        viewModel.uploadToBeVerified.observe(viewLifecycleOwner, Observer { uploaded ->
+            if (uploaded) {
+                binding.editOrUploadButton.text = getString(R.string.uploaded)
+                binding.editOrUploadButton.setOnClickListener(null)
+            }
+        })
+
         binding.startCustomButton.setOnClickListener {
             this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(viewModel.customChallengeId))
         }
@@ -105,7 +126,6 @@ class OverviewFragment : Fragment() {
         binding.completeCustomButton.setOnClickListener {
             this.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
         }
-
 
 
         return binding.root

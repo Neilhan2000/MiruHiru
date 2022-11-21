@@ -206,13 +206,14 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                             Timber.i("user $user")
                             if (user != null) {
                                 userInfoList.add(user)
-                                _userInfoList.value = userInfoList
 
+                                if (event.members.size == userInfoList.size) {
+                                    _userInfoList.value = userInfoList
+                                }
                             }
                         }
+
                 }
-
-
             }
 
     }

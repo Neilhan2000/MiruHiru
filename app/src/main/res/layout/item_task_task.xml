@@ -2,15 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="365dp"
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/locationCardView"
         android:layout_width="match_parent"
         android:layout_height="130dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:visibility="visible"
         app:cardCornerRadius="15dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,13 +23,17 @@
 
             <TextView
                 android:id="@+id/challengeTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:ellipsize="end"
                 android:text="AppWorks美食大挑戰"
+                android:singleLine="true"
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/cardTaskSuccessIcon"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/challengeImage"
                 app:layout_constraintTop_toTopOf="@+id/challengeImage" />
 
@@ -70,13 +74,6 @@
                 app:srcCompat="@drawable/image_placeholder" />
 
             <ImageView
-                android:id="@+id/locationIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp" />
-
-            <ImageView
                 android:id="@+id/taskLocationIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -98,10 +95,11 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/startTaskButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:backgroundTint="@color/deep_yellow"
+                android:gravity="center_horizontal|center_vertical"
                 android:text="查看挑戰"
                 android:textColor="@color/white"
                 android:textSize="18sp"
@@ -118,8 +116,6 @@
                 android:layout_marginEnd="16dp"
                 app:layout_constraintBottom_toBottomOf="@+id/challengeTitle"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/challengeTitle"
                 app:layout_constraintTop_toTopOf="@+id/challengeTitle"
                 app:layout_constraintVertical_bias="0.36"
                 app:srcCompat="@drawable/ic_success_500" />

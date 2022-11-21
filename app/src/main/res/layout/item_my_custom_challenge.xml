@@ -8,12 +8,12 @@
     <TextView
         android:id="@+id/customBorder"
         android:layout_width="0dp"
-        android:layout_height="335dp"
-        android:layout_marginStart="16dp"
+        android:layout_height="220dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/edit_text_border_log"
+        android:background="@drawable/text_border_mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -23,10 +23,10 @@
     <ImageView
         android:id="@+id/customImage"
         android:layout_width="0dp"
-        android:layout_height="220dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="@+id/customBorder"
         app:layout_constraintStart_toStartOf="@+id/customBorder"
@@ -35,47 +35,52 @@
 
     <TextView
         android:id="@+id/customChallengeName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:text="挑戰名稱"
         android:textColor="@color/black"
         android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/isUploadedText"
         app:layout_constraintStart_toStartOf="@+id/customImage"
         app:layout_constraintTop_toBottomOf="@+id/customImage" />
 
     <ImageView
         android:id="@+id/customLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/locationText"
-        app:layout_constraintEnd_toStartOf="@+id/locationText"
-        app:layout_constraintTop_toTopOf="@+id/locationText"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/customBorder"
+        app:layout_constraintTop_toBottomOf="@+id/customChallengeName"
         app:srcCompat="@drawable/ic_baseline_location" />
 
     <TextView
         android:id="@+id/locationText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:text="台北"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/customChallengeName"
-        app:layout_constraintEnd_toEndOf="@+id/customImage"
-        app:layout_constraintTop_toTopOf="@+id/customChallengeName" />
+        app:layout_constraintBottom_toBottomOf="@+id/customLocation"
+        app:layout_constraintStart_toEndOf="@+id/customLocation"
+        app:layout_constraintTop_toTopOf="@+id/customLocation" />
 
     <TextView
         android:id="@+id/isUploadedText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:background="@drawable/type_text_border"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
         android:text="未上傳"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/locationText"
-        app:layout_constraintTop_toBottomOf="@+id/locationText" />
+        app:layout_constraintBottom_toBottomOf="@+id/customChallengeName"
+        app:layout_constraintEnd_toEndOf="@+id/customImage"
+        app:layout_constraintTop_toTopOf="@+id/customChallengeName" />
 </androidx.constraintlayout.widget.ConstraintLayout>
