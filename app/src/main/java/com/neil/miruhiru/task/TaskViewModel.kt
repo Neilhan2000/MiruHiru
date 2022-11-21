@@ -43,6 +43,9 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
     var totalStage = -1
     var isMultiple: Boolean? = null
 
+    // we use this number to make sure that user be kicked only once
+    var kickNumber = 1
+
     fun detectUserKicked() {
         val db = Firebase.firestore
 
@@ -50,41 +53,42 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
             .addSnapshotListener { value, error ->
                 value?.documents?.get(0)?.let {
                     val event = it.toObject<Event>()
-                    event?.currentMembers?.contains(UserManager.userId)?.let {  _isKicked.value = !it }
-                    Timber.i("is kicked ${_isKicked.value}")
-                }
 
-                if (_isKicked.value == true) {
-                    db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
-                        .get()
-                        .addOnSuccessListener {
-                            val eventDocumentId = it.documents[0].id
-                            val event = it.documents[0].toObject<Event>()
-                            val progress: MutableList<Int> = event?.progress as MutableList<Int>
-                            progress.remove(UserManager.currentStage)
-                            Timber.i("progress $progress")
-
-                            // remove progress
-                            db.collection("events").document(eventDocumentId)
-                                .update("progress", progress)
+                    if (event?.currentMembers?.contains(UserManager.userId) == false) {
+                        if (kickNumber == 1) {
+                            db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+                                .get()
                                 .addOnSuccessListener {
+                                    val eventDocumentId = it.documents[0].id
+                                    val event = it.documents[0].toObject<Event>()
+                                    val progress: MutableList<Int> = event?.progress as MutableList<Int>
+                                    progress.remove(UserManager.currentStage)
+                                    Timber.i("kick number $kickNumber progress $progress")
 
-                                    // remove user current Event
-                                    db.collection("users").whereEqualTo("id", UserManager.userId)
-                                        .get()
+                                    kickNumber ++
+                                    _isKicked.value = true
+                                    // remove progress
+                                    db.collection("events").document(eventDocumentId)
+                                        .update("progress", progress)
                                         .addOnSuccessListener {
-                                            val userDocumentId = it.documents[0].id
 
-                                            db.collection("users").document(userDocumentId)
-                                                .update("currentEvent", "")
+                                            // remove user current Event
+                                            db.collection("users").whereEqualTo("id", UserManager.userId)
+                                                .get()
                                                 .addOnSuccessListener {
-                                                    UserManager.getUser()
-                                                    _isKicked.value = false
+                                                    val userDocumentId = it.documents[0].id
+
+                                                    db.collection("users").document(userDocumentId)
+                                                        .update("currentEvent", "")
+                                                        .addOnSuccessListener {
+                                                            UserManager.getUser()
+                                                        }
                                                 }
                                         }
-                                }
 
+                                }
                         }
+                    }
                 }
 
             }
@@ -113,10 +117,8 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
         db.collection("events").whereEqualTo("id" , eventId)
             .get()
             .addOnSuccessListener { result ->
-                Timber.i("result size ${result.documents.size}")
-                Timber.i("get document success")
+
                 for (document in result) {
-                    Timber.i("go into for loop")
                     val event = document.toObject<Event>()
                     _event.value = event
                     currentStage = event.progress.minOrNull() ?: -1
@@ -127,7 +129,6 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
 
 //                    Timber.i("task list event progress ${event.progress}")
 //                    Timber.i("current stage $currentStage")
-
 
                     db.collection("challenges").document(challengeDocumentId)
                         .collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
@@ -156,6 +157,79 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                 Timber.tag("neil").i(exception, "Error getting documents.")
             }
 
+    }
+
+    fun loadEventsWithPersonalTask(customDocumentId: String, eventId: String) {
+        val db = Firebase.firestore
+        val taskList = mutableListOf<Task>()
+        val annotationList = mutableListOf<Task>()
+
+        db.collection("events").whereEqualTo("id" , eventId)
+            .get()
+            .addOnSuccessListener { result ->
+
+                for (document in result) {
+                    val event = document.toObject<Event>()
+                    _event.value = event
+                    currentStage = event.progress.minOrNull() ?: -1
+                    UserManager.currentStage = currentStage
+                    Timber.i("set current stage ${UserManager.currentStage}")
+                    totalStage = event.stage
+                    isMultiple = event.progress.size > 1
+
+//                    Timber.i("task list event progress ${event.progress}")
+//                    Timber.i("current stage $currentStage")
+                    if (UserManager.userId == event.members.first()) {
+                        db.collection("users").whereEqualTo("id", UserManager.userId)
+                            .get()
+                            .addOnSuccessListener {
+                                val userDocumentId = it.documents[0].id
+
+                                Timber.i("custom document $customDocumentId")
+                                db.collection("users").document(userDocumentId).collection("customChallenges")
+                                    .document(customDocumentId).collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
+                                    .get()
+                                    .addOnSuccessListener { result ->
+                                        for (document in result) {
+                                            val task = document.toObject<Task>()
+                                            if (task.stage <= currentStage) {
+                                                taskList.add(task)
+                                            }
+                                            annotationList.add(task)
+                                        }
+                                        Timber.i("task list size ${taskList.size} current stage$currentStage")
+                                        _taskList.value = taskList
+                                        _annotationList.value = annotationList
+                                    }
+                            }
+                    } else {
+                        val hostUserId = event.members.first()
+                        db.collection("users").whereEqualTo("id", hostUserId)
+                            .get()
+                            .addOnSuccessListener {
+                                val userDocumentId = it.documents[0].id
+
+                                Timber.i("custom document $customDocumentId")
+                                db.collection("users").document(userDocumentId).collection("customChallenges")
+                                    .document(customDocumentId).collection("tasks").orderBy("stage", Query.Direction.DESCENDING)
+                                    .get()
+                                    .addOnSuccessListener { result ->
+                                        for (document in result) {
+                                            val task = document.toObject<Task>()
+                                            if (task.stage <= currentStage) {
+                                                taskList.add(task)
+                                            }
+                                            annotationList.add(task)
+                                        }
+                                        Timber.i("task list size ${taskList.size} current stage$currentStage")
+                                        _taskList.value = taskList
+                                        _annotationList.value = annotationList
+                                    }
+                            }
+                    }
+
+                }
+            }
     }
 
     private fun addTask(challengeId: String) {

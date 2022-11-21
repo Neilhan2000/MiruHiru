@@ -1,18 +1,24 @@
 package com.neil.miruhiru
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -42,20 +48,28 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // toolbar
+        UserManager.userLiveData.observe(this, Observer {
+            setupToolbar()
+        })
+
         // set activity instance
         instance = this
+        UserManager.customTotalStage = null
+        UserManager.customCurrentStage = null
 
         // bottom navigation
         val navController = Navigation.findNavController(this, R.id.myNavHostFragment)
         setupBottomNav()
 
         // login
-        userLogin("user2")
+        userLogin()
 
         // Timber
         if (BuildConfig.DEBUG) {
@@ -71,8 +85,7 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.fragment_custom -> {
-//                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalChallengeDetailFragment())
-//                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCustomFragment())
+                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCustomFragment())
                     return@setOnItemSelectedListener true
                 }
                 R.id.fragment_community -> {
@@ -89,10 +102,41 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun userLogin(userId: String) {
-        UserManager.userId = userId
-        UserManager.getUser()
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbar)
 
+        findNavController(R.id.myNavHostFragment).addOnDestinationChangedListener { navController: NavController, _: NavDestination, _: Bundle? ->
+            viewModel.currentFragmentType.value = when (navController.currentDestination?.id) {
+                R.id.exploreFragment -> CurrentFragmentType.EXPLORE
+                R.id.customFragment -> CurrentFragmentType.CUSTOM
+                R.id.communityFragment -> CurrentFragmentType.COMMUNITY
+                R.id.profileFragment -> CurrentFragmentType.PROFILE
+                else -> CurrentFragmentType.OTHER
+            }
+        }
+        viewModel.currentFragmentType.observe(this, Observer { fragmentType ->
+
+            if (fragmentType.value == getString(R.string.other)) {
+                supportActionBar?.hide()
+            } else {
+                supportActionBar?.show()
+            }
+
+            if (fragmentType.value == getString(R.string.explore_fragment)) {
+                binding.userIconExplore.visibility = View.VISIBLE
+                Glide.with(binding.userIconExplore.context).load(UserManager.user.icon).circleCrop().apply(
+                    RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
+                ).into(binding.userIconExplore)
+                binding.toolbarTitle.text = UserManager.user.name
+            } else {
+                binding.toolbarTitle.text = fragmentType.value
+                binding.userIconExplore.visibility = View.GONE
+            }
+        })
+    }
+
+    private fun userLogin() {
+        UserManager.getUser()
         // check if has uncompleted event
         UserManager.hasCurrentEvent.observe(this, Observer { event ->
             if (event.progress.size == 1) {
@@ -132,7 +176,6 @@ class MainActivity : AppCompatActivity() {
                     })
                     .setNeutralButton("清除紀錄", object : DialogInterface.OnClickListener{
                         override fun onClick(p0: DialogInterface?, p1: Int) {
-                            Log.i("Main", "current ${UserManager.currentStage}")
                             viewModel.cleanEventMultiple()
                         }
                     })

@@ -234,7 +234,8 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
     private fun determineChallengeIcon(type: String): Int {
         return when (type) {
-            "美食" -> R.drawable.anya_icon
+            getString(R.string.food) -> R.drawable.ic_food_location
+            getString(R.string.couple) -> R.drawable.ic_love_location
             else -> R.drawable.anya_icon2
         }
     }
@@ -271,14 +272,18 @@ class ExploreFragment : Fragment(), PermissionsListener {
                     // get data from annotation
 //                    Toast.makeText(requireContext(), "${Gson().fromJson(annotation.getData()?.asJsonObject, LocationInfo::class.java)}", Toast.LENGTH_SHORT).show()
                     binding.challengeTitle.text = challenge.name
-                    binding.challengeRating.text = challenge.totalRating.toString()
+                    binding.challengeRating.text = "${challenge.totalRating?.let { it1 ->
+                        viewModel.roundOffDecimal(
+                            it1
+                        )
+                    }} (${challenge.commentQuantity})"
                     binding.challengeStage.text = challenge.stage.toString()
                     binding.challengeTime.text = "${challenge.timeSpent?.div(3600)} Hrs"
                     Glide.with(binding.challengeImage.context).load(challenge.image).centerCrop().apply(
                         RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
                     ).into(binding.challengeImage)
-                    // this fun will show distance the between your location and challenge in the cardView
-                    calculateAndShowDistance(challenge.location)
+                    // this function will show distance the between your location and challenge in the cardView
+                    challenge.location?.let { calculateAndShowDistance(it) }
                     binding.locationCardView.setOnClickListener {
                         this@ExploreFragment.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(challenge.id ?: "null"))
                     }

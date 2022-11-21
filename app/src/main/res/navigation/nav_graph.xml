@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/exploreFragment">
+    app:startDestination="@id/signInFragment">
 
     <fragment
         android:id="@+id/exploreFragment"
@@ -21,35 +21,47 @@
         android:id="@+id/profileFragment"
         android:name="com.neil.miruhiru.profile.ProfileFragment"
         android:label="ProfileFragment" />
-    <action android:id="@+id/action_global_exploreFragment" app:destination="@id/exploreFragment"/>
-    <action android:id="@+id/action_global_customFragment" app:destination="@id/customFragment"/>
-    <action android:id="@+id/action_global_communityFragment" app:destination="@id/communityFragment"/>
-    <action android:id="@+id/action_global_profileFragment" app:destination="@id/profileFragment"/>
+    <action
+        android:id="@+id/action_global_exploreFragment"
+        app:destination="@id/exploreFragment" />
+    <action
+        android:id="@+id/action_global_customFragment"
+        app:destination="@id/customFragment" />
+    <action
+        android:id="@+id/action_global_communityFragment"
+        app:destination="@id/communityFragment" />
+    <action
+        android:id="@+id/action_global_profileFragment"
+        app:destination="@id/profileFragment" />
     <fragment
         android:id="@+id/challengeDetailFragment"
         android:name="com.neil.miruhiru.challengedetail.ChallengeDetailFragment"
         android:label="fragment_challenge_detail"
-        tools:layout="@layout/fragment_challenge_detail" >
+        tools:layout="@layout/fragment_challenge_detail">
         <argument
             android:name="challengeId"
             app:argType="string" />
     </fragment>
-    <action android:id="@+id/action_global_challengeDetailFragment" app:destination="@id/challengeDetailFragment"/>
+    <action
+        android:id="@+id/action_global_challengeDetailFragment"
+        app:destination="@id/challengeDetailFragment" />
     <fragment
         android:id="@+id/taskFragment"
         android:name="com.neil.miruhiru.task.TaskFragment"
         android:label="fragment_task"
-        tools:layout="@layout/fragment_task" >
+        tools:layout="@layout/fragment_task">
         <action
             android:id="@+id/action_taskFragment_to_taskDetailFragment"
             app:destination="@id/taskDetailFragment" />
     </fragment>
-    <action android:id="@+id/action_global_taskFragment" app:destination="@id/taskFragment"/>
+    <action
+        android:id="@+id/action_global_taskFragment"
+        app:destination="@id/taskFragment" />
     <fragment
         android:id="@+id/taskDetailFragment"
         android:name="com.neil.miruhiru.taskdetail.TaskDetailFragment"
         android:label="fragment_task_detail"
-        tools:layout="@layout/fragment_task_detail" >
+        tools:layout="@layout/fragment_task_detail">
         <argument
             android:name="locationInfo"
             app:argType="com.neil.miruhiru.data.LocationInfo" />
@@ -60,39 +72,53 @@
     <dialog
         android:id="@+id/taskDialogFragment"
         android:name="com.neil.miruhiru.taskdetail.TaskDialogFragment"
-        android:label="TaskDialogFragment" >
+        android:label="TaskDialogFragment">
         <argument
             android:name="locationInfo"
             app:argType="com.neil.miruhiru.data.LocationInfo" />
     </dialog>
-    <action android:id="@+id/action_global_taskDetailFragment" app:destination="@id/taskDetailFragment" />
-    <action android:id="@+id/action_global_taskDialogFragment" app:destination="@id/taskDialogFragment" />
+    <action
+        android:id="@+id/action_global_taskDetailFragment"
+        app:destination="@id/taskDetailFragment" />
+    <action
+        android:id="@+id/action_global_taskDialogFragment"
+        app:destination="@id/taskDialogFragment" />
     <fragment
         android:id="@+id/taskSuccessFragment"
         android:name="com.neil.miruhiru.tasksuccess.TaskSuccessFragment"
         android:label="fragment_task_success"
         tools:layout="@layout/fragment_task_success" />
-    <action android:id="@+id/action_global_taskSuccessFragment" app:destination="@id/taskSuccessFragment" />
+    <action
+        android:id="@+id/action_global_taskSuccessFragment"
+        app:destination="@id/taskSuccessFragment" />
     <dialog
         android:id="@+id/logDialogFragment"
         android:name="com.neil.miruhiru.log.LogDialogFragment"
-        android:label="LogDialogFragment" /><action android:id="@+id/action_global_logDialogFragment" app:destination="@id/logDialogFragment"/>
+        android:label="LogDialogFragment" />
+    <action
+        android:id="@+id/action_global_logDialogFragment"
+        app:destination="@id/logDialogFragment" />
     <fragment
         android:id="@+id/challengeSuccessFragment"
         android:name="com.neil.miruhiru.challengesuccess.ChallengeSuccessFragment"
         android:label="fragment_challenge_success"
         tools:layout="@layout/fragment_challenge_success" />
-    <action android:id="@+id/action_global_challengeSuccessFragment" app:destination="@id/challengeSuccessFragment" />
+    <action
+        android:id="@+id/action_global_challengeSuccessFragment"
+        app:destination="@id/challengeSuccessFragment" />
     <fragment
         android:id="@+id/logFragment"
         android:name="com.neil.miruhiru.log.LogFragment"
         android:label="fragment_log"
-        tools:layout="@layout/fragment_log" /><action android:id="@+id/action_global_logFragment" app:destination="@id/logFragment"/>
+        tools:layout="@layout/fragment_log" />
+    <action
+        android:id="@+id/action_global_logFragment"
+        app:destination="@id/logFragment" />
     <fragment
         android:id="@+id/challengeTypeFragment"
         android:name="com.neil.miruhiru.challengetype.ChallengeTypeFragment"
         android:label="fragment_challenge_type"
-        tools:layout="@layout/fragment_challenge_type" >
+        tools:layout="@layout/fragment_challenge_type">
         <argument
             android:name="challenge"
             app:argType="com.neil.miruhiru.data.ChallengeInfo" />
@@ -101,11 +127,17 @@
         android:id="@+id/inviteFragment"
         android:name="com.neil.miruhiru.invite.InviteFragment"
         android:label="fragment_invite"
-        tools:layout="@layout/fragment_invite" >
+        tools:layout="@layout/fragment_invite">
         <argument
             android:name="eventId"
             app:argType="string" />
-    </fragment><action android:id="@+id/action_global_challengeTypeFragment" app:destination="@id/challengeTypeFragment"/><action android:id="@+id/action_global_inviteFragment" app:destination="@id/inviteFragment"/>
+    </fragment>
+    <action
+        android:id="@+id/action_global_challengeTypeFragment"
+        app:destination="@id/challengeTypeFragment" />
+    <action
+        android:id="@+id/action_global_inviteFragment"
+        app:destination="@id/inviteFragment" />
     <fragment
         android:id="@+id/joinFragment"
         android:name="com.neil.miruhiru.join.JoinFragment"
@@ -116,10 +148,55 @@
         android:name="com.neil.miruhiru.scan.ScanFragment"
         android:label="fragment_scan"
         tools:layout="@layout/fragment_scan" />
-    <action android:id="@+id/action_global_joinFragment" app:destination="@id/joinFragment"/>
-    <action android:id="@+id/action_global_scanFragment" app:destination="@id/scanFragment"/>
+    <action
+        android:id="@+id/action_global_joinFragment"
+        app:destination="@id/joinFragment" />
+    <action
+        android:id="@+id/action_global_scanFragment"
+        app:destination="@id/scanFragment" />
     <dialog
         android:id="@+id/chatDialogFragment"
         android:name="com.neil.miruhiru.chat.ChatDialogFragment"
-        android:label="ChatDialogFragment" /><action android:id="@+id/action_global_chatDialogFragment" app:destination="@id/chatDialogFragment"/>
+        android:label="ChatDialogFragment" />
+    <action
+        android:id="@+id/action_global_chatDialogFragment"
+        app:destination="@id/chatDialogFragment" />
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.neil.miruhiru.signin.SignInFragment"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_sign_in" />
+    <action
+        android:id="@+id/action_global_signInFragment"
+        app:destination="@id/signInFragment" />
+    <fragment
+        android:id="@+id/customDetailFragment"
+        android:name="com.neil.miruhiru.customdetail.CustomDetailFragment"
+        android:label="fragment_custom_detail"
+        tools:layout="@layout/fragment_custom_detail" >
+        <argument
+            android:name="customChallengeId"
+            app:argType="string" />
+    </fragment>
+    <action android:id="@+id/action_global_customDetailFragment" app:destination="@id/customDetailFragment" />
+    <dialog
+        android:id="@+id/customBottomSheetFragment"
+        android:name="com.neil.miruhiru.customdetail.CustomBottomSheetFragment"
+        android:label="fragment_custom_bottom_sheet"
+        tools:layout="@layout/fragment_custom_bottom_sheet" /><action android:id="@+id/action_global_customBottomSheetFragment" app:destination="@id/customBottomSheetFragment"/>
+    <fragment
+        android:id="@+id/customChallengeFragment"
+        android:name="com.neil.miruhiru.customchallenge.CustomChallengeFragment"
+        android:label="fragment_custom_challenge"
+        tools:layout="@layout/fragment_custom_challenge" /><action android:id="@+id/action_global_customChallengeFragment" app:destination="@id/customChallengeFragment"/>
+    <fragment
+        android:id="@+id/overviewFragment"
+        android:name="com.neil.miruhiru.overview.OverviewFragment"
+        android:label="fragment_overview"
+        tools:layout="@layout/fragment_overview" >
+        <argument
+            android:name="customChallengeId"
+            app:argType="string" />
+    </fragment>
+    <action android:id="@+id/action_global_overviewFragment" app:destination="@id/overviewFragment" />
 </navigation>

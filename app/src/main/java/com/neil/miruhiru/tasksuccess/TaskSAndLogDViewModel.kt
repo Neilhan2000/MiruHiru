@@ -37,8 +37,13 @@ class TaskSAndLogDViewModel(): ViewModel() {
     val navigateToLogFragment: LiveData<Boolean>
         get() = _navigateToLogFragment
 
+    private val _isKicked = MutableLiveData<Boolean>()
+    val isKicked: LiveData<Boolean>
+        get() = _isKicked
+
     var currentStage = -1
     var stageNumber = -1
+    var kickNumber = 1
 
     private fun loadEvent(eventId: String) {
 
@@ -128,6 +133,54 @@ class TaskSAndLogDViewModel(): ViewModel() {
 
     fun navigateToLogFragmentCompleted() {
         _navigateToLogFragment.value = false
+    }
+
+    fun detectUserKicked() {
+        val db = Firebase.firestore
+
+        db.collection("events").whereEqualTo("id" , UserManager.user.currentEvent)
+            .addSnapshotListener { value, error ->
+                value?.documents?.get(0)?.let {
+                    val event = it.toObject<Event>()
+
+                    if (event?.currentMembers?.contains(UserManager.userId) == false) {
+                        if (kickNumber == 1) {
+                            db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+                                .get()
+                                .addOnSuccessListener {
+                                    val eventDocumentId = it.documents[0].id
+                                    val event = it.documents[0].toObject<Event>()
+                                    val progress: MutableList<Int> = event?.progress as MutableList<Int>
+                                    progress.remove(UserManager.currentStage)
+                                    Timber.i("kick number $kickNumber progress $progress")
+
+                                    kickNumber ++
+                                    _isKicked.value = true
+                                    // remove progress
+                                    db.collection("events").document(eventDocumentId)
+                                        .update("progress", progress)
+                                        .addOnSuccessListener {
+
+                                            // remove user current Event
+                                            db.collection("users").whereEqualTo("id", UserManager.userId)
+                                                .get()
+                                                .addOnSuccessListener {
+                                                    val userDocumentId = it.documents[0].id
+
+                                                    db.collection("users").document(userDocumentId)
+                                                        .update("currentEvent", "")
+                                                        .addOnSuccessListener {
+                                                            UserManager.getUser()
+                                                        }
+                                                }
+                                        }
+
+                                }
+                        }
+                    }
+                }
+
+            }
     }
 
 

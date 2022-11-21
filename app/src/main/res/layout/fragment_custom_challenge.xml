@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".customchallenge.CustomChallengeFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/imageBorder"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/edit_text_border_log"
+            android:gravity="center"
+            android:text="點擊上傳挑戰封面"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/ChallnegeNextButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chipGroup" />
+
+        <TextView
+            android:id="@+id/imageBorder2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/edit_text_border_log"
+            android:gravity="center"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/stageNumberPicker"
+            app:layout_constraintEnd_toEndOf="@+id/StageNumberText"
+            app:layout_constraintStart_toStartOf="@+id/StageNumberText"
+            app:layout_constraintTop_toTopOf="@+id/stageNumberPicker" />
+
+        <ImageView
+            android:id="@+id/uploadedChallengeImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:scaleType="centerCrop"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/imageBorder"
+            app:layout_constraintEnd_toEndOf="@+id/imageBorder"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/imageBorder"
+            app:layout_constraintTop_toTopOf="@+id/imageBorder"
+            app:layout_constraintVertical_bias="0.0"
+            tools:srcCompat="@null" />
+
+        <EditText
+            android:id="@+id/editTextChallengeName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/edit_text_border"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="來個漂亮的標題吧"
+            android:inputType="textMultiLine"
+            android:maxLength="20"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/challengeNameText" />
+
+        <EditText
+            android:id="@+id/editTextChallengeDescription"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/edit_text_border"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="這邊你可以跟玩家說明一切有關這個挑戰的事情。"
+            android:inputType="textMultiLine"
+            android:maxLength="99"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/challengeDescriptionText" />
+
+        <TextView
+            android:id="@+id/StageNumberText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:text="選擇關卡數量"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextChallengeDescription" />
+
+        <TextView
+            android:id="@+id/challengeNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="設定挑戰標題"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/challengeDescriptionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="設定挑戰描述"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextChallengeName" />
+
+        <NumberPicker
+            android:id="@+id/stageNumberPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="@+id/StageNumberText"
+            app:layout_constraintStart_toStartOf="@+id/StageNumberText"
+            app:layout_constraintTop_toBottomOf="@+id/StageNumberText" />
+
+        <NumberPicker
+            android:id="@+id/hourNumberPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/hourText"
+            app:layout_constraintTop_toBottomOf="@+id/ChallengeTimeSpentText" />
+
+        <NumberPicker
+            android:id="@+id/minuteNumberPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/minuteText"
+            app:layout_constraintTop_toBottomOf="@+id/ChallengeTimeSpentText" />
+
+        <TextView
+            android:id="@+id/ChallengeTimeSpentText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:text="輸入挑戰花費時間"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/StageNumberText"
+            app:layout_constraintTop_toBottomOf="@+id/editTextChallengeDescription" />
+
+        <TextView
+            android:id="@+id/challengeTagText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:text="選擇挑戰標籤"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/stageNumberPicker" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/challengeTagText"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/foodTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="true"
+                android:tag="美食"
+                android:text="美食"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/bg_food_chip_state"
+                app:chipEndPadding="10dp"
+                app:chipStartPadding="10dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/historyTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="true"
+                android:tag="歷史"
+                android:text="歷史"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/bg_history_chip_state"
+                app:chipEndPadding="10dp"
+                app:chipStartPadding="10dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/coupleTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="true"
+                android:tag="情侶"
+                android:text="情侶"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/bg_couple_chip_state"
+                app:chipEndPadding="10dp"
+                app:chipStartPadding="10dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/travelTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="true"
+                android:tag="旅遊"
+                android:text="旅遊"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/bg_travel_chip_state"
+                app:chipEndPadding="10dp"
+                app:chipStartPadding="10dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/specalTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="true"
+                android:tag="特殊"
+                android:text="特殊"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="@color/bg_special_chip_state"
+                app:chipEndPadding="10dp"
+                app:chipStartPadding="10dp" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <Button
+            android:id="@+id/ChallnegeNextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/deep_yellow"
+            android:text="繼續"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/minuteText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:text="分鐘"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/minuteNumberPicker"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/minuteNumberPicker" />
+
+        <TextView
+            android:id="@+id/hourText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="小時"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/hourNumberPicker"
+            app:layout_constraintEnd_toStartOf="@+id/minuteNumberPicker"
+            app:layout_constraintTop_toTopOf="@+id/hourNumberPicker" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>

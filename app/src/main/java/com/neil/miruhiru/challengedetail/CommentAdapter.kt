@@ -1,10 +1,7 @@
 package com.neil.miruhiru.challengedetail
 
-import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.*
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +10,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Comment
 import com.neil.miruhiru.databinding.ItemChallengeCommentBinding
-import timber.log.Timber
 
 
 class CommentAdapter(
@@ -22,38 +18,30 @@ class CommentAdapter(
 ): ListAdapter<Comment, CommentAdapter.ViewHolder>(DiffCallBack()) {
 
     private val viewModel = viewModel
-    private lateinit var mRecyclerView: RecyclerView
 
     inner class ViewHolder(private val binding: ItemChallengeCommentBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Comment) {
-            binding.userName.text = item.userId
             binding.ratingBar.rating = item.rating
             binding.comment.text = item.text
 
             var userIcon = ""
+            var userName = ""
             viewModel.commentUsers.value?.forEach { user ->
                 if (item.userId == user.id) {
                     userIcon = user.icon
+                    userName = user.name
                 }
             }
 
+            binding.userName.text = userName
             Glide.with(binding.userIcon.context).load(userIcon).circleCrop().apply(
-                RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
+                RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
             ).into(binding.userIcon)
             binding.reportIcon.setOnClickListener {
                 onClick(adapterPosition)
             }
-
-            if (adapterPosition > 2) {
-                mRecyclerView.layoutParams.height = 174
-            }
         }
-    }
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        mRecyclerView = recyclerView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentAdapter.ViewHolder {

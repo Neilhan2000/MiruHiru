@@ -26,7 +26,7 @@
         android:layout_marginTop="16dp"
         android:text="第一關"
         android:textColor="@color/white"
-        android:textSize="24sp"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,7 +37,7 @@
         android:layout_marginStart="16dp"
         android:text="XX鐵板燒"
         android:textColor="@color/white"
-        android:textSize="24sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/stageNumber"
         app:layout_constraintStart_toEndOf="@+id/stageNumber"
         app:layout_constraintTop_toTopOf="@+id/stageNumber" />

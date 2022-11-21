@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/customLocationIcon"
+        android:layout_width="25dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_red_location" />
+
+    <View
+        android:id="@+id/redLineView"
+        android:layout_width="2dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:background="@android:color/holo_red_light"
+        app:layout_constraintBottom_toBottomOf="@+id/overviewImageBorder"
+        app:layout_constraintEnd_toEndOf="@+id/customLocationIcon"
+        app:layout_constraintStart_toStartOf="@+id/customLocationIcon"
+        app:layout_constraintTop_toBottomOf="@+id/customLocationIcon" />
+
+    <View
+        android:id="@+id/customTaskBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/overviewTaskBorder"
+        app:layout_constraintEnd_toEndOf="@+id/overviewTaskBorder"
+        app:layout_constraintStart_toStartOf="@+id/overviewTaskBorder"
+        app:layout_constraintTop_toTopOf="@+id/overviewTaskBorder" />
+
+    <ImageView
+        android:id="@+id/overviewTaskImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/overviewImageBorder"
+        app:layout_constraintEnd_toEndOf="@+id/overviewImageBorder"
+        app:layout_constraintStart_toStartOf="@+id/overviewImageBorder"
+        app:layout_constraintTop_toTopOf="@+id/overviewImageBorder"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/image_placeholder" />
+
+    <TextView
+        android:id="@+id/overviewImageBorder"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/edit_text_border_log"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/customLocationIcon"
+        app:layout_constraintTop_toTopOf="@+id/customLocationIcon" />
+
+    <TextView
+        android:id="@+id/overviewTaskBorder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/edit_text_border_log"
+        app:layout_constraintBottom_toBottomOf="@+id/overviewImageBorder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/overviewImageBorder"
+        app:layout_constraintTop_toTopOf="@+id/overviewImageBorder"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/taskNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="12dp"
+        android:text="挑戰名稱"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/overviewTaskBorder"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/overviewTaskBorder"
+        app:layout_constraintTop_toTopOf="@+id/overviewTaskBorder" />
+
+    <TextView
+        android:id="@+id/taskDistanceText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="距離起點 > 1000 Ms"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/overviewDistanceIcon"
+        app:layout_constraintStart_toEndOf="@+id/overviewDistanceIcon"
+        app:layout_constraintTop_toTopOf="@+id/overviewDistanceIcon" />
+
+    <TextView
+        android:id="@+id/taskStage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="18dp"
+        android:text="5"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/taskDistanceText"
+        app:layout_constraintEnd_toEndOf="@+id/customTaskBackground"
+        app:layout_constraintTop_toTopOf="@+id/taskDistanceText" />
+
+    <ImageView
+        android:id="@+id/overviewDistanceIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@+id/taskNameText"
+        app:layout_constraintTop_toBottomOf="@+id/taskNameText"
+        app:srcCompat="@drawable/ic_baseline_location" />
+
+    <ImageView
+        android:id="@+id/overviewStageIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/taskStage"
+        app:layout_constraintEnd_toStartOf="@+id/taskStage"
+        app:layout_constraintTop_toTopOf="@+id/taskStage"
+        app:srcCompat="@drawable/ic_stage" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,7 @@ data class Event(
     val stage: Int = 0,
     val status: String = "",
     val endTime: Timestamp = Timestamp(Date(0)),
-    val currentMembers: List<String> = listOf()
+    val currentMembers: List<String> = listOf(),
+    val personal: Boolean = false
 )
 

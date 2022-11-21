@@ -15,4 +15,18 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="sign_in_with_google">Sign In with Google</string>
+    <string name="update">更新</string>
+    <string name="challenge">挑戰</string>
+    <string name="complete">完成</string>
+    <string name="uploaded">已上傳</string>
+    <string name="unUpoladed">未上傳</string>
+    <string name="food">美食</string>
+    <string name="history">歷史</string>
+    <string name="couple">情侶</string>
+    <string name="travel">旅遊</string>
+    <string name="special">特殊</string>
+    <string name="other">其他</string>
+    <string name="customGuideTextOne">歡迎來到自定義挑戰的第</string>
+    <string name="customGuideTextTwo">關，點擊地圖上的位置，並按下編輯按鈕以設定本次關卡的內容</string>
 </resources>

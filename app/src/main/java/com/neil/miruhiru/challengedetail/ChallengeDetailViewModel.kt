@@ -10,16 +10,15 @@ import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.mapbox.geojson.Point
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.*
 import timber.log.Timber
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
-
-    init {
-        loadChallenge(challengeId)
-    }
 
     private val _challenge = MutableLiveData<Challenge>()
     val challenge: LiveData<Challenge>
@@ -32,8 +31,6 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     private val _commentList = MutableLiveData<List<Comment>>()
     val commentList: LiveData<List<Comment>>
         get() = _commentList
-
-    lateinit var user: User
 
     private val _commentUsers = MutableLiveData<List<User>>()
     val commentUsers: LiveData<List<User>>
@@ -56,6 +53,10 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
         } else {
             _hasCurrentEvent.value = false
         }
+    }
+
+    fun navigateToChallengeTypeFragmentCompleted() {
+        _hasCurrentEvent.value = false
     }
 
     fun cleanEventSingle() {
@@ -81,7 +82,7 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
     private var challengeDocumentId = ""
 
-    private fun loadChallenge(challengeId: String) {
+    fun loadChallenge(challengeId: String) {
         val db = Firebase.firestore
 
         db.collection("challenges").whereEqualTo("id", challengeId)
@@ -99,6 +100,28 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
                 Timber.tag("neil").i(exception, "Error getting documents.")
             }
 
+    }
+
+    fun loadPersonalChallenge(customChallengeId: String) {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id" , UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                val userDocumentId = it.documents[0].id
+                UserManager.userChallengeDocumentId = userDocumentId
+
+                db.collection("users").document(userDocumentId).collection("customChallenges")
+                    .whereEqualTo("id", customChallengeId)
+                    .get()
+                    .addOnSuccessListener {
+                        val customDocumentId = it.documents[0].id
+                        val customChallenge = it.documents[0].toObject<Challenge>()
+                        _challenge.value = customChallenge!!
+
+                        loadPersonalTasks(userDocumentId, customDocumentId)
+                    }
+            }
     }
 
     private fun loadTasks() {
@@ -122,6 +145,26 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
     }
 
+    private fun loadPersonalTasks(userDocumentId: String, customDocumentId: String) {
+        val db = Firebase.firestore
+
+        db.collection("users").document(userDocumentId).collection("customChallenges")
+            .document(customDocumentId).collection("tasks")
+            .get()
+            .addOnSuccessListener {
+                val taskList = mutableListOf<Task>()
+                Timber.i("documents ${it.documents}")
+
+                it.documents.forEach { document ->
+                    val task = document.toObject<Task>()
+                    if (task != null) {
+                        taskList.add(task)
+                    }
+                }
+                _taskList.value = taskList
+            }
+    }
+
     fun loadComments() {
         val db = Firebase.firestore
         val commentList = mutableListOf<Comment>()
@@ -130,35 +173,31 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
             .collection("comments")
             .get()
             .addOnSuccessListener { result ->
+                val commentUsers = mutableListOf<User>()
+
                 for (document in result) {
                     val comment = document.toObject<Comment>()
                     commentList.add(comment)
-                    addUserToCommentUsersList(comment.userId)
+
+                    // add user to comment user list
+                    db.collection("users").whereEqualTo("id", comment.userId)
+                        .get().addOnSuccessListener {
+                            val user = it.documents[0].toObject<User>()
+                            if (user != null) {
+                                commentUsers.add(user)
+                                _commentUsers.value = commentUsers
+                                _commentList.value = commentList
+                            }
+
+                        }
+
                 }
-                _commentList.value = commentList
-                Timber.tag("neil").i("success load documents = %s", commentList)
+
             }
-            .addOnFailureListener { exception ->
-                Timber.tag("neil").i(exception, "Error getting documents.")
-            }
+
 
     }
 
-    private fun addUserToCommentUsersList(userId: String) {
-        val db = Firebase.firestore
-        val commentUsers = mutableListOf<User>()
-        db.collection("users")
-            .whereEqualTo("id", userId)
-            .get().addOnSuccessListener {
-                for (result in it.documents) {
-                    user = result.toObject<User>()!!
-                    commentUsers.add(user)
-                }
-                _commentUsers.value = commentUsers
-                Timber.tag("neil").i("success load documents = %s", commentUsers)
-
-            }
-    }
 
     fun calculateDistance(currentPoint: Point?, destinationPoint: GeoPoint): Float {
         val current = Location("current")
@@ -175,6 +214,12 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
         return result[0]
 
+    }
+
+    fun roundOffDecimal(number: Float): Float? {
+        val df = DecimalFormat("#.#")
+        df.roundingMode = RoundingMode.CEILING
+        return df.format(number).toFloat()
     }
 
 }

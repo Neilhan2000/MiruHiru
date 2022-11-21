@@ -1,5 +1,6 @@
 package com.neil.miruhiru
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
@@ -10,6 +11,8 @@ import com.neil.miruhiru.data.User
 import timber.log.Timber
 
 class MainViewModel: ViewModel() {
+
+    val currentFragmentType = MutableLiveData<CurrentFragmentType>()
 
     fun cleanEventSingle() {
         val db = Firebase.firestore

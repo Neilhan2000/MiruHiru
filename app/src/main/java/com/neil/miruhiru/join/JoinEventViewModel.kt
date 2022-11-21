@@ -41,9 +41,6 @@ class JoinEventViewModel(application: Application) : AndroidViewModel(applicatio
                     _navigateToTaskFragment.value = type
                 }
             }
-            .addOnFailureListener { exception ->
-                Log.i("neil", "Error getting documents.", exception)
-            }
     }
 
     fun addScanUserToEvent(eventId: String, type: String) {
@@ -128,14 +125,34 @@ class JoinEventViewModel(application: Application) : AndroidViewModel(applicatio
                     .get()
                     .addOnSuccessListener { result->
                         val event = result.toObject<Event>()
-                        challengeId = event?.challengeId ?: ""
+                        event?.challengeId?.let { challengeId = it }
 
-                        db.collection("challenges").whereEqualTo("id", challengeId)
-                            .get().addOnSuccessListener { result ->
-                                challengeDocumentId = result.documents[0].id
-                                UserManager.userChallengeDocumentId = challengeDocumentId
-                                getUser(type)
-                            }
+                        if (event?.personal == false) {
+                            UserManager.isPersonal = false
+                            db.collection("challenges").whereEqualTo("id", challengeId)
+                                .get().addOnSuccessListener { result ->
+                                    challengeDocumentId = result.documents[0].id
+                                    UserManager.userChallengeDocumentId = challengeDocumentId
+                                    getUser(type)
+                                }
+                        } else {
+                            UserManager.isPersonal = true
+                            val hostUserId = event?.members?.first()
+                            db.collection("users").whereEqualTo("id", hostUserId)
+                                .get()
+                                .addOnSuccessListener {
+                                    val userDocumentId = it.documents[0].id
+
+                                    db.collection("users").document(userDocumentId).collection("customChallenges")
+                                        .whereEqualTo("id", challengeId)
+                                        .get()
+                                        .addOnSuccessListener {
+                                            val customDocumentId = it.documents[0].id
+                                            UserManager.userChallengeDocumentId = customDocumentId
+                                            getUser(type)
+                                        }
+                                }
+                        }
                     }
             }
     }

@@ -17,6 +17,9 @@ object UserManager {
     private const val USER_ID = "user_token"
     private const val USER_CHALLENGE_ID = "user_challenge_id"
     private const val CURRENT_STAGE= "current_stage"
+    private const val CUSTOM_CURRENT_STAGE = "custom_current_stage"
+    private const val CUSTOM_TOTAL_STAGE = "custom_total_stage"
+    private const val IS_PERSONAL = "is_personal"
 
 
 
@@ -24,7 +27,33 @@ object UserManager {
     val hasCurrentEvent: LiveData<Event>
         get() = _hasCurrentEvent
 
+    private val _userLiveData = MutableLiveData<User>()
+    val userLiveData: LiveData<User>
+        get() = _userLiveData
+
     var user = User()
+    var isPersonal: Boolean? = null
+    get() = MiruHiruApplication.instance
+    .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE)
+    .getBoolean(IS_PERSONAL, false)
+    set(value) {
+        field = when (value) {
+            null -> {
+                MiruHiruApplication.instance
+                    .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                    .remove(IS_PERSONAL)
+                    .apply()
+                null
+            }
+            else -> {
+                MiruHiruApplication.instance
+                    .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                    .putBoolean(IS_PERSONAL, value)
+                    .apply()
+                value
+            }
+        }
+    }
     // this variable is used for updating log and cleaning progress of user current event
     var currentStage: Int? = null
         get() = MiruHiruApplication.instance
@@ -98,6 +127,55 @@ object UserManager {
             }
         }
 
+    // For Custom Fragment(record current task stage and total stage)
+    var unFinishEditingId = ""
+
+    var customCurrentStage: Int? = null
+        get() = MiruHiruApplication.instance
+            .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE)
+            .getInt(CUSTOM_CURRENT_STAGE, -1)
+        set(value) {
+            field = when (value) {
+                null -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .remove(CUSTOM_CURRENT_STAGE)
+                        .apply()
+                    null
+                }
+                else -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .putInt(CUSTOM_CURRENT_STAGE, value)
+                        .apply()
+                    value
+                }
+            }
+        }
+    var customTotalStage: Int? = null
+        get() = MiruHiruApplication.instance
+            .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE)
+            .getInt(CUSTOM_TOTAL_STAGE, -1)
+        set(value) {
+            field = when (value) {
+                null -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .remove(CUSTOM_TOTAL_STAGE)
+                        .apply()
+                    null
+                }
+                else -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .putInt(CUSTOM_TOTAL_STAGE, value)
+                        .apply()
+                    value
+                }
+            }
+        }
+
+
     /**
      * It can be use to check login status directly
      */
@@ -128,6 +206,7 @@ object UserManager {
                 for (document in result) {
                     val user = document.toObject<User>()
                     this.user = user
+                    _userLiveData.value = user
                 }
 
                 // if has event, we load it

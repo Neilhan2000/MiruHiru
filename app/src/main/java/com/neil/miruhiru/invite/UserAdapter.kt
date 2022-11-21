@@ -12,14 +12,14 @@ import com.neil.miruhiru.data.User
 import com.neil.miruhiru.databinding.ItemInviteUserBinding
 
 
-class UserAdapter: ListAdapter<User, UserAdapter.ViewHolder>(DiffCallBack()) {
+class UserAdapter : ListAdapter<User, UserAdapter.ViewHolder>(DiffCallBack()) {
 
 
     inner class ViewHolder(private val binding: ItemInviteUserBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: User) {
             Glide.with(binding.userIconInvite.context).load(item.icon).circleCrop().apply(
-                RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
+                RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
             ).into(binding.userIconInvite)
             binding.userNameInvite.text = item.name
         }

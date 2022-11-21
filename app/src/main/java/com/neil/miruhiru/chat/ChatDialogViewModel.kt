@@ -2,6 +2,7 @@ package com.neil.miruhiru.chat
 
 import android.app.Application
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -21,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 class ChatDialogViewModel(application: Application) : AndroidViewModel(application) {
@@ -46,14 +48,18 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
     val isMainUser: LiveData<Boolean>
         get() = _isMainUser
 
+    var event: Event? = Event()
+
     private fun detectUserMessages() {
         val db = Firebase.firestore
+
 
         db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
             .get()
             .addOnSuccessListener {
+
                 val eventDocumentId = it.documents[0].id
-                val event = it.documents[0].toObject<Event>()
+                event = it.documents[0].toObject<Event>()
                 event?.members?.let { userIdList = it }
 
 
@@ -66,9 +72,9 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
                             if (user != null) {
                                 memberList.add(user)
                             }
-
+     
                             if (memberList.size == event?.members?.size) {
-                                _isMainUser.value = event.members.first() == UserManager.userId
+                                _isMainUser.value = event?.members?.first() == UserManager.userId
                                 // load message
                                 db.collection("events").document(eventDocumentId).collection("messages").orderBy("time", Query.Direction.ASCENDING)
                                     .addSnapshotListener { messages, error ->

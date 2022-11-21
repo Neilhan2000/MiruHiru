@@ -1,10 +1,8 @@
 package com.neil.miruhiru.challengedetail
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
@@ -19,7 +17,6 @@ import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -41,7 +38,6 @@ import com.neil.miruhiru.data.ChallengeInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
 import com.neil.miruhiru.factory.ChallengeDetailViewModelFactory
-import com.neil.miruhiru.taskdetail.TaskDetailFragmentArgs
 import timber.log.Timber
 import kotlin.math.roundToInt
 
@@ -69,6 +65,17 @@ class ChallengeDetailFragment : Fragment() {
         // get args from last fragment and pass it to viewModel
         challengeId = ChallengeDetailFragmentArgs.fromBundle(requireArguments()).challengeId
         factory = ChallengeDetailViewModelFactory(challengeId)
+        val previousFragmentId  = this.findNavController().previousBackStackEntry?.destination?.id
+        if (previousFragmentId == R.id.exploreFragment) {
+            viewModel.loadChallenge(challengeId)
+            UserManager.isPersonal = false
+        } else if (previousFragmentId == R.id.overviewFragment) {
+            viewModel.loadPersonalChallenge(challengeId)
+            binding.seeComment.visibility = View.GONE
+            binding.ratingBar.visibility = View.GONE
+            binding.ratingText.visibility = View.GONE
+            UserManager.isPersonal = true
+        }
 
         // observer challenge data and setup screen
         viewModel.challenge.observe(viewLifecycleOwner, Observer {
@@ -116,9 +123,28 @@ class ChallengeDetailFragment : Fragment() {
         // observer commentUsers and show in recyclerView
         viewModel.commentUsers.observe(viewLifecycleOwner, Observer {
             adapter.submitList(viewModel.commentList.value)
+            adapter.notifyDataSetChanged()
+            if (adapter.itemCount > 2) {
+                binding.recyclerComment.layoutParams.height = 450
+            }
         })
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mapView.onDestroy()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView.onStop()
     }
 
     private fun reportUser(userIndex: Int) {
@@ -136,13 +162,21 @@ class ChallengeDetailFragment : Fragment() {
         Glide.with(binding.challengeMainImage.context).load(challenge.image).centerCrop().apply(
             RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
         ).into(binding.challengeMainImage)
-        binding.ratingBar.rating = challenge.totalRating!!
-        binding.ratingText.text = challenge.totalRating.toString()
+        challenge.totalRating?.let { binding.ratingBar.rating  = it }
+        binding.ratingText.text = "${challenge.totalRating?.let { viewModel.roundOffDecimal(it) }} (${challenge.commentQuantity})"
         binding.stageText.text = challenge.stage.toString()
-        binding.timeText.text = "${challenge.timeSpent?.div(3600)} Hrs"
+        binding.timeText.text = "${challenge.timeSpent?.toDouble().toBigDecimal().div(3600.toDouble().toBigDecimal())} Hrs"
         binding.challengeDescription.text = challenge.description
         binding.typeText.text = challenge.type
-        calculateAndShowDistance(challenge.location!!)
+        binding.typeText.setBackgroundResource(when (challenge.type) {
+            getString(R.string.food) -> R.drawable.type_text_border
+            getString(R.string.history) -> R.drawable.type_history_border
+            getString(R.string.couple) -> R.drawable.type_couple_border
+            getString(R.string.travel) -> R.drawable.type_travel_border
+            getString(R.string.special) -> R.drawable.type_special_border
+            else -> R.drawable.type_text_border
+        })
+        challenge.location?.let { calculateAndShowDistance(it) }
 
         binding.startButton.setOnClickListener {
             viewModel.checkHasCurrentEvent(challengeId)
@@ -244,8 +278,11 @@ class ChallengeDetailFragment : Fragment() {
 
     private fun determineTaskIcon(stage: Int): Int {
         val iconRes = when (stage) {
-            1 -> R.drawable.anya_icon
-            else -> R.drawable.anya_icon2
+            1 -> R.drawable.ic_stage_one_on
+            2 -> R.drawable.ic_stage_two_on
+            3 -> R.drawable.ic_stage_three_on
+            4 -> R.drawable.ic_stage_four_on
+            else -> R.drawable.ic_stage_five_on
         }
         return iconRes
     }
