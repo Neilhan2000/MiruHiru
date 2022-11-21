@@ -61,8 +61,8 @@ class MainActivity : AppCompatActivity() {
 
         // set activity instance
         instance = this
-//        UserManager.customTotalStage = null
-//        UserManager.customCurrentStage = null
+        UserManager.customTotalStage = null
+        UserManager.customCurrentStage = null
 
         // bottom navigation
         val navController = Navigation.findNavController(this, R.id.myNavHostFragment)
@@ -111,10 +111,16 @@ class MainActivity : AppCompatActivity() {
                 R.id.customFragment -> CurrentFragmentType.CUSTOM
                 R.id.communityFragment -> CurrentFragmentType.COMMUNITY
                 R.id.profileFragment -> CurrentFragmentType.PROFILE
-                else -> viewModel.currentFragmentType.value
+                else -> CurrentFragmentType.OTHER
             }
         }
         viewModel.currentFragmentType.observe(this, Observer { fragmentType ->
+
+            if (fragmentType.value == getString(R.string.other)) {
+                supportActionBar?.hide()
+            } else {
+                supportActionBar?.show()
+            }
 
             if (fragmentType.value == getString(R.string.explore_fragment)) {
                 binding.userIconExplore.visibility = View.VISIBLE

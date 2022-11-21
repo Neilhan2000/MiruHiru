@@ -234,7 +234,8 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
     private fun determineChallengeIcon(type: String): Int {
         return when (type) {
-            "美食" -> R.drawable.anya_icon
+            getString(R.string.food) -> R.drawable.ic_food_location
+            getString(R.string.couple) -> R.drawable.ic_love_location
             else -> R.drawable.anya_icon2
         }
     }

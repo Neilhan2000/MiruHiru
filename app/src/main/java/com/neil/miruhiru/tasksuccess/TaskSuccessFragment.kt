@@ -2,6 +2,7 @@ package com.neil.miruhiru.tasksuccess
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
+import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -76,21 +77,21 @@ class TaskSuccessFragment : Fragment() {
                 if (viewModel.currentStage < viewModel.stageNumber) {
                     Timber.i("isButtonClickable set 繼續挑戰")
                     binding.continueButton.text = "繼續挑戰"
-                    binding.continueButton.setBackgroundResource(R.drawable.button_border)
+                    binding.continueButton.backgroundTintList = (ColorStateList.valueOf(resources.getColor(R.color.deep_yellow)))
                     binding.continueButton.isEnabled = true
                     // remove snapshot listener
                     viewModel.removeDetectUsersProgress()
                 } else {
                     Timber.i("isButtonClickable set 挑戰完成")
                     binding.continueButton.text = "挑戰完成"
-                    binding.continueButton.setBackgroundResource(R.drawable.button_border)
+                    binding.continueButton.backgroundTintList = (ColorStateList.valueOf(resources.getColor(R.color.deep_yellow)))
                     binding.continueButton.isEnabled = true
                     // remove snapshot listener
                     viewModel.removeDetectUsersProgress()
                 }
             } else {
                 binding.continueButton.text = "等待同伴挑戰中"
-                binding.continueButton.setBackgroundResource(R.drawable.button_disable_border)
+                binding.continueButton.backgroundTintList = (ColorStateList.valueOf(resources.getColor(R.color.grey)))
                 binding.continueButton.isEnabled = false
             }
 

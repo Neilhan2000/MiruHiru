@@ -14,6 +14,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.databinding.FragmentSignInBinding
 
 
@@ -45,6 +46,7 @@ class SignInFragment : Fragment() {
         viewModel.navigateToExploreFragment.observe(viewLifecycleOwner, Observer { signIn ->
             if (signIn) {
                 this.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+                UserManager.getUser()
             }
         })
 

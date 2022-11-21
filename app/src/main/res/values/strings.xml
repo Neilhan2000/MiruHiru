@@ -26,4 +26,7 @@
     <string name="couple">情侶</string>
     <string name="travel">旅遊</string>
     <string name="special">特殊</string>
+    <string name="other">其他</string>
+    <string name="customGuideTextOne">歡迎來到自定義挑戰的第</string>
+    <string name="customGuideTextTwo">關，點擊地圖上的位置，並按下編輯按鈕以設定本次關卡的內容</string>
 </resources>

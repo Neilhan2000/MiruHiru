@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.URLUtil
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -20,7 +21,6 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
@@ -32,7 +32,6 @@ import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentCustomDetailBinding
-import kotlinx.coroutines.*
 import timber.log.Timber
 
 class CustomDetailFragment : Fragment() {
@@ -146,6 +145,9 @@ class CustomDetailFragment : Fragment() {
             false
         }
 
+        binding.closeGuideIcon.setOnClickListener {
+            binding.guideCardView.visibility = View.GONE
+        }
         binding.editButton.setOnClickListener {
             val result = viewModel.task
             // pass data to BottomSheetFragment
@@ -183,17 +185,18 @@ class CustomDetailFragment : Fragment() {
             -1 -> {
                 viewModel.loadFirstOrUnfinishedEditing()
                 Timber.i("-1 -> current stage ${UserManager.customCurrentStage}, total stage ${UserManager.customTotalStage}")
+                binding.customGuideText.text = getString(R.string.customGuideTextOne) + "1" + getString(R.string.customGuideTextTwo)
             }
             else -> {
                 UserManager.customCurrentStage = UserManager.customCurrentStage?.plus(1)
                 Timber.i("else -> current stage ${UserManager.customCurrentStage}, total stage ${UserManager.customTotalStage}")
+                binding.customGuideText.text = getString(R.string.customGuideTextOne) + "${UserManager.customCurrentStage}" + getString(R.string.customGuideTextTwo)
 
                 if (UserManager.customCurrentStage == UserManager.customTotalStage) {
                     viewModel.setLastStage()
                 }
             }
         }
-
 
         // in the editing of last stage, we change the next button content via live data
         // is not valid url means that the task is come from overview page, we don't change the next button here
@@ -212,6 +215,20 @@ class CustomDetailFragment : Fragment() {
             }
         })
 
+
+        // override back press
+        requireActivity().onBackPressedDispatcher
+            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    UserManager.customCurrentStage = null
+                    UserManager.customTotalStage = null
+                    if (binding.nextButton.text == getString(R.string.update)) {
+                        this@CustomDetailFragment.findNavController().navigateUp()
+                    } else {
+                        this@CustomDetailFragment.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
+                    }
+                }
+            })
         return binding.root
     }
 

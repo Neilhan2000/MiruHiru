@@ -132,6 +132,21 @@ class ChallengeDetailFragment : Fragment() {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mapView.onDestroy()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView.onStop()
+    }
+
     private fun reportUser(userIndex: Int) {
         Toast.makeText(requireContext(), "report user $userIndex", Toast.LENGTH_SHORT).show()
     }

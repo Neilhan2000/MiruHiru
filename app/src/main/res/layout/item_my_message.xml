@@ -29,7 +29,7 @@
         android:padding="5dp"
         android:text="其他人的訊息"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/userIconMine"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
