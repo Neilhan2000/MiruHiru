@@ -34,4 +34,7 @@
     <string name="upload">上傳</string>
     <string name="edit">編輯</string>
     <string name="upload_challenge_success_toast">上傳成功，我們將在審核完成後通知你歐</string>
+    <string name="custom_guide_text_continue">嗨! 你可以在這裡改變上次的編輯，目前在第</string>
+    <string name="stage">關</string>
+    <string name="custom_guide_text_unfinished">歡迎回來，在這裡你可以接續上次的編輯進度，目前在第</string>
 </resources>

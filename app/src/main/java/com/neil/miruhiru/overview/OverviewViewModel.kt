@@ -190,7 +190,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun resetStartButtonCompleted() {
-        
+
         _resetStartButton.value = false
     }
 

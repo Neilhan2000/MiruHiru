@@ -92,6 +92,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
+        mapbox:cardCornerRadius="5dp"
         mapbox:layout_constraintEnd_toEndOf="parent"
         mapbox:layout_constraintStart_toStartOf="parent"
         mapbox:layout_constraintTop_toTopOf="parent">
@@ -108,8 +109,8 @@
                 android:padding="15dp"
                 android:paddingStart="25dp"
                 android:paddingEnd="25dp"
-                android:text="教學引導"
                 android:textColor="@color/black"
+                mapbox:circularflow_radiusInDP="15dp"
                 mapbox:layout_constraintBottom_toBottomOf="parent"
                 mapbox:layout_constraintEnd_toEndOf="parent"
                 mapbox:layout_constraintStart_toStartOf="parent"
@@ -117,8 +118,8 @@
 
             <ImageView
                 android:id="@+id/closeGuideIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="4dp"
                 android:src="@drawable/ic_close"

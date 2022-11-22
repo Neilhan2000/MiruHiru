@@ -110,6 +110,9 @@ class TaskAdapter(viewModel: TaskViewModel) : ListAdapter<Task, TaskAdapter.View
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskAdapter.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_task_task, parent, false)
         context = parent.context
+        if (this.itemCount == 1) {
+            view.layoutParams.width = RecyclerView.LayoutParams.MATCH_PARENT
+        }
         return ViewHolder(binding = ItemTaskTaskBinding.bind(view))
     }
 

@@ -94,6 +94,7 @@ class CustomDetailFragment : Fragment() {
             if (result != null) {
 
                 viewModel.task = result
+                viewModel.setContinueStage(result.stage)
 
                 viewModel.originalTask.id = result.id
                 viewModel.originalTask.image = result.image
@@ -185,17 +186,30 @@ class CustomDetailFragment : Fragment() {
             }
         })
 
-        // continuing unfinished editing will not show guide text
-        if (this.findNavController().previousBackStackEntry?.destination?.id == R.id.overviewFragment) {
-            binding.guideCardView.visibility = View.GONE
-        }
         // update current stage value from 0 to total stage(excluding total 1),
         // and determine should we need to load firebase data(only first time and continue unfinished editing)
         when (UserManager.customCurrentStage) {
             -1 -> {
                 viewModel.loadFirstOrUnfinishedEditing()
                 Timber.i("-1 -> current stage ${UserManager.customCurrentStage}, total stage ${UserManager.customTotalStage}")
-                binding.customGuideText.text = getString(R.string.customGuideTextOne) + "1" + getString(R.string.customGuideTextTwo)
+                if (this.findNavController().previousBackStackEntry?.destination?.id == R.id.overviewFragment) {
+                    viewModel.continueEditingStage.observe(viewLifecycleOwner, Observer { stage ->
+                        if (binding.nextButton.text == getString(R.string.update)) {
+                            binding.customGuideText.text = getString(R.string.custom_guide_text_continue) +
+                                    "$stage" + getString(R.string.stage)
+                        }
+                    })
+                    viewModel.isUnfinished.observe(viewLifecycleOwner, Observer { isUnfinished ->
+                        if (isUnfinished) {
+                            if (binding.nextButton.text != getString(R.string.update)) {
+                                binding.customGuideText.text = getString(R.string.custom_guide_text_unfinished) +
+                                        "${UserManager.customCurrentStage}" + getString(R.string.stage)
+                            }
+                        }
+                    })
+                } else {
+                    binding.customGuideText.text = getString(R.string.customGuideTextOne) + "1" + getString(R.string.customGuideTextTwo)
+                }
             }
             else -> {
                 UserManager.customCurrentStage = UserManager.customCurrentStage?.plus(1)

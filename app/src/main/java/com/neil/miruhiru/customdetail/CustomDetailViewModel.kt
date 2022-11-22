@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -29,6 +30,14 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     private val _navigateToOverviewFragment = MutableLiveData<Boolean>()
     val navigateToOverviewFragment: LiveData<Boolean>
         get() = _navigateToOverviewFragment
+
+    private val _isUnfinished = MutableLiveData<Boolean>()
+    val isUnfinished: LiveData<Boolean>
+        get() = _isUnfinished
+
+    private val _continueEditingStage = MutableLiveData<Int>()
+    val continueEditingStage: LiveData<Int>
+        get() = _continueEditingStage
 
     private val viewModelApplication = application
     var task = Task()
@@ -58,6 +67,10 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
     fun deleteTask() {
         task = Task(id = task.id, stage = task.stage)
+    }
+
+    fun setContinueStage(stage: Int) {
+        _continueEditingStage.value = stage
     }
 
     fun postTask() {
@@ -244,12 +257,19 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                             .addOnSuccessListener {
                                 UserManager.customCurrentStage = it.documents.size + 1
 
+                                challenge?.stage?.let { challengeStage ->
+                                    if (challengeStage > it.documents.size) {
+                                        _isUnfinished.value = true
+                                    }
+                                }
+
                                 if (challenge?.stage == 1) { _isLastStage.value = true }
 
-                                // for unfinished editing
+                                // for continuing editing to set last stage
                                 if (challenge?.stage == it.documents.size + 1) {
                                     _isLastStage.value = true
                                 }
+
                             }
                     }
 
