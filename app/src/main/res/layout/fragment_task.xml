@@ -18,7 +18,7 @@
         mapbox:layout_constraintTop_toTopOf="parent"
         mapbox:mapbox_cameraTargetLat="23.5000"
         mapbox:mapbox_cameraTargetLng="121.0000"
-        mapbox:mapbox_cameraZoom="15.0">
+        mapbox:mapbox_cameraZoom="7.0">
 
     </com.mapbox.maps.MapView>
 

@@ -89,13 +89,13 @@
         android:id="@+id/guideCardView"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="20dp"
         mapbox:cardCornerRadius="5dp"
         mapbox:layout_constraintEnd_toEndOf="parent"
         mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toTopOf="parent">
+        mapbox:layout_constraintTop_toBottomOf="@+id/searchBar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -125,8 +125,65 @@
                 android:src="@drawable/ic_close"
                 mapbox:layout_constraintEnd_toEndOf="parent"
                 mapbox:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
+
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/challenge_success_border"
+        android:ems="10"
+        android:hint="輸入地點以搜尋"
+        android:inputType="text"
+        android:paddingStart="15dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="36dp"
+        android:paddingBottom="5dp"
+        android:textSize="16sp"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/searchIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_search"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/searchBar"
+        mapbox:layout_constraintEnd_toEndOf="@+id/searchBar"
+        mapbox:layout_constraintTop_toTopOf="@+id/searchBar" />
+
+    <ImageView
+        android:id="@+id/cleanSearchIcon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_close"
+        android:visibility="gone"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/searchBar"
+        mapbox:layout_constraintEnd_toEndOf="@+id/searchBar"
+        mapbox:layout_constraintTop_toTopOf="@+id/searchBar" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchRecycler"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:elevation="2dp"
+        mapbox:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        mapbox:layout_constraintEnd_toEndOf="@+id/searchBar"
+        mapbox:layout_constraintStart_toStartOf="@+id/searchBar"
+        mapbox:layout_constraintTop_toBottomOf="@+id/searchBar">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

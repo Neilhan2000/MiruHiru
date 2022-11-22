@@ -3,6 +3,8 @@ buildscript {
 
     ext {
         version_glide = '4.13.1'
+        version_moshi = "1.13.0"
+        version_retrofit = "2.9.0"
     }
     repositories {
         google()

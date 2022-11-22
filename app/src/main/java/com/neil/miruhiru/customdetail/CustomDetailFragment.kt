@@ -5,7 +5,6 @@ import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -19,18 +18,23 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.extension.style.expressions.dsl.generated.pitch
+import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
+import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
+import com.neil.miruhiru.BuildConfig
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
@@ -47,7 +51,6 @@ class CustomDetailFragment : Fragment() {
     private val viewModel: CustomDetailViewModel by lazy {
         ViewModelProvider(this).get(CustomDetailViewModel::class.java)
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -325,6 +328,47 @@ class CustomDetailFragment : Fragment() {
                     }
                 }
             })
+
+        // search bar
+        binding.cleanSearchIcon.setOnClickListener {
+            binding.searchBar.setText("")
+        }
+        binding.searchBar.addTextChangedListener {
+            it?.length?.let { textNumber ->
+                if (textNumber > 0) {
+                    binding.searchIcon.visibility = View.GONE
+                    binding.cleanSearchIcon.visibility = View.VISIBLE
+                } else {
+                    binding.searchIcon.visibility = View.VISIBLE
+                    binding.cleanSearchIcon.visibility = View.GONE
+                    viewModel.cleanSearchResult()
+                }
+            }
+            viewModel.searchPlace(it.toString(), 3, BuildConfig.MAPBOX_ACCESS_TOKEN)
+        }
+
+        // search recyclerView
+        val searchAdapter = SearchResultAdapter { resultPosition ->
+            val point = Point.fromLngLat(
+                viewModel.featureList.value?.get(resultPosition)?.geometry?.coordinates?.get(0) ?: 0.0,
+                viewModel.featureList.value?.get(resultPosition)?.geometry?.coordinates?.get(1) ?: 0.0
+            )
+            mapBoxMap.flyTo(CameraOptions.Builder().center(point).build(), mapAnimationOptions {
+                duration(2000)
+            })
+            addAnnotationToMap(point)
+            changeButtonStatus()
+//            mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(point).build())
+        }
+        binding.searchRecycler.adapter = searchAdapter
+
+        // observe search result and show in searchRecycler
+        viewModel.featureList.observe(viewLifecycleOwner, Observer { featureList ->
+            Timber.i("$featureList")
+            searchAdapter.submitList(featureList)
+            searchAdapter.notifyDataSetChanged()
+        })
+
         return binding.root
     }
 

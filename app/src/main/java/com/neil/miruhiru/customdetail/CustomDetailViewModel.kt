@@ -8,7 +8,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.GeoPoint
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -16,7 +15,10 @@ import com.google.firebase.storage.FirebaseStorage
 import com.mapbox.geojson.Point
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.data.Feature
 import com.neil.miruhiru.data.Task
+import com.neil.miruhiru.network.MapBoxApi
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -54,6 +56,14 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     private val _isUpdated = MutableLiveData<Boolean>()
     val isUpdated: LiveData<Boolean>
         get() = _isUpdated
+
+    private val _featureList = MutableLiveData<List<Feature>>()
+    val featureList: LiveData<List<Feature>>
+        get() = _featureList
+
+    private val coroutineScope = CoroutineScope(Job() + Dispatchers.Main)
+    private lateinit var job: Job
+    private var jobInitialized = false
 
     var originalTask = Task()
 
@@ -400,4 +410,27 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
             }
     }
 
+    fun searchPlace(place: String, limit: Int, accessToken: String) {
+
+        if (jobInitialized) {
+            job.cancel()
+        }
+        coroutineScope.launch {
+            job = launch {
+                jobInitialized = true
+                val result = MapBoxApi.retrofitService.getProductList("$place.json",limit, accessToken)
+                if (result.features.isNotEmpty()) {
+                    val featureList = mutableListOf<Feature>()
+                    result.features.forEach { feature ->
+                        featureList.add(feature)
+                    }
+                    _featureList.value = featureList
+                }
+            }
+        }
+    }
+
+    fun cleanSearchResult() {
+        _featureList.value = mutableListOf()
+    }
 }
