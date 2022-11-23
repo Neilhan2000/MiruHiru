@@ -358,6 +358,8 @@ class CustomDetailFragment : Fragment() {
             })
             addAnnotationToMap(point)
             changeButtonStatus()
+            viewModel.setTaskLocation(point)
+            Timber.i("task ${viewModel.task}")
         }
         binding.searchRecycler.adapter = searchAdapter
 

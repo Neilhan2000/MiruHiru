@@ -76,6 +76,9 @@ class ChallengeDetailFragment : Fragment() {
             binding.seeComment.visibility = View.GONE
             binding.ratingBar.visibility = View.GONE
             binding.ratingText.visibility = View.GONE
+            binding.likeIcon.visibility = View.GONE
+            binding.unlikeIcon.visibility = View.GONE
+            binding.likeClick.visibility = View.GONE
             UserManager.isPersonal = true
         }
 

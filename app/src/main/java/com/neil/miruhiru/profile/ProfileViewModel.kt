@@ -19,8 +19,7 @@ class ProfileViewModel : ViewModel() {
     val completedList: LiveData<List<Challenge>>
         get() = _completedChallengeList
 
-    private val completedChallengeList = mutableListOf<Challenge>()
-    var position = 0
+    private var completedChallengeList = mutableListOf<Challenge>()
 
     val eventList = mutableListOf<Event>()
 
@@ -30,61 +29,101 @@ class ProfileViewModel : ViewModel() {
     }
 
     private fun loadCompletedChallenge() {
-        Timber.i("position = $position")
+
         val db = Firebase.firestore
-        val eventId = UserManager.user.completedEvents[position]
 
-        db.collection("events").whereEqualTo("id", eventId)
-            .get()
-            .addOnSuccessListener {
+        UserManager.user.completedEvents.forEach { eventId ->
+            db.collection("events").whereEqualTo("id", eventId)
+                .get()
+                .addOnSuccessListener {
 
-                val event = it.documents[0].toObject<Event>()
-                if (event?.personal == false) {
-                    db.collection("challenges").whereEqualTo("id", event.challengeId)
-                        .get()
-                        .addOnSuccessListener {
-                            Timber.i("event document id = ${it.documents[0].id}")
-                            Timber.i("challenge id = ${event.challengeId}")
+                    val event = it.documents[0].toObject<Event>()
+                    if (event != null) {
+                        eventList.add(event)
+                    }
 
-                            val challenge = it.documents[0].toObject<Challenge>()
-                            if (challenge != null) {
-                                completedChallengeList.add(challenge)
-                            }
-                            if (completedChallengeList.size == UserManager.user.completedEvents.size) {
-                                _completedChallengeList.value = completedChallengeList.reversed()
-                                position = 0
-                            } else {
-                                position ++
-                                loadCompletedChallenge()
-                            }
-                        }
-                } else {
-                    db.collection("users").whereEqualTo("id", event?.members?.first())
-                        .get()
-                        .addOnSuccessListener {
+                    if (event?.personal == false) {
+                        db.collection("challenges").whereEqualTo("id", event.challengeId)
+                            .get()
+                            .addOnSuccessListener {
 
-                            it.documents[0].reference.collection("customChallenges")
-                                .whereEqualTo("id", event?.challengeId)
-                                .get()
-                                .addOnSuccessListener {
-
-                                    val challenge = it.documents[0].toObject<Challenge>()
-                                    if (challenge != null) {
-                                        completedChallengeList.add(challenge)
-                                    }
-                                    if (completedChallengeList.size == UserManager.user.completedEvents.size) {
-                                        _completedChallengeList.value = completedChallengeList.reversed()
-                                        position = 0
-                                    } else {
-                                        position ++
-                                        loadCompletedChallenge()
-                                    }
+                                val challenge = it.documents[0].toObject<Challenge>()
+                                if (challenge != null) {
+                                    completedChallengeList.add(challenge)
                                 }
+                                if (completedChallengeList.size == UserManager.user.completedEvents.size) {
 
-                        }
+                                    // sort event to list
+                                    val eventDesiredOrder = UserManager.user.completedEvents
+                                    val eventById = eventList.associateBy { it.id }
+                                    val sortedEventList = eventDesiredOrder.map { eventById[it] }
 
+                                    // use sorted event list to make a sorted challenge id list
+                                    val challengeOrder = mutableListOf<String>()
+                                    sortedEventList.forEach {
+                                        it?.challengeId?.let { it1 -> challengeOrder.add(it1) }
+                                    }
+
+                                    // sort challenge list by completed time
+                                    val challengeById = completedChallengeList.associateBy { it.id }
+                                    val sortedChallengeList = challengeOrder.map { challengeById[it] }
+                                    completedChallengeList = mutableListOf<Challenge>()
+                                    sortedChallengeList.forEach {
+                                        if (it != null) {
+                                            completedChallengeList.add(it)
+                                        }
+                                    }
+
+                                    _completedChallengeList.value = completedChallengeList.reversed()
+
+                                }
+                            }
+                    } else {
+                        db.collection("users").whereEqualTo("id", event?.members?.first())
+                            .get()
+                            .addOnSuccessListener {
+
+                                it.documents[0].reference.collection("customChallenges")
+                                    .whereEqualTo("id", event?.challengeId)
+                                    .get()
+                                    .addOnSuccessListener {
+
+                                        val challenge = it.documents[0].toObject<Challenge>()
+                                        if (challenge != null) {
+                                            completedChallengeList.add(challenge)
+                                        }
+                                        if (completedChallengeList.size == UserManager.user.completedEvents.size) {
+                                            
+                                            // sort event to list
+                                            val eventDesiredOrder = UserManager.user.completedEvents
+                                            val eventById = eventList.associateBy { it.id }
+                                            val sortedEventList = eventDesiredOrder.map { eventById[it] }
+
+                                            // sort event to list
+                                            val challengeOrder = mutableListOf<String>()
+                                            sortedEventList.forEach {
+                                                it?.challengeId?.let { it1 -> challengeOrder.add(it1) }
+                                            }
+
+                                            // sort challenge list by completed time
+                                            val challengeById = completedChallengeList.associateBy { it.id }
+                                            val sortedChallengeList = challengeOrder.map { challengeById[it] }
+                                            completedChallengeList = mutableListOf<Challenge>()
+                                            sortedChallengeList.forEach {
+                                                if (it != null) {
+                                                    completedChallengeList.add(it)
+                                                }
+                                            }
+
+                                            _completedChallengeList.value = completedChallengeList.reversed()
+                                        }
+                                    }
+
+                            }
+
+                    }
                 }
-            }
+        }
 
     }
 }
