@@ -110,7 +110,11 @@
         android:id="@+id/logFragment"
         android:name="com.neil.miruhiru.log.LogFragment"
         android:label="fragment_log"
-        tools:layout="@layout/fragment_log" />
+        tools:layout="@layout/fragment_log" >
+        <argument
+            android:name="eventId"
+            app:argType="string" />
+    </fragment>
     <action
         android:id="@+id/action_global_logFragment"
         app:destination="@id/logFragment" />

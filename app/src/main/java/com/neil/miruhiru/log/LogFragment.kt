@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.neil.miruhiru.NavGraphDirections
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.databinding.FragmentLogBinding
 import java.text.SimpleDateFormat
 
@@ -22,6 +25,7 @@ class LogFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentLogBinding.inflate(inflater, container, false)
+        val eventId = LogFragmentArgs.fromBundle(requireArguments()).eventId
 
         // observe log
         val stageAdapter = LogStageAdapter(viewModel)
@@ -29,13 +33,16 @@ class LogFragment : Fragment() {
         viewModel.userInfoList.observe(viewLifecycleOwner, Observer {
             stageAdapter.submitList(viewModel.taskList.value)
         })
-        viewModel.loadCompletedChallenge()
+        viewModel.loadCompletedChallenge(eventId)
 
         // observe timeSpent
         viewModel.timeSpent.observe(viewLifecycleOwner, Observer {
             binding.timeSpent.text = viewModel.convertSecondsToHours(it)
         })
 
+        binding.logCompleteButton.setOnClickListener {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+        }
 
 
         return binding.root

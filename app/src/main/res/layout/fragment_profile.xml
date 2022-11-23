@@ -16,7 +16,7 @@ tools:context=".profile.ProfileFragment">
         android:background="@color/grey_cccccc"
         mapbox:layout_constraintEnd_toEndOf="parent"
         mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+        mapbox:layout_constraintTop_toBottomOf="@+id/completedChallengeRecycler" />
 
     <ImageView
         android:id="@+id/profileIcon"
@@ -101,7 +101,7 @@ tools:context=".profile.ProfileFragment">
         android:layout_marginTop="8dp"
         android:text="名稱："
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="16sp"
         mapbox:layout_constraintStart_toStartOf="parent"
         mapbox:layout_constraintTop_toBottomOf="@+id/personalInfo" />
 
@@ -111,26 +111,26 @@ tools:context=".profile.ProfileFragment">
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="完成的挑戰數量："
+        android:text="完成的挑戰數量：0"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="16sp"
         mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toBottomOf="@+id/profileCompletedChallenges2" />
+        mapbox:layout_constraintTop_toBottomOf="@+id/profileCreateChallenges" />
 
     <TextView
-        android:id="@+id/profileCompletedChallenges2"
+        android:id="@+id/profileCreateChallenges"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="創造的的挑戰數量："
+        android:text="公開的挑戰數量：0"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="16sp"
         mapbox:layout_constraintStart_toStartOf="parent"
         mapbox:layout_constraintTop_toBottomOf="@+id/profileName" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/completedChallengeRecycler"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

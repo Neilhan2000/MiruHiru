@@ -143,12 +143,12 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
             }
     }
 
-    private fun loadNewestCompletedEventLog() {
+    private fun loadNewestCompletedEventLog(eventId: String) {
         val db = Firebase.firestore
         var eventDocumentId = ""
         val logList = mutableListOf<Log>()
 
-        db.collection("events").whereEqualTo("id", UserManager.user.completedEvents.last())
+        db.collection("events").whereEqualTo("id", eventId)
             .get()
             .addOnSuccessListener {
                 eventDocumentId = it.documents[0].id
@@ -172,7 +172,7 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                         }
                         _logList.value = logList
 
-                        loadUserInfo()
+                        loadUserInfo(eventId)
                     }
             }
     }
@@ -184,13 +184,13 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
         return String.format("總共花費 %02d 小時 %02d 分 %02d 秒", hours, minutes, seconds)
     }
 
-    // 所有參加者的資料
-    private fun loadUserInfo() {
+    // all members info
+    private fun loadUserInfo(eventId: String) {
         val db = Firebase.firestore
         var event = Event()
         val userInfoList = mutableListOf<User>()
 
-        db.collection("events").whereEqualTo("id", UserManager.user.completedEvents.last())
+        db.collection("events").whereEqualTo("id", eventId)
             .get()
             .addOnSuccessListener { result ->
                 result?.documents?.get(0)?.toObject<Event>()?.let {
@@ -218,13 +218,13 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
 
     }
 
-    fun loadCompletedChallenge() {
+    fun loadCompletedChallenge(eventId: String) {
         val db = Firebase.firestore
         var challengeId = ""
         var challengeDocumentId = ""
         val taskList = mutableListOf<Task>()
 
-        db.collection("events").whereEqualTo("id", UserManager.user.completedEvents.last())
+        db.collection("events").whereEqualTo("id", eventId)
             .get()
             .addOnSuccessListener { result ->
                 val event = result.documents[0].toObject<Event>()
@@ -243,7 +243,7 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                                         tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
                                         _taskList.value = taskList
 
-                                        loadNewestCompletedEventLog()
+                                        loadNewestCompletedEventLog(eventId)
                                     }
                             }
                     } else {
@@ -266,7 +266,7 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                                                     tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
                                                     _taskList.value = taskList
 
-                                                    loadNewestCompletedEventLog()
+                                                    loadNewestCompletedEventLog(eventId)
                                                 }
                                         }
                                 }
@@ -290,7 +290,7 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                                                     tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
                                                     _taskList.value = taskList
 
-                                                    loadNewestCompletedEventLog()
+                                                    loadNewestCompletedEventLog(eventId)
                                                 }
                                         }
                                 }

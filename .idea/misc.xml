@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/bottom_sheet_border.xml" value="0.101" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_border.xml" value="0.271" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_border_deep_yellow.xml" value="0.281" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_disable_border.xml" value="0.1745" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/challenge_success_border.xml" value="0.1195" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/custom_page_tab_indicator.xml" value="0.238" />
@@ -43,7 +44,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_explore.xml" value="0.25" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_invite.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_join.xml" value="0.264" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_log.xml" value="0.12" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_log.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_log_dialog.xml" value="0.25196850393700787" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_login.xml" value="0.22" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_my_custom.xml" value="0.21833740831295845" />

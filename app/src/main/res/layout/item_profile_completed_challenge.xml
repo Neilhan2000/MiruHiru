@@ -6,25 +6,29 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/logImage"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:id="@+id/completedChallengeImage"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_challenge_success" />
 
     <TextView
-        android:id="@+id/logChallengeName"
+        android:id="@+id/completedChallengeName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
         android:ellipsize="end"
+        android:gravity="center"
         android:singleLine="true"
         android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="@+id/logImage"
-        app:layout_constraintStart_toStartOf="@+id/logImage"
-        app:layout_constraintTop_toBottomOf="@+id/logImage" />
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/completedChallengeImage"
+        app:layout_constraintStart_toStartOf="@+id/completedChallengeImage"
+        app:layout_constraintTop_toBottomOf="@+id/completedChallengeImage" />
 </androidx.constraintlayout.widget.ConstraintLayout>
