@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -75,11 +76,6 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     }
 
 
-
-
-
-
-
     private var challengeDocumentId = ""
 
     fun loadChallenge(challengeId: String) {
@@ -89,15 +85,10 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
             .get()
             .addOnSuccessListener { result ->
                 val challenge = result.documents[0].toObject<Challenge>()
-                _challenge.value = challenge!!
+                challenge?.let { _challenge.value = it }
                 challengeDocumentId = result.documents[0].id
 
                 loadTasks()
-
-                Timber.tag("neil").i("success load documents = %s", _challenge.value)
-            }
-            .addOnFailureListener { exception ->
-                Timber.tag("neil").i(exception, "Error getting documents.")
             }
 
     }
@@ -220,6 +211,48 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
         val df = DecimalFormat("#.#")
         df.roundingMode = RoundingMode.CEILING
         return df.format(number).toFloat()
+    }
+
+    fun likeChallenge(challengeId: String) {
+        val db = Firebase.firestore
+
+        // challenge
+        db.collection("challenges").whereEqualTo("id", challengeId)
+            .get()
+            .addOnSuccessListener {
+                it.documents[0].reference.update("likeList", FieldValue.arrayUnion(UserManager.userId))
+            }
+
+        // user
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                it.documents[0].reference.update("likeChallenges", FieldValue.arrayUnion(challengeId))
+                    .addOnSuccessListener {
+                        UserManager.getUser()
+                    }
+            }
+    }
+
+    fun unLikeChallenge(challengeId: String) {
+        val db = Firebase.firestore
+
+        // challenge
+        db.collection("challenges").whereEqualTo("id", challengeId)
+            .get()
+            .addOnSuccessListener {
+                it.documents[0].reference.update("likeList", FieldValue.arrayRemove(UserManager.userId))
+            }
+
+        // user
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                it.documents[0].reference.update("likeChallenges", FieldValue.arrayRemove(challengeId))
+                    .addOnSuccessListener {
+                        UserManager.getUser()
+                    }
+            }
     }
 
 }

@@ -203,4 +203,9 @@
             app:argType="string" />
     </fragment>
     <action android:id="@+id/action_global_overviewFragment" app:destination="@id/overviewFragment" />
+    <fragment
+        android:id="@+id/likeChallengeFragment"
+        android:name="com.neil.miruhiru.likeChallenge.LikeChallengeFragment"
+        android:label="fragment_like_challenge"
+        tools:layout="@layout/fragment_like_challenge" /><action android:id="@+id/action_global_likeChallengeFragment" app:destination="@id/likeChallengeFragment"/>
 </navigation>

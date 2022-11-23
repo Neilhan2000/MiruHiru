@@ -30,7 +30,7 @@ class ProfileFragment : Fragment() {
         val binding = FragmentProfileBinding.inflate(inflater, container, false)
 
         binding.likeChallenge.setOnClickListener {
-
+            this.findNavController().navigate(NavGraphDirections.actionGlobalLikeChallengeFragment())
         }
         binding.joinChallenge.setOnClickListener {
             this.findNavController().navigate(NavGraphDirections.actionGlobalJoinFragment())
@@ -39,7 +39,7 @@ class ProfileFragment : Fragment() {
 
         }
         binding.settings.setOnClickListener {
-            this.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
+
         }
         val challengeAdapter = ProfileChallengeAdapter { position ->
             val completedEventReversed = UserManager.user.completedEvents.reversed()

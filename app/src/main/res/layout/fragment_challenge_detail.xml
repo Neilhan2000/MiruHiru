@@ -273,6 +273,36 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/seeComment" />
+
+            <ImageView
+                android:id="@+id/unlikeIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_unlike"
+                app:layout_constraintBottom_toBottomOf="@+id/ChallengeTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ChallengeTitle" />
+
+            <ImageView
+                android:id="@+id/likeIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_like"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/ChallengeTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ChallengeTitle" />
+
+            <ImageView
+                android:id="@+id/likeClick"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/ChallengeTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ChallengeTitle" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

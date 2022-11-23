@@ -40,6 +40,7 @@ import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
 import com.neil.miruhiru.factory.ChallengeDetailViewModelFactory
 import timber.log.Timber
 import kotlin.math.roundToInt
+import kotlin.properties.Delegates
 
 class ChallengeDetailFragment : Fragment() {
 
@@ -53,6 +54,7 @@ class ChallengeDetailFragment : Fragment() {
     private lateinit var pointAnnotationManager: PointAnnotationManager
     private lateinit var firstStagePoint: Point
     private lateinit var challengeId: String
+    private var like by Delegates.notNull<Boolean>()
     private var show = true
 
     override fun onCreateView(
@@ -66,7 +68,7 @@ class ChallengeDetailFragment : Fragment() {
         challengeId = ChallengeDetailFragmentArgs.fromBundle(requireArguments()).challengeId
         factory = ChallengeDetailViewModelFactory(challengeId)
         val previousFragmentId  = this.findNavController().previousBackStackEntry?.destination?.id
-        if (previousFragmentId == R.id.exploreFragment) {
+        if (previousFragmentId == R.id.exploreFragment || previousFragmentId == R.id.likeChallengeFragment) {
             viewModel.loadChallenge(challengeId)
             UserManager.isPersonal = false
         } else if (previousFragmentId == R.id.overviewFragment) {
@@ -87,7 +89,6 @@ class ChallengeDetailFragment : Fragment() {
             it.forEach {
                 addAnnotationToMap(it)
             }
-            Timber.i("$it")
             firstStagePoint = Point.fromLngLat(
                 it[0].location.longitude,
                 it[0].location.latitude
@@ -176,7 +177,29 @@ class ChallengeDetailFragment : Fragment() {
             getString(R.string.special) -> R.drawable.type_special_border
             else -> R.drawable.type_text_border
         })
+
+        // like or unlike challenge
         challenge.location?.let { calculateAndShowDistance(it) }
+
+        challenge.likeList.forEach { likeUser ->
+            if (likeUser == UserManager.userId) {
+                like = true
+                binding.likeIcon.visibility = View.VISIBLE
+            } else {
+                like = false
+                binding.likeIcon.visibility = View.INVISIBLE
+            }
+        }
+        binding.likeClick.setOnClickListener {
+            if (like) {
+                binding.likeIcon.visibility = View.INVISIBLE
+                viewModel.unLikeChallenge(challengeId)
+            } else {
+                binding.likeIcon.visibility = View.VISIBLE
+                viewModel.likeChallenge(challengeId)
+            }
+            like = !like
+        }
 
         binding.startButton.setOnClickListener {
             viewModel.checkHasCurrentEvent(challengeId)
