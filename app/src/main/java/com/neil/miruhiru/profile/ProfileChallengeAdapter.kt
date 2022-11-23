@@ -14,7 +14,7 @@ import com.neil.miruhiru.databinding.ItemInviteUserBinding
 import com.neil.miruhiru.databinding.ItemProfileCompletedChallengeBinding
 
 
-class ProfileChallengeAdapter : ListAdapter<Challenge, ProfileChallengeAdapter.ViewHolder>(DiffCallBack()) {
+class ProfileChallengeAdapter(val onclick: (Int) -> Unit) : ListAdapter<Challenge, ProfileChallengeAdapter.ViewHolder>(DiffCallBack()) {
 
 
     inner class ViewHolder(private val binding: ItemProfileCompletedChallengeBinding) :
@@ -24,6 +24,9 @@ class ProfileChallengeAdapter : ListAdapter<Challenge, ProfileChallengeAdapter.V
                 RequestOptions().placeholder(R.drawable.ic_challenge_success).error(R.drawable.ic_challenge_success)
             ).into(binding.completedChallengeImage)
             binding.completedChallengeName.text = item.name
+            itemView.setOnClickListener {
+                onclick(adapterPosition)
+            }
         }
     }
 

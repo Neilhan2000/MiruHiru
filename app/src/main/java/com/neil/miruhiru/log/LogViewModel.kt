@@ -31,6 +31,10 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
     val uploadStatus: LiveData<Boolean>
         get() = _uploadStatus
 
+    private val _challengeDeleted = MutableLiveData<Boolean>()
+    val challengeDeleted: LiveData<Boolean>
+        get() = _challengeDeleted
+
     private val _taskList = MutableLiveData<List<Task>>()
     val taskList: LiveData<List<Task>>
         get() = _taskList
@@ -50,6 +54,8 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
 
     lateinit var imageUri: Uri
     var text = ""
+
+    var challengeName = ""
 
 
 
@@ -231,10 +237,12 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                 event?.challengeId?.let {
                     challengeId = it
 
-                    if (UserManager.isPersonal == false) {
+                    if (!event.personal) {
                         db.collection("challenges").whereEqualTo("id", challengeId)
                             .get()
                             .addOnSuccessListener { result ->
+                                val challenge = result.documents[0].toObject<Challenge>()
+                                challenge?.name?.let { challengeName = it }
                                 challengeDocumentId = result.documents[0].id
 
                                 db.collection("challenges").document(challengeDocumentId).collection("tasks")
@@ -247,27 +255,39 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                                     }
                             }
                     } else {
-                        if (event.members.first() == UserManager.userId) {
+                        val hostUserId = event.members.first()
+                        if (hostUserId == UserManager.userId) {
                             db.collection("users").whereEqualTo("id", UserManager.userId)
                                 .get()
                                 .addOnSuccessListener {
                                     val userDocumentId = it.documents[0].id
 
-                                    db.collection("users").document(userDocumentId).collection("customChallenges")
+                                    db.collection("users").document(userDocumentId)
+                                        .collection("customChallenges")
                                         .whereEqualTo("id", challengeId)
                                         .get()
                                         .addOnSuccessListener {
-                                            val customDocumentId = it.documents[0].id
+                                            Timber.i("challenge id = $challengeId")
+                                            // check if custom challenge deleted
+                                            if (it.documents.isNotEmpty()) {
+                                                val challenge = it.documents[0].toObject<Challenge>()
+                                                Timber.i("challenge1 = $challenge")
+                                                challenge?.name?.let { challengeName = it }
+                                                val customDocumentId = it.documents[0].id
 
-                                            db.collection("users").document(userDocumentId).collection("customChallenges")
-                                                .document(customDocumentId).collection("tasks")
-                                                .get()
-                                                .addOnSuccessListener { tasks ->
-                                                    tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
-                                                    _taskList.value = taskList
+                                                db.collection("users").document(userDocumentId)
+                                                    .collection("customChallenges")
+                                                    .document(customDocumentId).collection("tasks")
+                                                    .get()
+                                                    .addOnSuccessListener { tasks ->
+                                                        tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
+                                                        _taskList.value = taskList
 
-                                                    loadNewestCompletedEventLog(eventId)
-                                                }
+                                                        loadNewestCompletedEventLog(eventId)
+                                                    }
+                                            } else {
+                                                _challengeDeleted.value = true
+                                            }
                                         }
                                 }
                         } else {
@@ -275,24 +295,42 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                             db.collection("users").whereEqualTo("id", hostUserId)
                                 .get()
                                 .addOnSuccessListener {
+
                                     val userDocumentId = it.documents[0].id
 
-                                    db.collection("users").document(userDocumentId).collection("customChallenges")
-                                        .whereEqualTo("id", challengeId)
-                                        .get()
-                                        .addOnSuccessListener {
-                                            val customDocumentId = it.documents[0].id
+                                        db.collection("users").document(userDocumentId).collection("customChallenges")
+                                            .whereEqualTo("id", challengeId)
+                                            .get()
+                                            .addOnSuccessListener {
 
-                                            db.collection("users").document(userDocumentId).collection("customChallenges")
-                                                .document(customDocumentId).collection("tasks")
-                                                .get()
-                                                .addOnSuccessListener { tasks ->
-                                                    tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
-                                                    _taskList.value = taskList
+                                                // check if custom challenge deleted
+                                                if (it.documents.isNotEmpty()) {
 
-                                                    loadNewestCompletedEventLog(eventId)
+                                                    val challenge =
+                                                        it.documents[0].toObject<Challenge>()
+                                                    Timber.i("challenge2 = $challenge")
+                                                    challenge?.name?.let { challengeName = it }
+                                                    val customDocumentId = it.documents[0].id
+
+                                                    db.collection("users").document(userDocumentId)
+                                                        .collection("customChallenges")
+                                                        .document(customDocumentId)
+                                                        .collection("tasks")
+                                                        .get()
+                                                        .addOnSuccessListener { tasks ->
+                                                            tasks.forEach { task ->
+                                                                taskList.add(
+                                                                    task.toObject<Task>()
+                                                                )
+                                                            }
+                                                            _taskList.value = taskList
+
+                                                            loadNewestCompletedEventLog(eventId)
+                                                        }
+                                                } else {
+                                                    _challengeDeleted.value = true
                                                 }
-                                        }
+                                            }
                                 }
                         }
 

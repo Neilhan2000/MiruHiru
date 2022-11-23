@@ -22,6 +22,8 @@ class ProfileViewModel : ViewModel() {
     private val completedChallengeList = mutableListOf<Challenge>()
     var position = 0
 
+    val eventList = mutableListOf<Event>()
+
     init {
         // load CompletedList here to prevent fragment onCreateView reloading
         loadCompletedChallenge()

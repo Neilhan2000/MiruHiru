@@ -41,7 +41,10 @@ class ProfileFragment : Fragment() {
         binding.settings.setOnClickListener {
             this.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
         }
-        val challengeAdapter = ProfileChallengeAdapter()
+        val challengeAdapter = ProfileChallengeAdapter { position ->
+            val completedEventReversed = UserManager.user.completedEvents.reversed()
+            this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment(completedEventReversed[position]))
+        }
         binding.completedChallengeRecycler.adapter = challengeAdapter
 
         // observe user live data to make sure user data load success before setup profile info
