@@ -236,6 +236,9 @@ class ExploreFragment : Fragment(), PermissionsListener {
         return when (type) {
             getString(R.string.food) -> R.drawable.ic_food_location
             getString(R.string.couple) -> R.drawable.ic_love_location
+            getString(R.string.history) -> R.drawable.ic_histoty_location
+            getString(R.string.travel) -> R.drawable.ic_travel_location
+            getString(R.string.special) -> R.drawable.ic_special_location
             else -> R.drawable.anya_icon2
         }
     }

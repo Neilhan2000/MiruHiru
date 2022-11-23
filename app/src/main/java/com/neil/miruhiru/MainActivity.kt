@@ -90,7 +90,6 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.fragment_community -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalJoinFragment())
 //                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCommunityFragment())
                     return@setOnItemSelectedListener true
                 }
@@ -119,8 +118,10 @@ class MainActivity : AppCompatActivity() {
 
             if (fragmentType.value == getString(R.string.other)) {
                 supportActionBar?.hide()
+                binding.activityMainBottomNavigationView.visibility = View.GONE
             } else {
                 supportActionBar?.show()
+                binding.activityMainBottomNavigationView.visibility = View.VISIBLE
             }
 
             if (fragmentType.value == getString(R.string.explore_fragment)) {

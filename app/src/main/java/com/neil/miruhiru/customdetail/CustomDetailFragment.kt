@@ -353,12 +353,11 @@ class CustomDetailFragment : Fragment() {
                 viewModel.featureList.value?.get(resultPosition)?.geometry?.coordinates?.get(0) ?: 0.0,
                 viewModel.featureList.value?.get(resultPosition)?.geometry?.coordinates?.get(1) ?: 0.0
             )
-            mapBoxMap.flyTo(CameraOptions.Builder().center(point).build(), mapAnimationOptions {
+            mapBoxMap.flyTo(CameraOptions.Builder().center(point).zoom(15.0).build(), mapAnimationOptions {
                 duration(2000)
             })
             addAnnotationToMap(point)
             changeButtonStatus()
-//            mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(point).build())
         }
         binding.searchRecycler.adapter = searchAdapter
 
