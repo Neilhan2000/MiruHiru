@@ -68,7 +68,8 @@ class ChallengeDetailFragment : Fragment() {
         challengeId = ChallengeDetailFragmentArgs.fromBundle(requireArguments()).challengeId
         factory = ChallengeDetailViewModelFactory(challengeId)
         val previousFragmentId  = this.findNavController().previousBackStackEntry?.destination?.id
-        if (previousFragmentId == R.id.exploreFragment || previousFragmentId == R.id.likeChallengeFragment) {
+        if (previousFragmentId == R.id.exploreFragment || previousFragmentId == R.id.likeChallengeFragment ||
+                previousFragmentId == R.id.communityFragment) {
             viewModel.loadChallenge(challengeId)
             UserManager.isPersonal = false
         } else if (previousFragmentId == R.id.overviewFragment) {

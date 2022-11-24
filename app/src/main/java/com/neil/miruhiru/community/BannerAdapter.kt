@@ -21,6 +21,7 @@ class BannerAdapter : BaseBannerAdapter<Challenge>()  {
             Glide.with(it).load(data?.image).centerCrop().apply(
                 RequestOptions().placeholder(R.drawable.image_placeholder).error(R.drawable.image_placeholder)
             ).into(binding.bannerImage)
+            binding.bannerTitle.text = data?.name
         }
     }
 

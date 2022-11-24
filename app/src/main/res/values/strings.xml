@@ -38,4 +38,5 @@
     <string name="stage">關</string>
     <string name="custom_guide_text_unfinished">歡迎回來，在這裡你可以接續上次的編輯進度，目前在第</string>
     <string name="challenge_deleted">挑戰已刪除</string>
+    <string name="popularity">熱門</string>
 </resources>
