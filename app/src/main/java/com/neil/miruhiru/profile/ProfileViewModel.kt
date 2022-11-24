@@ -1,19 +1,33 @@
 package com.neil.miruhiru.profile
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.neil.miruhiru.MiruHiruApplication
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.Task
 import timber.log.Timber
 
-class ProfileViewModel : ViewModel() {
+class ProfileViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val viewModelApplication = application
+
+    private val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestEmail()
+        .build()
+
+    private val googleSignInClient = GoogleSignIn.getClient(
+        viewModelApplication, googleSignInOptions)
 
     private val _completedChallengeList = MutableLiveData<List<Challenge>>()
     val completedList: LiveData<List<Challenge>>
@@ -93,7 +107,7 @@ class ProfileViewModel : ViewModel() {
                                             completedChallengeList.add(challenge)
                                         }
                                         if (completedChallengeList.size == UserManager.user.completedEvents.size) {
-                                            
+
                                             // sort event to list
                                             val eventDesiredOrder = UserManager.user.completedEvents
                                             val eventById = eventList.associateBy { it.id }
@@ -125,5 +139,20 @@ class ProfileViewModel : ViewModel() {
                 }
         }
 
+    }
+
+    // sign out
+    private val _navigateToSignInFragment = MutableLiveData<Boolean>()
+    val navigateToSignInFragment: LiveData<Boolean>
+        get() = _navigateToSignInFragment
+
+    fun signOut() {
+        googleSignInClient.signOut().addOnCompleteListener {
+            _navigateToSignInFragment.value = true
+        }
+    }
+
+    fun navigateToSignInFragmentCompleted() {
+        _navigateToSignInFragment.value = false
     }
 }

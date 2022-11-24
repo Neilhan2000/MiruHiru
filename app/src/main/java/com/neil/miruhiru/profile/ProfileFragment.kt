@@ -3,6 +3,7 @@ package com.neil.miruhiru.profile
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
@@ -41,6 +42,9 @@ class ProfileFragment : Fragment() {
         binding.settings.setOnClickListener {
 
         }
+        binding.signOutButton.setOnClickListener {
+            viewModel.signOut()
+        }
         val challengeAdapter = ProfileChallengeAdapter { position ->
             val completedEventReversed = UserManager.user.completedEvents.reversed()
             this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment(completedEventReversed[position]))
@@ -63,6 +67,14 @@ class ProfileFragment : Fragment() {
                     RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
                 ).into(binding.profileIcon)
                 binding.profileName.text = "名稱：" + UserManager.user.name
+            }
+        })
+
+        // observe sign out and navigate to sign in fragment
+        viewModel.navigateToSignInFragment.observe(viewLifecycleOwner, Observer { signOut ->
+            if (signOut) {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalSignInFragment())
+                viewModel.navigateToSignInFragmentCompleted()
             }
         })
 
