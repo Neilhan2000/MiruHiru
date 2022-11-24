@@ -25,28 +25,16 @@ class TagAdapter(val onclick: (String) -> Unit) : ListAdapter<String, TagAdapter
 
     // set first item to be selected
     private var selectedPosition = 0
-    private var selected = true
 
 
     inner class ViewHolder(private val binding: ItemCommunityTagBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("ResourceAsColor")
         fun bind(item: String) {
-            Timber.i("bind view position $adapterPosition")
             binding.tag.text = item
             itemView.setOnClickListener {
                 selectedPosition = adapterPosition
-                if (!selected) {
-                    onclick(item)
-                    binding.tag.setBackgroundResource(R.drawable.community_tag_border)
-                    binding.tag.setTextColor((itemView.context.getResources().getColor(R.color.black)))
-                    binding.tag.setPadding(dpToPixel(20), dpToPixel(3), dpToPixel(20), dpToPixel(3))
-                } else {
-                    binding.tag.setBackgroundResource(R.drawable.community_tag_border_selected)
-                    binding.tag.setTextColor((itemView.context.getResources().getColor(R.color.white)))
-                    binding.tag.setPadding(dpToPixel(20), dpToPixel(3), dpToPixel(20), dpToPixel(3))
-                }
-                selected = !selected
+                onclick(item)
                 notifyDataSetChanged()
             }
 

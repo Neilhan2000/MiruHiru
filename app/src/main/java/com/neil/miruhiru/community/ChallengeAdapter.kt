@@ -33,6 +33,9 @@ class ChallengeAdapter(val onclick: (String) -> Unit) : ListAdapter<Challenge, C
             if (address.size > 0) {
                 binding.communityChallengeLocation.text = "${address[0].countryName}, ${address[0].adminArea}"
             }
+            itemView.setOnClickListener {
+                onclick(item.id)
+            }
         }
 
         fun roundOffDecimal(number: Float): Float? {

@@ -9,6 +9,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_disable_border.xml" value="0.1745" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/challenge_success_border.xml" value="0.1195" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/community_challenge_name_border.xml" value="0.363" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/community_searchbar_border.xml" value="0.254" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/community_tag_border.xml" value="0.362" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/community_tag_border_selected.xml" value="0.362" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/custom_page_tab_indicator.xml" value="0.238" />
@@ -40,7 +41,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_detail.xml" value="0.33000949667616336" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_success.xml" value="0.35737704918032787" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_type.xml" value="0.33" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_community.xml" value="0.5" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_community.xml" value="0.536" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom_bottom_sheet.xml" value="0.297008547008547" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom_challenge.xml" value="0.245018115942029" />
