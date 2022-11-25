@@ -1,6 +1,8 @@
 package com.neil.miruhiru.profile
 
 import android.os.Bundle
+import android.os.SystemClock
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -11,11 +13,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.Timestamp
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.databinding.FragmentProfileBinding
 import timber.log.Timber
+import java.time.LocalDateTime
 
 
 class ProfileFragment : Fragment() {
@@ -39,8 +43,27 @@ class ProfileFragment : Fragment() {
         binding.notification.setOnClickListener {
 
         }
+        var lastClickTime = 0L
+        var firstClickTime = 0L
+        var count = 0
         binding.settings.setOnClickListener {
-            this.findNavController().navigate(NavGraphDirections.actionGlobalVerifyDetailFragment())
+            if (firstClickTime == 0L) {
+                firstClickTime = Timestamp.now().seconds
+            }
+            count ++
+            Timber.i("count $count")
+            if (count == 5 && UserManager.userId == "tsaichenghan999@gmail.com") {
+                lastClickTime = Timestamp.now().seconds
+                if (lastClickTime - firstClickTime < 2) {
+                    this.findNavController().navigate(NavGraphDirections.actionGlobalVerifyFragment())
+                } else {
+                    count = 0
+                    firstClickTime = 0L
+                }
+                Timber.i("judge")
+                Timber.i("interval ${lastClickTime - firstClickTime}")
+                Timber.i("judge count $count")
+            }
         }
         binding.signOutButton.setOnClickListener {
             viewModel.signOut()

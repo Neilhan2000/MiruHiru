@@ -27,6 +27,7 @@ class VerifyDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentVerifyDetailBinding.inflate(inflater, container, false)
+        val challengeId = VerifyDetailFragmentArgs.fromBundle(requireArguments()).challengeId
 
         val taskAdapter = VerifyTaskAdapter()
         binding.taskRecycler.adapter = taskAdapter
@@ -42,11 +43,20 @@ class VerifyDetailFragment : Fragment() {
             // tasks
             taskAdapter.submitList(it)
         })
-        viewModel.loadUnverifiedChallenge("2d3cb03e-53c8-4a6e-aef4-3cc18c56f045")
+        viewModel.loadUnverifiedChallenge(challengeId)
         binding.agreeButton.setOnClickListener {
-            viewModel.confirmChallenge("2d3cb03e-53c8-4a6e-aef4-3cc18c56f045")
+            viewModel.confirmChallenge(challengeId)
             this.findNavController().navigateUp()
         }
+        binding.disagreeButton.setOnClickListener {
+            viewModel.rejectChallenge(challengeId)
+        }
+        viewModel.navigateUp.observe(viewLifecycleOwner, Observer { deleteUnverified ->
+            if (deleteUnverified) {
+                this.findNavController().navigateUp()
+                viewModel.navigateUpCompleted()
+            }
+        })
 
 
         return binding.root

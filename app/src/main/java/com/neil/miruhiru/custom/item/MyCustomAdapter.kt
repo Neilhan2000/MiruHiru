@@ -31,7 +31,7 @@ class MyCustomAdapter(val onClick: (String) -> Unit)  : ListAdapter<Challenge, M
                     true -> {
                         if (item.public) {
                             binding.isUploadedText.setBackgroundResource(R.drawable.type_public_border)
-                            itemView.context.getString(R.string.uploaded)
+                            itemView.context.getString(R.string.isPublic)
                         } else {
                             binding.isUploadedText.setBackgroundResource(R.drawable.type_uploaded_border)
                             itemView.context.getString(R.string.verifying)

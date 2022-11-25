@@ -22,6 +22,10 @@ class VerifyDetailViewModel : ViewModel() {
     val unverifiedTasks: LiveData<List<Task>>
         get() = _unverifiedTasks
 
+    private val _navigateUp = MutableLiveData<Boolean>()
+    val navigateUp: LiveData<Boolean>
+        get() = _navigateUp
+
     fun loadUnverifiedChallenge(challengeId: String) {
         val db = Firebase.firestore
 
@@ -86,6 +90,40 @@ class VerifyDetailViewModel : ViewModel() {
                             .update("public", true)
                     }
             }
+    }
+
+    fun rejectChallenge(challengeId: String) {
+        val db = Firebase.firestore
+
+        // delete challenge in unverifiedChallenges
+        db.collection("unverifiedCustoms").whereEqualTo("id", challengeId)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference
+                    .delete()
+                    .addOnSuccessListener {
+                        _navigateUp.value = true
+                    }
+            }
+
+        // update user custom challenge status
+        db.collection("users").whereEqualTo("id", _unverifiedChallenge.value?.author)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference.collection("customChallenges").whereEqualTo("id", challengeId)
+                    .get()
+                    .addOnSuccessListener {
+
+                        it.documents[0].reference
+                            .update("upload", false)
+                    }
+            }
+    }
+
+    fun navigateUpCompleted() {
+        _navigateUp.value = false
     }
 
     inline fun <reified T : Any> T.asMap() : Map<String, Any?> {

@@ -172,7 +172,6 @@ class ChallengeDetailFragment : Fragment() {
         binding.stageText.text = challenge.stage.toString()
         binding.timeText.text = "${challenge.timeSpent?.toDouble().toBigDecimal().div(3600.toDouble().toBigDecimal())} Hrs"
         binding.challengeDescription.text = challenge.description
-        binding.author.text = "created by ${challenge.author}"
         binding.typeText.text = challenge.type
         binding.typeText.setBackgroundResource(when (challenge.type) {
             getString(R.string.food) -> R.drawable.type_text_border
@@ -209,6 +208,10 @@ class ChallengeDetailFragment : Fragment() {
         binding.startButton.setOnClickListener {
             viewModel.checkHasCurrentEvent(challengeId)
         }
+        // observe to display author name
+        viewModel.authorName.observe(viewLifecycleOwner, Observer {
+            binding.author.text = "created by $it"
+        })
 
         // observe if has uncompleted event
         viewModel.hasCurrentEvent.observe(viewLifecycleOwner, Observer { hasEvent ->

@@ -212,5 +212,16 @@
         android:id="@+id/verifyDetailFragment"
         android:name="com.neil.miruhiru.verifydetail.VerifyDetailFragment"
         android:label="fragment_verify_detail"
-        tools:layout="@layout/fragment_verify_detail" /><action android:id="@+id/action_global_verifyDetailFragment" app:destination="@id/verifyDetailFragment"/>
+        tools:layout="@layout/fragment_verify_detail" >
+        <argument
+            android:name="challengeId"
+            app:argType="string" />
+    </fragment>
+    <action android:id="@+id/action_global_verifyDetailFragment" app:destination="@id/verifyDetailFragment" />
+    <fragment
+        android:id="@+id/verifyFragment"
+        android:name="com.neil.miruhiru.verify.VerifyFragment"
+        android:label="fragment_verify"
+        tools:layout="@layout/fragment_verify" />
+    <action android:id="@+id/action_global_verifyFragment" app:destination="@id/verifyFragment" />
 </navigation>

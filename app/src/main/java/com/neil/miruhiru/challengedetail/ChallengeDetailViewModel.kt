@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.mapbox.geojson.Point
@@ -40,6 +41,10 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     private val _hasCurrentEvent = MutableLiveData<Boolean>()
     val hasCurrentEvent: LiveData<Boolean>
         get() = _hasCurrentEvent
+
+    private val _authorName = MutableLiveData<String>()
+    val authorName: LiveData<String>
+        get() = _authorName
 
     fun checkHasCurrentEvent(challengeId: String) {
         val db = Firebase.firestore
@@ -89,6 +94,7 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
                 challengeDocumentId = result.documents[0].id
 
                 loadTasks()
+                challenge?.author?.let { loadAuthor(it) }
             }
 
     }
@@ -112,6 +118,17 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
                         loadPersonalTasks(userDocumentId, customDocumentId)
                     }
+            }
+    }
+
+    private fun loadAuthor(authorId: String) {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", authorId)
+            .get()
+            .addOnSuccessListener {
+                val author = it.documents[0].toObject<User>()
+                _authorName.value = author?.name
             }
     }
 
