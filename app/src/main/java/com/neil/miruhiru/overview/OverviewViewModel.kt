@@ -15,6 +15,7 @@ import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Task
 import timber.log.Timber
+import kotlin.reflect.full.memberProperties
 
 class OverviewViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -115,29 +116,13 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
 
     fun uploadCustomChallengeBeVerified() {
 
-        val customChallenge = hashMapOf(
-            "description" to challenge?.description,
-            "id" to challenge?.id,
-            "image" to challenge?.image,
-            "upload" to true,
-            "likeList" to challenge?.likeList,
-            "location" to challenge?.location,
-            "name" to challenge?.name,
-            "stage" to challenge?.stage,
-            "timeSpent" to challenge?.timeSpent,
-            "totalRating" to challenge?.totalRating,
-            "type" to challenge?.type,
-            "completedList" to challenge?.completedList,
-            "commentQuantity" to challenge?.commentQuantity,
-            "createdTime" to challenge?.createdTime,
-            "finished" to challenge?.finished
-        )
+        val customChallenge = challenge?.asMap()
 
         val db = Firebase.firestore
 
         // upload challenge
         db.collection("unverifiedCustoms")
-            .add(customChallenge)
+            .add(customChallenge as HashMap)
             .addOnSuccessListener {
 
                 // upload tasks
@@ -200,5 +185,10 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
             customTaskList[position].stage = position + 1
         }
         Timber.i("list = ${_customTaskList.value}")
+    }
+
+    inline fun <reified T : Any> T.asMap() : Map<String, Any?> {
+        val props = T::class.memberProperties.associateBy { it.name }
+        return props.keys.associateWith { props[it]?.get(this) }
     }
 }

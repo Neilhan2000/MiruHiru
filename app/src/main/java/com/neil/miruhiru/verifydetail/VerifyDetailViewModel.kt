@@ -74,7 +74,18 @@ class VerifyDetailViewModel : ViewModel() {
             }
 
         // update user custom challenge status
-        db.collection("users")
+        db.collection("users").whereEqualTo("id", _unverifiedChallenge.value?.author)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference.collection("customChallenges").whereEqualTo("id", challengeId)
+                    .get()
+                    .addOnSuccessListener {
+
+                        it.documents[0].reference
+                            .update("public", true)
+                    }
+            }
     }
 
     inline fun <reified T : Any> T.asMap() : Map<String, Any?> {

@@ -172,6 +172,7 @@ class ChallengeDetailFragment : Fragment() {
         binding.stageText.text = challenge.stage.toString()
         binding.timeText.text = "${challenge.timeSpent?.toDouble().toBigDecimal().div(3600.toDouble().toBigDecimal())} Hrs"
         binding.challengeDescription.text = challenge.description
+        binding.author.text = "created by ${challenge.author}"
         binding.typeText.text = challenge.type
         binding.typeText.setBackgroundResource(when (challenge.type) {
             getString(R.string.food) -> R.drawable.type_text_border

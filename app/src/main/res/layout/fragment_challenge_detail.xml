@@ -129,14 +129,12 @@
 
             <TextView
                 android:id="@+id/challengeDescription"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
                 mapbox:layout_constraintStart_toStartOf="parent"
                 mapbox:layout_constraintTop_toBottomOf="@+id/Description"
                 tools:text="安妮亞喜歡這個 𓁹‿𓁹  " />
@@ -305,6 +303,16 @@
                 app:layout_constraintBottom_toBottomOf="@+id/ChallengeTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/ChallengeTitle" />
+
+            <TextView
+                android:id="@+id/author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                tools:text="作者"
+                app:layout_constraintBottom_toBottomOf="@+id/Description"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/Description" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

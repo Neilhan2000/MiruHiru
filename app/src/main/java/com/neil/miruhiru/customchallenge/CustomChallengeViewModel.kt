@@ -55,7 +55,9 @@ class CustomChallengeViewModel(application: Application) : AndroidViewModel(appl
             "totalRating" to 0,
             "type" to challenge.type,
             "createdTime" to Timestamp.now(),
-            "finished" to false
+            "finished" to false,
+            "author" to UserManager.userId,
+            "public" to false
         )
 
         val db = Firebase.firestore

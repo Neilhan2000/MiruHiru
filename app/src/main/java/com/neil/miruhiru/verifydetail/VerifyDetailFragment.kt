@@ -42,9 +42,9 @@ class VerifyDetailFragment : Fragment() {
             // tasks
             taskAdapter.submitList(it)
         })
-        viewModel.loadUnverifiedChallenge("a3eb7c89-0b1b-4b9b-a1be-431315b8a42b")
+        viewModel.loadUnverifiedChallenge("2d3cb03e-53c8-4a6e-aef4-3cc18c56f045")
         binding.agreeButton.setOnClickListener {
-            viewModel.confirmChallenge("a3eb7c89-0b1b-4b9b-a1be-431315b8a42b")
+            viewModel.confirmChallenge("2d3cb03e-53c8-4a6e-aef4-3cc18c56f045")
             this.findNavController().navigateUp()
         }
 
