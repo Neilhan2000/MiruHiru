@@ -3,7 +3,10 @@ package com.neil.miruhiru.community
 import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -38,7 +41,7 @@ class ChallengeAdapter(val onclick: (String) -> Unit) : ListAdapter<Challenge, C
             }
         }
 
-        fun roundOffDecimal(number: Float): Float? {
+        private fun roundOffDecimal(number: Float): Float? {
             val df = DecimalFormat("#.#")
             df.roundingMode = RoundingMode.CEILING
             return df.format(number).toFloat()

@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1495" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/bottom_sheet_border.xml" value="0.101" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_border.xml" value="0.271" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_border_deep_yellow.xml" value="0.281" />
@@ -62,6 +63,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task_detail.xml" value="0.2" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task_dialog.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task_success.xml" value="0.264" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_verify.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragmet_chat_dialog.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_challenge_comment.xml" value="0.536" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_chat_my_message.xml" value="0.4" />
@@ -77,11 +79,15 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_my_custom_challenge.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_my_message.xml" value="0.2" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_overview_task.xml" value="0.259963768115942" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_profile_completed_challenge.xml" value="1.0" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_profile_finished_log.xml" value="0.67" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_search_result.xml" value="0.22" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_task_guide.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_task_task.xml" value="0.264" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_verify_task.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/menu/navigation_menu.xml" value="0.21666666666666667" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1205" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1205" />
       </map>
     </option>
   </component>
@@ -94,7 +100,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.297008547008547" />
+        <option name="scale" value="0.2047008547008547" />
       </ProjectState>
     </option>
   </component>

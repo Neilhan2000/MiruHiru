@@ -96,11 +96,11 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
     // listeners and observers
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
-        mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().bearing(it).build())
+        mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().zoom(14.0).bearing(it).build())
     }
 
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
-        mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().center(it).build())
+        mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().center(it).zoom(14.0).build())
         mapView?.gestures?.focalPoint = mapView?.getMapboxMap()?.pixelForCoordinate(it)
     }
 
@@ -207,11 +207,6 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
     // set up map
     private fun onMapReady() {
-        mapView?.getMapboxMap()?.setCamera(
-            CameraOptions.Builder()
-                .zoom(14.0)
-                .build()
-        )
         mapView?.getMapboxMap()?.loadStyleUri(
             Style.MAPBOX_STREETS
         ) {

@@ -208,4 +208,9 @@
         android:name="com.neil.miruhiru.likeChallenge.LikeChallengeFragment"
         android:label="fragment_like_challenge"
         tools:layout="@layout/fragment_like_challenge" /><action android:id="@+id/action_global_likeChallengeFragment" app:destination="@id/likeChallengeFragment"/>
+    <fragment
+        android:id="@+id/verifyDetailFragment"
+        android:name="com.neil.miruhiru.verifydetail.VerifyDetailFragment"
+        android:label="fragment_verify_detail"
+        tools:layout="@layout/fragment_verify_detail" /><action android:id="@+id/action_global_verifyDetailFragment" app:destination="@id/verifyDetailFragment"/>
 </navigation>

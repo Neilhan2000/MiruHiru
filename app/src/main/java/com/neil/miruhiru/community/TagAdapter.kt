@@ -4,7 +4,13 @@ import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -50,10 +56,18 @@ class TagAdapter(val onclick: (String) -> Unit) : ListAdapter<String, TagAdapter
                 binding.tag.setTextColor((itemView.context.getResources().getColor(R.color.white)))
                 binding.tag.setPadding(dpToPixel(20), dpToPixel(3), dpToPixel(20), dpToPixel(3))
             }
-
+            // set first item left margin
+            if (adapterPosition == 0) {
+                (binding.tag.layoutParams as ConstraintLayout.LayoutParams).apply {
+                    marginStart = dpToPixel(10)
+                    topMargin = dpToPixel(0)
+                    marginEnd = dpToPixel(4)
+                    bottomMargin = dpToPixel(0)
+                }
+            }
         }
 
-        fun dpToPixel(dp: Int): Int {
+        private fun dpToPixel(dp: Int): Int {
             val density = itemView.context.resources.displayMetrics.density
             return (dp * density).toInt()
         }

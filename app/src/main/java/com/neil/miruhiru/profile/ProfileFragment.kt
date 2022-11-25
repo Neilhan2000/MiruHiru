@@ -40,7 +40,7 @@ class ProfileFragment : Fragment() {
 
         }
         binding.settings.setOnClickListener {
-
+            this.findNavController().navigate(NavGraphDirections.actionGlobalVerifyDetailFragment())
         }
         binding.signOutButton.setOnClickListener {
             viewModel.signOut()

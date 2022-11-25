@@ -2,6 +2,7 @@ package com.neil.miruhiru.profile
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -27,8 +28,24 @@ class ProfileChallengeAdapter(val onclick: (Int) -> Unit) : ListAdapter<Challeng
             itemView.setOnClickListener {
                 onclick(adapterPosition)
             }
+
+            // set first item left margin
+            if (adapterPosition == 0) {
+                (binding.completedChallengeImage.layoutParams as ConstraintLayout.LayoutParams).apply {
+                    marginStart = dpToPixel(16)
+                    topMargin = dpToPixel(0)
+                    marginEnd = dpToPixel(8)
+                    bottomMargin = dpToPixel(0)
+                }
+            }
+        }
+
+        private fun dpToPixel(dp: Int): Int {
+            val density = itemView.context.resources.displayMetrics.density
+            return (dp * density).toInt()
         }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileChallengeAdapter.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_profile_completed_challenge, parent, false)
