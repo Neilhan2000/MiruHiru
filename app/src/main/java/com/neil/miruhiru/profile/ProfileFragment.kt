@@ -1,5 +1,10 @@
 package com.neil.miruhiru.profile
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -8,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.getSystemService
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -103,6 +109,20 @@ class ProfileFragment : Fragment() {
 
 
 
+        val channel = NotificationChannel("tsai", "tsai", NotificationManager.IMPORTANCE_HIGH)
+        val builder = Notification.Builder(requireContext(), "Day15")
+        builder.setSmallIcon(R.drawable.anya_icon)
+            .setContentTitle("Day15")
+            .setContentText("Day15 Challenge")
+            .setLargeIcon(BitmapFactory.decodeResource(resources,R.mipmap.ic_launcher_foreground))
+            .setAutoCancel(true)
+        val notification = builder.build()
+        val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+
+        binding.notification.setOnClickListener {
+            notificationManager.notify(0, notification)
+        }
 
         return binding.root
     }

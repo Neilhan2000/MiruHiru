@@ -38,7 +38,7 @@ class VerifyDetailFragment : Fragment() {
             ).into(binding.verifyChallengeImage)
             binding.verifyChallengeName.text = viewModel.unverifiedChallenge.value?.name
             binding.verifyChallengeStage.text = "共${viewModel.unverifiedChallenge.value?.stage}關"
-            binding.verifyChallengeTime.text = "預計時長 ${viewModel.unverifiedChallenge.value?.timeSpent?.toDouble()?.toBigDecimal()?.div(3600.toDouble().toBigDecimal())} Hrs}"
+            binding.verifyChallengeTime.text = "預計時長 ${viewModel.unverifiedChallenge.value?.timeSpent?.toDouble()?.toBigDecimal()?.div(3600.toDouble().toBigDecimal())} Hrs"
             binding.verifyChallengeDescription.text = viewModel.unverifiedChallenge.value?.description
             // tasks
             taskAdapter.submitList(it)
