@@ -85,7 +85,9 @@
 <!--    <com.tenclouds.fluidbottomnavigation.FluidBottomNavigation-->
 <!--        android:id="@+id/fluidBottomNavigation"-->
 <!--        android:layout_width="0dp"-->
-<!--        android:layout_height="80dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_marginBottom="100dp"-->
+<!--        android:outlineProvider="paddedBounds"-->
 <!--        app:layout_constraintBottom_toBottomOf="parent"-->
 <!--        app:layout_constraintEnd_toEndOf="parent"-->
 <!--        app:layout_constraintHorizontal_bias="0.0"-->

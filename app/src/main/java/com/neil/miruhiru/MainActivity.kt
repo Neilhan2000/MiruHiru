@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,8 +17,10 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.tabs.TabLayout
 import com.neil.miruhiru.databinding.ActivityMainBinding
 import com.tenclouds.fluidbottomnavigation.FluidBottomNavigationItem
+import com.tenclouds.fluidbottomnavigation.listener.OnTabSelectedListener
 import timber.log.Timber
 import timber.log.Timber.Forest.plant
 
@@ -78,13 +81,23 @@ class MainActivity : AppCompatActivity() {
 //                FluidBottomNavigationItem(
 //                    getString(R.string.profile_fragment),
 //                    ContextCompat.getDrawable(this, R.drawable.profile_black_icon)))
-//        binding.fluidBottomNavigation.accentColor = ContextCompat.getColor(this, R.color.deep_yellow)
-//        binding.fluidBottomNavigation.backColor = ContextCompat.getColor(this, R.color.deep_yellow)
-//        binding.fluidBottomNavigation.textColor = ContextCompat.getColor(this, R.color.deep_yellow)
-//        binding.fluidBottomNavigation.iconColor = ContextCompat.getColor(this, R.color.deep_yellow)
-//        binding.fluidBottomNavigation.iconSelectedColor = ContextCompat.getColor(this, R.color.deep_yellow)
+//        binding.fluidBottomNavigation.accentColor = ContextCompat.getColor(this, R.color.grey)
+//        binding.fluidBottomNavigation.backColor = ContextCompat.getColor(this, R.color.grey)
+//        binding.fluidBottomNavigation.textColor = ContextCompat.getColor(this, R.color.grey)
+//        binding.fluidBottomNavigation.iconColor = ContextCompat.getColor(this, R.color.grey)
+//        binding.fluidBottomNavigation.iconSelectedColor = ContextCompat.getColor(this, R.color.grey)
+//        binding.fluidBottomNavigation.onTabSelectedListener = object : OnTabSelectedListener {
+//            override fun onTabSelected(position: Int) {
+//                when (position) {
+//                    0 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalExploreFragment())
+//                    1 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCustomFragment())
+//                    2 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCommunityFragment())
+//                    3 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalProfileFragment())
+//                }
+//            }
+//
+//        }
     }
-
     private fun setupBottomNav() {
         val navController = Navigation.findNavController(this, R.id.myNavHostFragment)
         binding.activityMainBottomNavigationView.setupWithNavController(navController)
@@ -199,14 +212,6 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
-
-
-
-
-
-
-
-
 
 
 }
