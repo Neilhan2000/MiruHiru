@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Comment
 import com.neil.miruhiru.databinding.ItemChallengeCommentBinding
 
@@ -38,8 +39,12 @@ class CommentAdapter(
             Glide.with(binding.userIcon.context).load(userIcon).circleCrop().apply(
                 RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
             ).into(binding.userIcon)
-            binding.reportIcon.setOnClickListener {
-                onClick(adapterPosition)
+            if (item.userId != UserManager.userId) {
+                binding.reportIcon.setOnClickListener {
+                    onClick(adapterPosition)
+                }
+            } else {
+                binding.reportIcon.setOnClickListener(null)
             }
         }
     }

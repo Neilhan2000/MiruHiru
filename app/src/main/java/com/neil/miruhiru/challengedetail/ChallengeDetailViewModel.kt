@@ -46,6 +46,8 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     val authorName: LiveData<String>
         get() = _authorName
 
+    private lateinit var comments: MutableList<Comment>
+
     fun checkHasCurrentEvent(challengeId: String) {
         val db = Firebase.firestore
 
@@ -175,7 +177,7 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
     fun loadComments() {
         val db = Firebase.firestore
-        val commentList = mutableListOf<Comment>()
+        comments = mutableListOf<Comment>()
 
         db.collection("challenges").document(challengeDocumentId)
             .collection("comments")
@@ -185,22 +187,22 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
                 for (document in result) {
                     val comment = document.toObject<Comment>()
-                    commentList.add(comment)
+                    if (!UserManager.user.blockList.contains(comment.userId)) {
+                        comments.add(comment)
 
-                    // add user to comment user list
-                    db.collection("users").whereEqualTo("id", comment.userId)
-                        .get().addOnSuccessListener {
-                            val user = it.documents[0].toObject<User>()
-                            if (user != null) {
-                                commentUsers.add(user)
-                                _commentUsers.value = commentUsers
-                                _commentList.value = commentList
+                        // add user to comment user list
+                        db.collection("users").whereEqualTo("id", comment.userId)
+                            .get().addOnSuccessListener {
+                                val user = it.documents[0].toObject<User>()
+                                if (user != null) {
+                                    commentUsers.add(user)
+                                    _commentList.value = comments
+                                    _commentUsers.value = commentUsers
+                                }
                             }
 
-                        }
-
+                    }
                 }
-
             }
 
 
@@ -272,4 +274,23 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
             }
     }
 
+    fun blockUser(position: Int) {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference
+                    .update("blockList", FieldValue.arrayUnion(commentList.value?.get(position)?.userId))
+                    .addOnSuccessListener {
+                        comments.removeIf {
+                            it.userId == comments[position].userId
+                        }
+                        _commentList.value = comments
+                        _commentUsers.value = commentUsers.value
+                        UserManager.getUser()
+                    }
+            }
+    }
 }

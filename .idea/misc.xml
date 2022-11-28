@@ -32,9 +32,10 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_text_border.xml" value="0.1455" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_travel_border.xml" value="0.248" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_uploaded_border.xml" value="0.248" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/activity_main.xml" value="0.10400000000000001" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/activity_main_activitytwo.xml" value="0.24444444444444444" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/bottom_sheet_border.xml" value="0.14473684210526316" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/bottom_sheet_report.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/content_main_activitytwo.xml" value="0.24444444444444444" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_blank.xml" value="0.24444444444444444" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_bottom_step.xml" value="0.33" />
@@ -42,7 +43,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_bottom_step3.xml" value="0.29615384615384616" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_detail.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_success.xml" value="0.35737704918032787" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_type.xml" value="0.33" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_type.xml" value="0.2" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_community.xml" value="0.536" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom_bottom_sheet.xml" value="0.297008547008547" />

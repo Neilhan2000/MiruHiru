@@ -1,6 +1,7 @@
 package com.neil.miruhiru.challengedetail
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Bitmap
@@ -9,10 +10,9 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.location.LocationServices
@@ -120,17 +121,20 @@ class ChallengeDetailFragment : Fragment() {
         // set recyclerView adapter
         val adapter = CommentAdapter(
             viewModel
-        ) { index ->
-            reportUser(index)
+        ) { position ->
+            showDialog(position)
         }
         binding.recyclerComment.adapter = adapter
 
         // observer commentUsers and show in recyclerView
         viewModel.commentUsers.observe(viewLifecycleOwner, Observer {
             adapter.submitList(viewModel.commentList.value)
+            Timber.i("comment List ${viewModel.commentList.value}")
             adapter.notifyDataSetChanged()
             if (adapter.itemCount > 2) {
                 binding.recyclerComment.layoutParams.height = 450
+            } else {
+                binding.recyclerComment.layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT
             }
         })
 
@@ -152,8 +156,28 @@ class ChallengeDetailFragment : Fragment() {
         mapView.onStop()
     }
 
-    private fun reportUser(userIndex: Int) {
-        Toast.makeText(requireContext(), "report user $userIndex", Toast.LENGTH_SHORT).show()
+    private fun showDialog(position: Int) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.bottom_sheet_report)
+        val reportButton = dialog.findViewById<Button>(R.id.reportButton)
+        val blockButton = dialog.findViewById<Button>(R.id.blockButton)
+        val backButton = dialog.findViewById<Button>(R.id.backButton)
+
+        reportButton.setOnClickListener {
+            Toast.makeText(requireContext(), "report user", Toast.LENGTH_SHORT).show()
+        }
+        blockButton.setOnClickListener {
+            Toast.makeText(requireContext(), "block user", Toast.LENGTH_SHORT).show()
+            viewModel.blockUser(position)
+        }
+        backButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+//        dialog.window?.setBackgroundDrawable()
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
     private fun setLocation() {

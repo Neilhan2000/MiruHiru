@@ -37,7 +37,7 @@ class ChallengeTypeFragment : Fragment() {
 
     private fun setupScreen() {
         eventId = getRandomString()
-        Timber.i("$eventId")
+
         viewModel.navigateToTaskFragment.observe(viewLifecycleOwner, Observer { postEventSuccess ->
             if (postEventSuccess == "single") {
                 this.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())

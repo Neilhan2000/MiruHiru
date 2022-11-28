@@ -17,6 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.databinding.ActivityMainBinding
+import com.tenclouds.fluidbottomnavigation.FluidBottomNavigationItem
 import timber.log.Timber
 import timber.log.Timber.Forest.plant
 
@@ -63,6 +64,25 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG) {
             plant(Timber.DebugTree())
         }
+//        binding.fluidBottomNavigation.items =
+//            listOf(
+//                FluidBottomNavigationItem(
+//                    getString(R.string.explore_fragment),
+//                    ContextCompat.getDrawable(this, R.drawable.location_black_icon)),
+//                FluidBottomNavigationItem(
+//                    getString(R.string.custom_fragment),
+//                    ContextCompat.getDrawable(this, R.drawable.custom_black_icon)),
+//                FluidBottomNavigationItem(
+//                    getString(R.string.community_fragment),
+//                    ContextCompat.getDrawable(this, R.drawable.community_black_icon)),
+//                FluidBottomNavigationItem(
+//                    getString(R.string.profile_fragment),
+//                    ContextCompat.getDrawable(this, R.drawable.profile_black_icon)))
+//        binding.fluidBottomNavigation.accentColor = ContextCompat.getColor(this, R.color.deep_yellow)
+//        binding.fluidBottomNavigation.backColor = ContextCompat.getColor(this, R.color.deep_yellow)
+//        binding.fluidBottomNavigation.textColor = ContextCompat.getColor(this, R.color.deep_yellow)
+//        binding.fluidBottomNavigation.iconColor = ContextCompat.getColor(this, R.color.deep_yellow)
+//        binding.fluidBottomNavigation.iconSelectedColor = ContextCompat.getColor(this, R.color.deep_yellow)
     }
 
     private fun setupBottomNav() {
