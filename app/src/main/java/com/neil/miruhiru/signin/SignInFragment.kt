@@ -57,6 +57,11 @@ class SignInFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        MainActivity.getInstanceFromMainActivity().binding.activityMainBottomNavigationView.visibility = View.GONE
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GOOGLE_SIGN_IN_CODE) {
