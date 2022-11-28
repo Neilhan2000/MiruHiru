@@ -1,40 +1,128 @@
 package com.neil.miruhiru.profile
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.SystemClock
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.getSystemService
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.Timestamp
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.databinding.FragmentProfileBinding
 import timber.log.Timber
+import java.time.LocalDateTime
 
 
 class ProfileFragment : Fragment() {
+
+    private val viewModel: ProfileViewModel by lazy {
+        ViewModelProvider(this).get(ProfileViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentProfileBinding.inflate(inflater, container, false)
-        binding.button2.setOnClickListener {
-            this.findNavController().navigate(NavGraphDirections.actionGlobalScanFragment())
+
+        binding.likeChallenge.setOnClickListener {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalLikeChallengeFragment())
         }
+        binding.joinChallenge.setOnClickListener {
+            this.findNavController().navigate(NavGraphDirections.actionGlobalJoinFragment())
+        }
+        binding.notification.setOnClickListener {
 
-        val db = Firebase.firestore
-        var eventDocumentId = ""
+        }
+        var lastClickTime = 0L
+        var firstClickTime = 0L
+        var count = 0
+        binding.settings.setOnClickListener {
+            if (firstClickTime == 0L) {
+                firstClickTime = Timestamp.now().seconds
+            }
+            count ++
+            Timber.i("count $count")
+            if (count == 5 && UserManager.userId == "tsaichenghan999@gmail.com") {
+                lastClickTime = Timestamp.now().seconds
+                if (lastClickTime - firstClickTime < 2) {
+                    this.findNavController().navigate(NavGraphDirections.actionGlobalVerifyFragment())
+                } else {
+                    count = 0
+                    firstClickTime = 0L
+                }
+                Timber.i("judge")
+                Timber.i("interval ${lastClickTime - firstClickTime}")
+                Timber.i("judge count $count")
+            }
+        }
+        binding.signOutButton.setOnClickListener {
+            viewModel.signOut()
+        }
+        val challengeAdapter = ProfileChallengeAdapter { position ->
+            val completedEventReversed = UserManager.user.completedEvents.reversed()
+            this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment(completedEventReversed[position]))
+        }
+        binding.completedChallengeRecycler.adapter = challengeAdapter
 
-        // get event document id
-//        db.collection("events").whereEqualTo("id", "cfb5d07a-9457-4761-968d-4598f6879c26")
-//            .get()
-//            .addOnSuccessListener { result ->
-//                eventDocumentId = result.documents[0].id
-//                Timber.i("id $eventDocumentId")
-//            }
+        // observe user live data to make sure user data load success before setup profile info
+        UserManager.userLiveData.observe(viewLifecycleOwner, Observer {
+
+            Timber.i("user $it")
+            if (it.completedEvents.isNotEmpty()) {
+                viewModel.completedList.observe(viewLifecycleOwner, Observer { completedChallenges ->
+                    challengeAdapter.submitList(completedChallenges)
+                    challengeAdapter.notifyItemRangeChanged(0, challengeAdapter.itemCount)
+                    binding.profileCompletedChallenges.text = "完成的挑數量：" + "${completedChallenges.size}"
+                })
+            }
+            if (it.name.isNotEmpty()) {
+                Glide.with(binding.profileIcon.context).load(UserManager.user.icon).circleCrop().apply(
+                    RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
+                ).into(binding.profileIcon)
+                binding.profileName.text = "名稱：" + UserManager.user.name
+            }
+        })
+
+        // observe sign out and navigate to sign in fragment
+        viewModel.navigateToSignInFragment.observe(viewLifecycleOwner, Observer { signOut ->
+            if (signOut) {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalSignInFragment())
+                viewModel.navigateToSignInFragmentCompleted()
+            }
+        })
+
+
+
+        val channel = NotificationChannel("tsai", "tsai", NotificationManager.IMPORTANCE_HIGH)
+        val builder = Notification.Builder(requireContext(), "Day15")
+        builder.setSmallIcon(R.drawable.anya_icon)
+            .setContentTitle("Day15")
+            .setContentText("Day15 Challenge")
+            .setLargeIcon(BitmapFactory.decodeResource(resources,R.mipmap.ic_launcher_foreground))
+            .setAutoCancel(true)
+        val notification = builder.build()
+        val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+
+        binding.notification.setOnClickListener {
+            notificationManager.notify(0, notification)
+        }
 
         return binding.root
     }

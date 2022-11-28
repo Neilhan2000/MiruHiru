@@ -40,7 +40,11 @@ class TaskDetailFragment : Fragment() {
             RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
         ).into(binding.taskImage)
         binding.TaskTitle.text = locationInfo.name
-        binding.distance.text = "距離任務點 ${locationInfo.distance} Ms"
+        if (locationInfo.distance != 0) {
+            binding.distance.text = "距離任務點 ${locationInfo.distance} Ms"
+        } else {
+            binding.distance.text = getString(R.string.no_gps)
+        }
         binding.introductionContent.text = locationInfo.introduction
         if (locationInfo.distance > 10000) {
             binding.answerButton.text = "回上一頁"
@@ -48,6 +52,12 @@ class TaskDetailFragment : Fragment() {
                 this.findNavController().navigateUp()
             }
             Toast.makeText(requireContext(), "距離任務點太遠囉，靠近一點在回答八OuO", Toast.LENGTH_LONG).show()
+        } else if (binding.distance.text == getString(R.string.no_gps)) {
+            binding.answerButton.text = "回上一頁"
+            binding.answerButton.setOnClickListener {
+                this.findNavController().navigateUp()
+            }
+            Toast.makeText(requireContext(), "要開啟定位才可以使用功能歐", Toast.LENGTH_LONG).show()
         } else {
             binding.answerButton.setOnClickListener {
                 this.findNavController().navigate(NavGraphDirections.actionGlobalTaskDialogFragment(locationInfo))

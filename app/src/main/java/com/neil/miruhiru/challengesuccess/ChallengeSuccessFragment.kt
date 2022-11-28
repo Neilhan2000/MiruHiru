@@ -36,19 +36,18 @@ class ChallengeSuccessFragment : Fragment() {
 
     private fun setupScreen() {
         binding.postButton.setOnClickListener {
-            Timber.i("post button click")
             viewModel.postComment(binding.successRatingBar.rating, binding.editTextComment.text.toString())
         }
         viewModel.navigateToLogFragment.observe(viewLifecycleOwner, Observer { postSuccess ->
             if (postSuccess) {
-                this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment())
+                this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment(UserManager.user.completedEvents.last()))
                 viewModel.navigateToLogFragmentCompleted()
             }
         })
 
         binding.cancelButton.setOnClickListener {
             UserManager.userChallengeDocumentId = null
-            this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment())
+            this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment(UserManager.user.completedEvents.last()))
         }
 
     }

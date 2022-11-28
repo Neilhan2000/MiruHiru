@@ -6,5 +6,6 @@ data class User(
     val blockList: List<String> = listOf(),
     val currentEvent: String = "",
     val icon: String = "",
-    val completedEvents: List<String> = listOf()
+    val completedEvents: List<String> = listOf(),
+    val likeChallenges: List<String> = listOf()
 )

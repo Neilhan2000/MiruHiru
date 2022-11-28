@@ -15,13 +15,15 @@ import com.google.firebase.storage.FirebaseStorage
 import com.mapbox.geojson.Point
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.data.Feature
 import com.neil.miruhiru.data.Task
+import com.neil.miruhiru.network.MapBoxApi
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
 class CustomDetailViewModel(application: Application) : AndroidViewModel(application) {
-
 
     private val _navigateToCustomDetailFragment = MutableLiveData<Boolean>()
     val navigateToCustomDetailFragment: LiveData<Boolean>
@@ -31,6 +33,14 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     val navigateToOverviewFragment: LiveData<Boolean>
         get() = _navigateToOverviewFragment
 
+    private val _isUnfinished = MutableLiveData<Boolean>()
+    val isUnfinished: LiveData<Boolean>
+        get() = _isUnfinished
+
+    private val _continueEditingStage = MutableLiveData<Int>()
+    val continueEditingStage: LiveData<Int>
+        get() = _continueEditingStage
+
     private val viewModelApplication = application
     var task = Task()
     var customChallengeId = ""
@@ -39,9 +49,21 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     val isLastStage: LiveData<Boolean>
         get() = _isLastStage
 
+    private val _loadCurrentStage = MutableLiveData<Int>()
+    val loadCurrentStage: LiveData<Int>
+        get() = _loadCurrentStage
+
     private val _isUpdated = MutableLiveData<Boolean>()
     val isUpdated: LiveData<Boolean>
         get() = _isUpdated
+
+    private val _featureList = MutableLiveData<List<Feature>>()
+    val featureList: LiveData<List<Feature>>
+        get() = _featureList
+
+    private val coroutineScope = CoroutineScope(Job() + Dispatchers.Main)
+    private lateinit var job: Job
+    private var jobInitialized = false
 
     var originalTask = Task()
 
@@ -55,6 +77,10 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
     fun deleteTask() {
         task = Task(id = task.id, stage = task.stage)
+    }
+
+    fun setContinueStage(stage: Int) {
+        _continueEditingStage.value = stage
     }
 
     fun postTask() {
@@ -154,11 +180,28 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                             UserManager.customCurrentStage = null
                                             UserManager.customTotalStage = null
                                             _navigateToOverviewFragment.value = true
+                                            customChallengeEditingCompleted()
                                         } else {
                                             _navigateToCustomDetailFragment.value = true
                                         }
                                     }
                             }
+                    }
+            }
+    }
+
+    private fun customChallengeEditingCompleted() {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference.collection("customChallenges").whereEqualTo("id", customChallengeId)
+                    .get()
+                    .addOnSuccessListener {
+
+                        it.documents[0].reference.update("finished", true)
                     }
             }
     }
@@ -223,12 +266,20 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                             .get()
                             .addOnSuccessListener {
                                 UserManager.customCurrentStage = it.documents.size + 1
+
+                                challenge?.stage?.let { challengeStage ->
+                                    if (challengeStage > it.documents.size) {
+                                        _isUnfinished.value = true
+                                    }
+                                }
+
                                 if (challenge?.stage == 1) { _isLastStage.value = true }
 
-                                // load unfinished editing data
-                                if (it.documents.isNotEmpty()) {
-
+                                // for continuing editing to set last stage
+                                if (challenge?.stage == it.documents.size + 1) {
+                                    _isLastStage.value = true
                                 }
+
                             }
                     }
 
@@ -290,6 +341,10 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
         UserManager.customTotalStage = null
     }
 
+    fun needToUpdate() {
+        _isUpdated.value = false
+    }
+
     private fun storeAndUpdateImage() {
 
         Timber.i("store image")
@@ -339,4 +394,43 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
             }
     }
 
+    fun cleanCustomChallenge(customChallengeId: String) {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference.collection("customChallenges").whereEqualTo("id", customChallengeId)
+                    .get()
+                    .addOnSuccessListener {
+
+                        it.documents[0].reference.delete()
+                    }
+            }
+    }
+
+    fun searchPlace(place: String, limit: Int, accessToken: String) {
+
+        if (jobInitialized) {
+            job.cancel()
+        }
+        coroutineScope.launch {
+            job = launch {
+                jobInitialized = true
+                val result = MapBoxApi.retrofitService.getProductList("$place.json",limit, accessToken)
+                if (result.features.isNotEmpty()) {
+                    val featureList = mutableListOf<Feature>()
+                    result.features.forEach { feature ->
+                        featureList.add(feature)
+                    }
+                    _featureList.value = featureList
+                }
+            }
+        }
+    }
+
+    fun cleanSearchResult() {
+        _featureList.value = mutableListOf()
+    }
 }

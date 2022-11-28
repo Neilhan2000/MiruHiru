@@ -20,6 +20,8 @@
     <string name="challenge">挑戰</string>
     <string name="complete">完成</string>
     <string name="uploaded">已上傳</string>
+    <string name="isPublic">已公開</string>
+    <string name="verifying">審核中</string>
     <string name="unUpoladed">未上傳</string>
     <string name="food">美食</string>
     <string name="history">歷史</string>
@@ -29,4 +31,15 @@
     <string name="other">其他</string>
     <string name="customGuideTextOne">歡迎來到自定義挑戰的第</string>
     <string name="customGuideTextTwo">關，點擊地圖上的位置，並按下編輯按鈕以設定本次關卡的內容</string>
+    <string name="task_success">挑戰完成</string>
+    <string name="wait_for_editing">待編輯</string>
+    <string name="upload">上傳</string>
+    <string name="edit">編輯</string>
+    <string name="upload_challenge_success_toast">上傳成功，我們將在審核完成後通知你歐</string>
+    <string name="custom_guide_text_continue">嗨! 你可以在這裡改變上次的編輯，目前在第</string>
+    <string name="stage">關</string>
+    <string name="custom_guide_text_unfinished">歡迎回來，在這裡你可以接續上次的編輯進度，目前在第</string>
+    <string name="challenge_deleted">挑戰已刪除</string>
+    <string name="popularity">熱門</string>
+    <string name="no_gps">未開啟定位</string>
 </resources>

@@ -46,7 +46,7 @@ class CustomChallengeViewModel(application: Application) : AndroidViewModel(appl
             "description" to challenge.description,
             "id" to customChallengeId,
             "image" to "",
-            "isUpload" to false,
+            "upload" to false,
             "likeList" to listOf<String>(),
             "location" to GeoPoint(0.0, 0.0),
             "name" to challenge.name,
@@ -54,7 +54,10 @@ class CustomChallengeViewModel(application: Application) : AndroidViewModel(appl
             "timeSpent" to challenge.timeSpent,
             "totalRating" to 0,
             "type" to challenge.type,
-            "createdTime" to Timestamp.now()
+            "createdTime" to Timestamp.now(),
+            "finished" to false,
+            "author" to UserManager.userId,
+            "public" to false
         )
 
         val db = Firebase.firestore

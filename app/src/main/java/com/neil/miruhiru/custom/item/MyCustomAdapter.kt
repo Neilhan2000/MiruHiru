@@ -26,9 +26,25 @@ class MyCustomAdapter(val onClick: (String) -> Unit)  : ListAdapter<Challenge, M
                 RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
             ).into(binding.customImage)
             binding.customChallengeName.text = item.name
-            binding.isUploadedText.text = when (item.isUpload) {
-                true -> itemView.context.getString(R.string.uploaded)
-                else -> itemView.context.getString(R.string.unUpoladed)
+            if (item.finished) {
+                binding.isUploadedText.text = when (item.upload) {
+                    true -> {
+                        if (item.public) {
+                            binding.isUploadedText.setBackgroundResource(R.drawable.type_public_border)
+                            itemView.context.getString(R.string.isPublic)
+                        } else {
+                            binding.isUploadedText.setBackgroundResource(R.drawable.type_uploaded_border)
+                            itemView.context.getString(R.string.verifying)
+                        }
+                    }
+                    else -> {
+                        binding.isUploadedText.setBackgroundResource(R.drawable.type_text_border)
+                        itemView.context.getString(R.string.unUpoladed)
+                    }
+                }   
+            } else {
+                binding.isUploadedText.setBackgroundResource(R.drawable.type_history_border)
+                binding.isUploadedText.text = itemView.context.getString(R.string.wait_for_editing)
             }
             val geoCoder = Geocoder(itemView.context, Locale.getDefault())
             val address = geoCoder.getFromLocation(item.location.latitude, item.location.longitude, 1)

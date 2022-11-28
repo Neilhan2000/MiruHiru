@@ -2,11 +2,8 @@ package com.neil.miruhiru
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,20 +13,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
-import com.neil.miruhiru.data.Event
-import com.neil.miruhiru.data.User
 import com.neil.miruhiru.databinding.ActivityMainBinding
-import com.neil.miruhiru.task.TaskViewModel
-import kotlinx.coroutines.*
+import com.tenclouds.fluidbottomnavigation.FluidBottomNavigationItem
 import timber.log.Timber
-import timber.log.Timber.Forest.i
 import timber.log.Timber.Forest.plant
 
 
@@ -59,13 +48,13 @@ class MainActivity : AppCompatActivity() {
             setupToolbar()
         })
 
+        UserManager.customCurrentStage = null
+        UserManager.customTotalStage = null
+
         // set activity instance
         instance = this
-        UserManager.customTotalStage = null
-        UserManager.customCurrentStage = null
 
         // bottom navigation
-        val navController = Navigation.findNavController(this, R.id.myNavHostFragment)
         setupBottomNav()
 
         // login
@@ -75,25 +64,45 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG) {
             plant(Timber.DebugTree())
         }
+//        binding.fluidBottomNavigation.items =
+//            listOf(
+//                FluidBottomNavigationItem(
+//                    getString(R.string.explore_fragment),
+//                    ContextCompat.getDrawable(this, R.drawable.location_black_icon)),
+//                FluidBottomNavigationItem(
+//                    getString(R.string.custom_fragment),
+//                    ContextCompat.getDrawable(this, R.drawable.custom_black_icon)),
+//                FluidBottomNavigationItem(
+//                    getString(R.string.community_fragment),
+//                    ContextCompat.getDrawable(this, R.drawable.community_black_icon)),
+//                FluidBottomNavigationItem(
+//                    getString(R.string.profile_fragment),
+//                    ContextCompat.getDrawable(this, R.drawable.profile_black_icon)))
+//        binding.fluidBottomNavigation.accentColor = ContextCompat.getColor(this, R.color.deep_yellow)
+//        binding.fluidBottomNavigation.backColor = ContextCompat.getColor(this, R.color.deep_yellow)
+//        binding.fluidBottomNavigation.textColor = ContextCompat.getColor(this, R.color.deep_yellow)
+//        binding.fluidBottomNavigation.iconColor = ContextCompat.getColor(this, R.color.deep_yellow)
+//        binding.fluidBottomNavigation.iconSelectedColor = ContextCompat.getColor(this, R.color.deep_yellow)
     }
 
     private fun setupBottomNav() {
+        val navController = Navigation.findNavController(this, R.id.myNavHostFragment)
+        binding.activityMainBottomNavigationView.setupWithNavController(navController)
         binding.activityMainBottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.fragment_explore -> {
+                R.id.exploreFragment -> {
                     findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalExploreFragment())
                     return@setOnItemSelectedListener true
                 }
-                R.id.fragment_custom -> {
+                R.id.customFragment -> {
                     findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCustomFragment())
                     return@setOnItemSelectedListener true
                 }
-                R.id.fragment_community -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalJoinFragment())
-//                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCommunityFragment())
+                R.id.communityFragment -> {
+                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCommunityFragment())
                     return@setOnItemSelectedListener true
                 }
-                R.id.fragment_profile -> {
+                R.id.profileFragment -> {
                     findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalProfileFragment())
                     return@setOnItemSelectedListener true
                 }
@@ -118,8 +127,10 @@ class MainActivity : AppCompatActivity() {
 
             if (fragmentType.value == getString(R.string.other)) {
                 supportActionBar?.hide()
+                binding.activityMainBottomNavigationView.visibility = View.GONE
             } else {
                 supportActionBar?.show()
+                binding.activityMainBottomNavigationView.visibility = View.VISIBLE
             }
 
             if (fragmentType.value == getString(R.string.explore_fragment)) {

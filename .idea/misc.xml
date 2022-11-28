@@ -3,11 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/bg_food_chip_state.xml" value="0.2535" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1495" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/bottom_sheet_border.xml" value="0.101" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_border.xml" value="0.271" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_border_deep_yellow.xml" value="0.281" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_disable_border.xml" value="0.1745" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/challenge_success_border.xml" value="0.1195" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/community_challenge_name_border.xml" value="0.363" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/community_searchbar_border.xml" value="0.254" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/community_tag_border.xml" value="0.362" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/community_tag_border_selected.xml" value="0.362" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/custom_page_tab_indicator.xml" value="0.238" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/dialog_border.xml" value="0.254" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/disable_button_border.xml" value="0.254" />
@@ -19,57 +24,73 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/ratingbar.xml" value="0.1035" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/ratingbar_empty.xml" value="0.1" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/ratingbar_filled.xml" value="0.1" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_couple_border.xml" value="0.255" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_history_border.xml" value="0.255" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_special_border.xml" value="0.255" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/text_border_mini.xml" value="0.248" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_couple_border.xml" value="0.248" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_history_border.xml" value="0.248" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_public_border.xml" value="0.234" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_special_border.xml" value="0.248" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_text_border.xml" value="0.1455" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_travel_border.xml" value="0.254" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_travel_border.xml" value="0.248" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_uploaded_border.xml" value="0.248" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/activity_main_activitytwo.xml" value="0.24444444444444444" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/bottom_sheet_border.xml" value="0.14473684210526316" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/bottom_sheet_report.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/content_main_activitytwo.xml" value="0.24444444444444444" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_blank.xml" value="0.24444444444444444" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_bottom_step.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_bottom_step2.xml" value="0.297008547008547" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_bottom_step3.xml" value="0.29615384615384616" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_detail.xml" value="0.264" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_success.xml" value="0.2" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_type.xml" value="0.33" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_community.xml" value="0.21666666666666667" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_success.xml" value="0.35737704918032787" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_type.xml" value="0.2" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_community.xml" value="0.536" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom_bottom_sheet.xml" value="0.297008547008547" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom_challenge.xml" value="0.297008547008547" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom_detail.xml" value="0.264" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom_challenge.xml" value="0.245018115942029" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom_detail.xml" value="0.22128851540616246" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_explore.xml" value="0.25" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_invite.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_join.xml" value="0.264" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_log.xml" value="0.12" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_like_challenge.xml" value="0.21509433962264152" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_log.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_log_dialog.xml" value="0.25196850393700787" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_login.xml" value="0.22" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_my_custom.xml" value="0.21833740831295845" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_overview.xml" value="0.33" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_preview.xml" value="0.2047008547008547" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_profile.xml" value="0.21666666666666667" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_overview.xml" value="0.23052536231884058" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_profile.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_scan.xml" value="0.14376528117359413" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_start_custom.xml" value="0.264" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task.xml" value="0.33" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_start_custom.xml" value="0.33" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task.xml" value="0.22128851540616246" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task_detail.xml" value="0.2" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task_dialog.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task_success.xml" value="0.264" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_verify.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragmet_chat_dialog.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_challenge_comment.xml" value="0.536" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_chat_my_message.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_chat_other_message.xml" value="0.264" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_community_banner.xml" value="1.25" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_community_challenge.xml" value="0.5" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_community_tag.xml" value="0.5" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_invite_user.xml" value="0.33" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_like_challenge.xml" value="0.5" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_log_photo.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_log_photo_comment.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_log_stage.xml" value="0.2" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_my_custom_challenge.xml" value="0.264" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_my_custom_challenge.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_my_message.xml" value="0.2" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_overview_task.xml" value="0.5" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_overview_task.xml" value="0.259963768115942" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_profile_completed_challenge.xml" value="1.0" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_profile_finished_log.xml" value="0.67" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_search_result.xml" value="0.22" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_task_guide.xml" value="0.4" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_task_task.xml" value="0.2" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_task_task.xml" value="0.264" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_verify_challenge.xml" value="0.536" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_verify_task.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/menu/navigation_menu.xml" value="0.21666666666666667" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1205" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1205" />
       </map>
     </option>
   </component>
@@ -82,7 +103,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.297008547008547" />
+        <option name="scale" value="0.2047008547008547" />
       </ProjectState>
     </option>
   </component>

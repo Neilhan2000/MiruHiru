@@ -6,9 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.mapbox.geojson.Point
@@ -39,6 +41,12 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     private val _hasCurrentEvent = MutableLiveData<Boolean>()
     val hasCurrentEvent: LiveData<Boolean>
         get() = _hasCurrentEvent
+
+    private val _authorName = MutableLiveData<String>()
+    val authorName: LiveData<String>
+        get() = _authorName
+
+    private lateinit var comments: MutableList<Comment>
 
     fun checkHasCurrentEvent(challengeId: String) {
         val db = Firebase.firestore
@@ -75,11 +83,6 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     }
 
 
-
-
-
-
-
     private var challengeDocumentId = ""
 
     fun loadChallenge(challengeId: String) {
@@ -89,15 +92,11 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
             .get()
             .addOnSuccessListener { result ->
                 val challenge = result.documents[0].toObject<Challenge>()
-                _challenge.value = challenge!!
+                challenge?.let { _challenge.value = it }
                 challengeDocumentId = result.documents[0].id
 
                 loadTasks()
-
-                Timber.tag("neil").i("success load documents = %s", _challenge.value)
-            }
-            .addOnFailureListener { exception ->
-                Timber.tag("neil").i(exception, "Error getting documents.")
+                challenge?.author?.let { loadAuthor(it) }
             }
 
     }
@@ -121,6 +120,17 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
                         loadPersonalTasks(userDocumentId, customDocumentId)
                     }
+            }
+    }
+
+    private fun loadAuthor(authorId: String) {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", authorId)
+            .get()
+            .addOnSuccessListener {
+                val author = it.documents[0].toObject<User>()
+                _authorName.value = author?.name
             }
     }
 
@@ -167,7 +177,7 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
     fun loadComments() {
         val db = Firebase.firestore
-        val commentList = mutableListOf<Comment>()
+        comments = mutableListOf<Comment>()
 
         db.collection("challenges").document(challengeDocumentId)
             .collection("comments")
@@ -177,22 +187,22 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
 
                 for (document in result) {
                     val comment = document.toObject<Comment>()
-                    commentList.add(comment)
+                    if (!UserManager.user.blockList.contains(comment.userId)) {
+                        comments.add(comment)
 
-                    // add user to comment user list
-                    db.collection("users").whereEqualTo("id", comment.userId)
-                        .get().addOnSuccessListener {
-                            val user = it.documents[0].toObject<User>()
-                            if (user != null) {
-                                commentUsers.add(user)
-                                _commentUsers.value = commentUsers
-                                _commentList.value = commentList
+                        // add user to comment user list
+                        db.collection("users").whereEqualTo("id", comment.userId)
+                            .get().addOnSuccessListener {
+                                val user = it.documents[0].toObject<User>()
+                                if (user != null) {
+                                    commentUsers.add(user)
+                                    _commentList.value = comments
+                                    _commentUsers.value = commentUsers
+                                }
                             }
 
-                        }
-
+                    }
                 }
-
             }
 
 
@@ -222,4 +232,65 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
         return df.format(number).toFloat()
     }
 
+    fun likeChallenge(challengeId: String) {
+        val db = Firebase.firestore
+
+        // challenge
+        db.collection("challenges").whereEqualTo("id", challengeId)
+            .get()
+            .addOnSuccessListener {
+                it.documents[0].reference.update("likeList", FieldValue.arrayUnion(UserManager.userId))
+            }
+
+        // user
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                it.documents[0].reference.update("likeChallenges", FieldValue.arrayUnion(challengeId))
+                    .addOnSuccessListener {
+                        UserManager.getUser()
+                    }
+            }
+    }
+
+    fun unLikeChallenge(challengeId: String) {
+        val db = Firebase.firestore
+
+        // challenge
+        db.collection("challenges").whereEqualTo("id", challengeId)
+            .get()
+            .addOnSuccessListener {
+                it.documents[0].reference.update("likeList", FieldValue.arrayRemove(UserManager.userId))
+            }
+
+        // user
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+                it.documents[0].reference.update("likeChallenges", FieldValue.arrayRemove(challengeId))
+                    .addOnSuccessListener {
+                        UserManager.getUser()
+                    }
+            }
+    }
+
+    fun blockUser(position: Int) {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference
+                    .update("blockList", FieldValue.arrayUnion(commentList.value?.get(position)?.userId))
+                    .addOnSuccessListener {
+                        comments.removeIf {
+                            it.userId == comments[position].userId
+                        }
+                        _commentList.value = comments
+                        _commentUsers.value = commentUsers.value
+                        UserManager.getUser()
+                    }
+            }
+    }
 }

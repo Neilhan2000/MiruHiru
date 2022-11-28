@@ -41,6 +41,7 @@ class LogLogAdapter(viewModel: LogViewModel, adapterPosition: Int) : ListAdapter
 
                 // user
                 viewModel.userInfoList.value?.forEach {
+                    Timber.i("userlist = ${viewModel.userInfoList.value}")
                     if (it.id == item.senderId) {
                         binding.userNameLog.text = it.name
                         Glide.with(binding.userIconLog.context).load(it.icon).circleCrop().apply(

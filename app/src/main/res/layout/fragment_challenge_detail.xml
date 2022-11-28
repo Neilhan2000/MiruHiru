@@ -101,7 +101,7 @@
                 mapbox:layout_constraintBottom_toBottomOf="@+id/location"
                 mapbox:layout_constraintStart_toEndOf="@+id/location"
                 mapbox:layout_constraintTop_toTopOf="@+id/location"
-                tools:text="距離起點 ?? Ms" />
+                android:text="@string/no_gps" />
 
             <TextView
                 android:id="@+id/stageText"
@@ -129,12 +129,15 @@
 
             <TextView
                 android:id="@+id/challengeDescription"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.48"
                 mapbox:layout_constraintStart_toStartOf="parent"
                 mapbox:layout_constraintTop_toBottomOf="@+id/Description"
                 tools:text="安妮亞喜歡這個 𓁹‿𓁹  " />
@@ -273,6 +276,46 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/seeComment" />
+
+            <ImageView
+                android:id="@+id/unlikeIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_unlike"
+                app:layout_constraintBottom_toBottomOf="@+id/ChallengeTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ChallengeTitle" />
+
+            <ImageView
+                android:id="@+id/likeIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_like"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/ChallengeTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ChallengeTitle" />
+
+            <ImageView
+                android:id="@+id/likeClick"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/ChallengeTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/ChallengeTitle" />
+
+            <TextView
+                android:id="@+id/author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                tools:text="作者"
+                app:layout_constraintBottom_toBottomOf="@+id/Description"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/Description" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

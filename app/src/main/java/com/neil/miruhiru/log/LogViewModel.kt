@@ -31,6 +31,10 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
     val uploadStatus: LiveData<Boolean>
         get() = _uploadStatus
 
+    private val _challengeDeleted = MutableLiveData<Boolean>()
+    val challengeDeleted: LiveData<Boolean>
+        get() = _challengeDeleted
+
     private val _taskList = MutableLiveData<List<Task>>()
     val taskList: LiveData<List<Task>>
         get() = _taskList
@@ -50,6 +54,8 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
 
     lateinit var imageUri: Uri
     var text = ""
+
+    var challengeName = ""
 
 
 
@@ -143,12 +149,12 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
             }
     }
 
-    private fun loadNewestCompletedEventLog() {
+    private fun loadNewestCompletedEventLog(eventId: String) {
         val db = Firebase.firestore
         var eventDocumentId = ""
         val logList = mutableListOf<Log>()
 
-        db.collection("events").whereEqualTo("id", UserManager.user.completedEvents.last())
+        db.collection("events").whereEqualTo("id", eventId)
             .get()
             .addOnSuccessListener {
                 eventDocumentId = it.documents[0].id
@@ -172,7 +178,7 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                         }
                         _logList.value = logList
 
-                        loadUserInfo()
+                        loadUserInfo(eventId)
                     }
             }
     }
@@ -184,13 +190,13 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
         return String.format("總共花費 %02d 小時 %02d 分 %02d 秒", hours, minutes, seconds)
     }
 
-    // 所有參加者的資料
-    private fun loadUserInfo() {
+    // all members info
+    private fun loadUserInfo(eventId: String) {
         val db = Firebase.firestore
         var event = Event()
         val userInfoList = mutableListOf<User>()
 
-        db.collection("events").whereEqualTo("id", UserManager.user.completedEvents.last())
+        db.collection("events").whereEqualTo("id", eventId)
             .get()
             .addOnSuccessListener { result ->
                 result?.documents?.get(0)?.toObject<Event>()?.let {
@@ -206,34 +212,37 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                             Timber.i("user $user")
                             if (user != null) {
                                 userInfoList.add(user)
-                                _userInfoList.value = userInfoList
 
+                                if (event.members.size == userInfoList.size) {
+                                    _userInfoList.value = userInfoList
+                                }
                             }
                         }
+
                 }
-
-
             }
 
     }
 
-    fun loadCompletedChallenge() {
+    fun loadCompletedChallenge(eventId: String) {
         val db = Firebase.firestore
         var challengeId = ""
         var challengeDocumentId = ""
         val taskList = mutableListOf<Task>()
 
-        db.collection("events").whereEqualTo("id", UserManager.user.completedEvents.last())
+        db.collection("events").whereEqualTo("id", eventId)
             .get()
             .addOnSuccessListener { result ->
                 val event = result.documents[0].toObject<Event>()
                 event?.challengeId?.let {
                     challengeId = it
 
-                    if (UserManager.isPersonal == false) {
+                    if (!event.personal) {
                         db.collection("challenges").whereEqualTo("id", challengeId)
                             .get()
                             .addOnSuccessListener { result ->
+                                val challenge = result.documents[0].toObject<Challenge>()
+                                challenge?.name?.let { challengeName = it }
                                 challengeDocumentId = result.documents[0].id
 
                                 db.collection("challenges").document(challengeDocumentId).collection("tasks")
@@ -242,31 +251,43 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                                         tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
                                         _taskList.value = taskList
 
-                                        loadNewestCompletedEventLog()
+                                        loadNewestCompletedEventLog(eventId)
                                     }
                             }
                     } else {
-                        if (event.members.first() == UserManager.userId) {
+                        val hostUserId = event.members.first()
+                        if (hostUserId == UserManager.userId) {
                             db.collection("users").whereEqualTo("id", UserManager.userId)
                                 .get()
                                 .addOnSuccessListener {
                                     val userDocumentId = it.documents[0].id
 
-                                    db.collection("users").document(userDocumentId).collection("customChallenges")
+                                    db.collection("users").document(userDocumentId)
+                                        .collection("customChallenges")
                                         .whereEqualTo("id", challengeId)
                                         .get()
                                         .addOnSuccessListener {
-                                            val customDocumentId = it.documents[0].id
+                                            Timber.i("challenge id = $challengeId")
+                                            // check if custom challenge deleted
+                                            if (it.documents.isNotEmpty()) {
+                                                val challenge = it.documents[0].toObject<Challenge>()
+                                                Timber.i("challenge1 = $challenge")
+                                                challenge?.name?.let { challengeName = it }
+                                                val customDocumentId = it.documents[0].id
 
-                                            db.collection("users").document(userDocumentId).collection("customChallenges")
-                                                .document(customDocumentId).collection("tasks")
-                                                .get()
-                                                .addOnSuccessListener { tasks ->
-                                                    tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
-                                                    _taskList.value = taskList
+                                                db.collection("users").document(userDocumentId)
+                                                    .collection("customChallenges")
+                                                    .document(customDocumentId).collection("tasks")
+                                                    .get()
+                                                    .addOnSuccessListener { tasks ->
+                                                        tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
+                                                        _taskList.value = taskList
 
-                                                    loadNewestCompletedEventLog()
-                                                }
+                                                        loadNewestCompletedEventLog(eventId)
+                                                    }
+                                            } else {
+                                                _challengeDeleted.value = true
+                                            }
                                         }
                                 }
                         } else {
@@ -274,24 +295,42 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
                             db.collection("users").whereEqualTo("id", hostUserId)
                                 .get()
                                 .addOnSuccessListener {
+
                                     val userDocumentId = it.documents[0].id
 
-                                    db.collection("users").document(userDocumentId).collection("customChallenges")
-                                        .whereEqualTo("id", challengeId)
-                                        .get()
-                                        .addOnSuccessListener {
-                                            val customDocumentId = it.documents[0].id
+                                        db.collection("users").document(userDocumentId).collection("customChallenges")
+                                            .whereEqualTo("id", challengeId)
+                                            .get()
+                                            .addOnSuccessListener {
 
-                                            db.collection("users").document(userDocumentId).collection("customChallenges")
-                                                .document(customDocumentId).collection("tasks")
-                                                .get()
-                                                .addOnSuccessListener { tasks ->
-                                                    tasks.forEach { task -> taskList.add(task.toObject<Task>()) }
-                                                    _taskList.value = taskList
+                                                // check if custom challenge deleted
+                                                if (it.documents.isNotEmpty()) {
 
-                                                    loadNewestCompletedEventLog()
+                                                    val challenge =
+                                                        it.documents[0].toObject<Challenge>()
+                                                    Timber.i("challenge2 = $challenge")
+                                                    challenge?.name?.let { challengeName = it }
+                                                    val customDocumentId = it.documents[0].id
+
+                                                    db.collection("users").document(userDocumentId)
+                                                        .collection("customChallenges")
+                                                        .document(customDocumentId)
+                                                        .collection("tasks")
+                                                        .get()
+                                                        .addOnSuccessListener { tasks ->
+                                                            tasks.forEach { task ->
+                                                                taskList.add(
+                                                                    task.toObject<Task>()
+                                                                )
+                                                            }
+                                                            _taskList.value = taskList
+
+                                                            loadNewestCompletedEventLog(eventId)
+                                                        }
+                                                } else {
+                                                    _challengeDeleted.value = true
                                                 }
-                                        }
+                                            }
                                 }
                         }
 

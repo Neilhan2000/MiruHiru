@@ -37,6 +37,8 @@ import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
+import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.gestures.OnMoveListener
@@ -65,8 +67,9 @@ class TaskFragment : Fragment() {
     private val toBottom: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.fab_to_bottom_anim) }
     private var clicked = false
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
-        mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().center(it).build())
-        mapView?.gestures?.focalPoint = mapView?.getMapboxMap()?.pixelForCoordinate(it)
+        val cameraOptions = CameraOptions.Builder().center(it).zoom(15.0).build()
+        mapView.getMapboxMap().setCamera(cameraOptions)
+        mapView.gestures.focalPoint = mapView.getMapboxMap().pixelForCoordinate(it)
     }
     private val onMoveListener = object : OnMoveListener {
         override fun onMoveBegin(detector: MoveGestureDetector) {

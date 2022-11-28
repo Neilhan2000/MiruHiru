@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Observer
@@ -15,10 +16,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
-import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentOverviewBinding
 import kotlinx.coroutines.*
-import okhttp3.internal.notifyAll
 import timber.log.Timber
 import java.util.*
 
@@ -98,6 +97,32 @@ class OverviewFragment : Fragment() {
             }
         })
 
+        // observe editing status to determine button feature
+        viewModel.editingCompleted.observe(viewLifecycleOwner, Observer { editingCompleted ->
+            if (editingCompleted) {
+                binding.editOrUploadButton.text = getString(R.string.upload)
+                binding.editOrUploadButton.setOnClickListener {
+                    viewModel.uploadCustomChallengeBeVerified()
+                }
+
+            } else {
+                binding.editOrUploadButton.text = getString(R.string.edit)
+                binding.editOrUploadButton.setOnClickListener {
+                    this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment(viewModel.customChallengeId))
+                }
+                binding.startCustomButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
+                binding.startCustomButton.setOnClickListener(null)
+            }
+        })
+
+        // observe upload to change button
+        viewModel.uploadToBeVerified.observe(viewLifecycleOwner, Observer { uploaded ->
+            if (uploaded) {
+                binding.editOrUploadButton.text = getString(R.string.uploaded)
+                binding.editOrUploadButton.setOnClickListener(null)
+            }
+        })
+
         binding.startCustomButton.setOnClickListener {
             this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(viewModel.customChallengeId))
         }
@@ -105,7 +130,6 @@ class OverviewFragment : Fragment() {
         binding.completeCustomButton.setOnClickListener {
             this.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
         }
-
 
 
         return binding.root
@@ -117,6 +141,7 @@ class OverviewFragment : Fragment() {
     }
 
     private fun setStartButtonToUpdate() {
+        binding.startCustomButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
         binding.startCustomButton.text = getString(R.string.update)
         binding.startCustomButton.setOnClickListener(null)
         binding.startCustomButton.setOnClickListener {
@@ -125,11 +150,18 @@ class OverviewFragment : Fragment() {
     }
 
     private fun resetStartButton() {
-        binding.startCustomButton.text = getString(R.string.challenge)
-        binding.startCustomButton.setOnClickListener(null)
-        binding.startCustomButton.setOnClickListener {
-            // navigate to challenge detail
-            this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(viewModel.customChallengeId))
+        if (viewModel.editingCompleted.value == true) {
+            binding.startCustomButton.text = getString(R.string.challenge)
+            binding.startCustomButton.setOnClickListener(null)
+            binding.startCustomButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+            binding.startCustomButton.setOnClickListener {
+                // navigate to challenge detail
+                this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(viewModel.customChallengeId))
+            }
+        } else {
+            binding.startCustomButton.text = getString(R.string.challenge)
+            binding.startCustomButton.setOnClickListener(null)
+            binding.startCustomButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
         }
     }
 }

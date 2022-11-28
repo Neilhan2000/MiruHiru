@@ -6,13 +6,196 @@ android:layout_height="match_parent"
 xmlns:mapbox="http://schemas.android.com/apk/res-auto"
 tools:context=".profile.ProfileFragment">
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="加入挑戰"
-        mapbox:layout_constraintBottom_toBottomOf="parent"
+    <View
+        android:id="@+id/greyLine9"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/grey_cccccc"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/completedChallengeRecycler" />
+
+    <ImageView
+        android:id="@+id/profileIcon"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/ic_user_no_photo"
         mapbox:layout_constraintEnd_toEndOf="parent"
         mapbox:layout_constraintStart_toStartOf="parent"
         mapbox:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/personalInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="個人資訊"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/profileIcon" />
+
+    <TextView
+        android:id="@+id/likeChallenge"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:text="收藏的挑戰"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        mapbox:layout_constraintEnd_toEndOf="@+id/goToMyLike"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/greyLine9" />
+
+    <TextView
+        android:id="@+id/joinChallenge"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:text="加入挑戰"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        mapbox:layout_constraintEnd_toEndOf="@+id/goToJoin"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/likeChallenge" />
+
+    <TextView
+        android:id="@+id/notification"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:text="通知"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        mapbox:layout_constraintEnd_toEndOf="@+id/goToNotification"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/joinChallenge" />
+
+    <TextView
+        android:id="@+id/settings"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:text="設定"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        mapbox:layout_constraintEnd_toEndOf="@+id/goToSettings"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/notification" />
+
+    <TextView
+        android:id="@+id/profileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="名稱："
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/personalInfo" />
+
+    <TextView
+        android:id="@+id/profileCompletedChallenges"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="完成的挑戰數量：0"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/profileCreateChallenges" />
+
+    <TextView
+        android:id="@+id/profileCreateChallenges"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="公開的挑戰數量：0"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/profileName" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/completedChallengeRecycler"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        mapbox:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/profileCompletedChallenges" />
+
+    <ImageView
+        android:id="@+id/goToMyLike"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:rotation="180"
+        android:src="@drawable/icons_24px_back02"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/likeChallenge"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintTop_toTopOf="@+id/likeChallenge" />
+
+    <ImageView
+        android:id="@+id/goToJoin"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:rotation="180"
+        android:src="@drawable/icons_24px_back02"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/joinChallenge"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintTop_toTopOf="@+id/joinChallenge" />
+
+    <ImageView
+        android:id="@+id/goToNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:rotation="180"
+        android:src="@drawable/icons_24px_back02"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/notification"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintTop_toTopOf="@+id/notification" />
+
+    <ImageView
+        android:id="@+id/goToSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:rotation="180"
+        android:src="@drawable/icons_24px_back02"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/settings"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintTop_toTopOf="@+id/settings" />
+
+    <Button
+        android:id="@+id/signOutButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/deep_yellow"
+        android:text="登出"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toBottomOf="@+id/settings" />
 </androidx.constraintlayout.widget.ConstraintLayout>

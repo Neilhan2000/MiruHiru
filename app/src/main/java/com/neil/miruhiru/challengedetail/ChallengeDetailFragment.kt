@@ -1,6 +1,7 @@
 package com.neil.miruhiru.challengedetail
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Bitmap
@@ -9,10 +10,9 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.location.LocationServices
@@ -40,6 +41,7 @@ import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
 import com.neil.miruhiru.factory.ChallengeDetailViewModelFactory
 import timber.log.Timber
 import kotlin.math.roundToInt
+import kotlin.properties.Delegates
 
 class ChallengeDetailFragment : Fragment() {
 
@@ -53,6 +55,7 @@ class ChallengeDetailFragment : Fragment() {
     private lateinit var pointAnnotationManager: PointAnnotationManager
     private lateinit var firstStagePoint: Point
     private lateinit var challengeId: String
+    private var like by Delegates.notNull<Boolean>()
     private var show = true
 
     override fun onCreateView(
@@ -66,7 +69,8 @@ class ChallengeDetailFragment : Fragment() {
         challengeId = ChallengeDetailFragmentArgs.fromBundle(requireArguments()).challengeId
         factory = ChallengeDetailViewModelFactory(challengeId)
         val previousFragmentId  = this.findNavController().previousBackStackEntry?.destination?.id
-        if (previousFragmentId == R.id.exploreFragment) {
+        if (previousFragmentId == R.id.exploreFragment || previousFragmentId == R.id.likeChallengeFragment ||
+                previousFragmentId == R.id.communityFragment) {
             viewModel.loadChallenge(challengeId)
             UserManager.isPersonal = false
         } else if (previousFragmentId == R.id.overviewFragment) {
@@ -74,6 +78,9 @@ class ChallengeDetailFragment : Fragment() {
             binding.seeComment.visibility = View.GONE
             binding.ratingBar.visibility = View.GONE
             binding.ratingText.visibility = View.GONE
+            binding.likeIcon.visibility = View.GONE
+            binding.unlikeIcon.visibility = View.GONE
+            binding.likeClick.visibility = View.GONE
             UserManager.isPersonal = true
         }
 
@@ -87,7 +94,6 @@ class ChallengeDetailFragment : Fragment() {
             it.forEach {
                 addAnnotationToMap(it)
             }
-            Timber.i("$it")
             firstStagePoint = Point.fromLngLat(
                 it[0].location.longitude,
                 it[0].location.latitude
@@ -115,17 +121,20 @@ class ChallengeDetailFragment : Fragment() {
         // set recyclerView adapter
         val adapter = CommentAdapter(
             viewModel
-        ) { index ->
-            reportUser(index)
+        ) { position ->
+            showDialog(position)
         }
         binding.recyclerComment.adapter = adapter
 
         // observer commentUsers and show in recyclerView
         viewModel.commentUsers.observe(viewLifecycleOwner, Observer {
             adapter.submitList(viewModel.commentList.value)
+            Timber.i("comment List ${viewModel.commentList.value}")
             adapter.notifyDataSetChanged()
             if (adapter.itemCount > 2) {
                 binding.recyclerComment.layoutParams.height = 450
+            } else {
+                binding.recyclerComment.layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT
             }
         })
 
@@ -147,8 +156,28 @@ class ChallengeDetailFragment : Fragment() {
         mapView.onStop()
     }
 
-    private fun reportUser(userIndex: Int) {
-        Toast.makeText(requireContext(), "report user $userIndex", Toast.LENGTH_SHORT).show()
+    private fun showDialog(position: Int) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.bottom_sheet_report)
+        val reportButton = dialog.findViewById<Button>(R.id.reportButton)
+        val blockButton = dialog.findViewById<Button>(R.id.blockButton)
+        val backButton = dialog.findViewById<Button>(R.id.backButton)
+
+        reportButton.setOnClickListener {
+            Toast.makeText(requireContext(), "report user", Toast.LENGTH_SHORT).show()
+        }
+        blockButton.setOnClickListener {
+            Toast.makeText(requireContext(), "block user", Toast.LENGTH_SHORT).show()
+            viewModel.blockUser(position)
+        }
+        backButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+//        dialog.window?.setBackgroundDrawable()
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
     private fun setLocation() {
@@ -176,11 +205,37 @@ class ChallengeDetailFragment : Fragment() {
             getString(R.string.special) -> R.drawable.type_special_border
             else -> R.drawable.type_text_border
         })
+
+        // like or unlike challenge
         challenge.location?.let { calculateAndShowDistance(it) }
+
+        challenge.likeList.forEach { likeUser ->
+            if (likeUser == UserManager.userId) {
+                like = true
+                binding.likeIcon.visibility = View.VISIBLE
+            } else {
+                like = false
+                binding.likeIcon.visibility = View.INVISIBLE
+            }
+        }
+        binding.likeClick.setOnClickListener {
+            if (like) {
+                binding.likeIcon.visibility = View.INVISIBLE
+                viewModel.unLikeChallenge(challengeId)
+            } else {
+                binding.likeIcon.visibility = View.VISIBLE
+                viewModel.likeChallenge(challengeId)
+            }
+            like = !like
+        }
 
         binding.startButton.setOnClickListener {
             viewModel.checkHasCurrentEvent(challengeId)
         }
+        // observe to display author name
+        viewModel.authorName.observe(viewLifecycleOwner, Observer {
+            binding.author.text = "created by $it"
+        })
 
         // observe if has uncompleted event
         viewModel.hasCurrentEvent.observe(viewLifecycleOwner, Observer { hasEvent ->
@@ -217,16 +272,16 @@ class ChallengeDetailFragment : Fragment() {
         // calculate and show distance
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
-//                Log.i("neil", "current location = ${location?.latitude}, ${location?.longitude}")
-                currentPoint = Point.fromLngLat(
-                    location!!.longitude,
-                    location!!.latitude
-                )
-                val distance = viewModel.calculateDistance(currentPoint, destination)
-                binding.distanceText.text = "距離起點 ${distance.roundToInt()} Ms"
-            }.addOnFailureListener { exception ->
-                binding.distanceText.text = "${exception.message}"
+                location?.let {
+                    currentPoint = Point.fromLngLat(
+                        location.longitude,
+                        location.latitude
+                    )
+                    val distance = viewModel.calculateDistance(currentPoint, destination)
+                    binding.distanceText.text = "距離起點 ${distance.roundToInt()} Ms"
+                }
             }
+
     }
 
 

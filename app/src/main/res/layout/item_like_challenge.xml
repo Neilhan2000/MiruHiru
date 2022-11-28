@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/border"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/text_border_mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/likeChallengeImage"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="@+id/border"
+        app:layout_constraintStart_toStartOf="@+id/border"
+        app:layout_constraintTop_toTopOf="@+id/border"
+        app:srcCompat="@drawable/image_placeholder" />
+
+    <TextView
+        android:id="@+id/likChallengeName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        tools:text="AppWorks美食大挑戰"
+        app:layout_constraintEnd_toStartOf="@+id/likeChallengeTag"
+        app:layout_constraintStart_toStartOf="@+id/likeChallengeImage"
+        app:layout_constraintTop_toBottomOf="@+id/likeChallengeImage" />
+
+    <TextView
+        android:id="@+id/likeChallengeTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/type_text_border"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/likChallengeName"
+        app:layout_constraintEnd_toEndOf="@+id/likeChallengeImage"
+        app:layout_constraintTop_toTopOf="@+id/likChallengeName"
+        tools:text="tag" />
+
+    <RatingBar
+        android:id="@+id/likeChallengeRating"
+        style="@style/CustomRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        tools:rating="5"
+        android:stepSize="0.01"
+        app:layout_constraintStart_toStartOf="@+id/likChallengeName"
+        app:layout_constraintTop_toBottomOf="@+id/likChallengeName" />
+
+    <TextView
+        android:id="@+id/likeChallengeRatingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        tools:text="5.0 (999)"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/likeChallengeRating"
+        app:layout_constraintStart_toEndOf="@+id/likeChallengeRating"
+        app:layout_constraintTop_toTopOf="@+id/likeChallengeRating" />
+
+    <ImageView
+        android:id="@+id/likeLocationIcon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/likeChallengeRatingText"
+        app:layout_constraintEnd_toStartOf="@+id/likeChallengeLocation"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/likeChallengeRatingText"
+        app:layout_constraintTop_toTopOf="@+id/likeChallengeRatingText"
+        app:srcCompat="@drawable/ic_baseline_location" />
+
+    <TextView
+        android:id="@+id/likeChallengeLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Taiwan, Taipei"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/likeLocationIcon"
+        app:layout_constraintEnd_toEndOf="@+id/likeChallengeTag"
+        app:layout_constraintTop_toTopOf="@+id/likeLocationIcon" />
+</androidx.constraintlayout.widget.ConstraintLayout>

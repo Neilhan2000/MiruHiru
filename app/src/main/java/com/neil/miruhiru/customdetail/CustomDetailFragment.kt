@@ -1,6 +1,7 @@
 package com.neil.miruhiru.customdetail
 
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
@@ -13,20 +14,27 @@ import android.view.ViewGroup
 import android.webkit.URLUtil
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.extension.style.expressions.dsl.generated.pitch
+import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
+import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
+import com.neil.miruhiru.BuildConfig
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
@@ -44,7 +52,6 @@ class CustomDetailFragment : Fragment() {
         ViewModelProvider(this).get(CustomDetailViewModel::class.java)
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,19 +67,20 @@ class CustomDetailFragment : Fragment() {
                     Timber.i("original task${viewModel.originalTask} normal task ${viewModel.task}")
                     // if the task do not change we don't change the button
                     if (viewModel.originalTask != viewModel.task && binding.nextButton.text == getString(R.string.update)) {
-                            binding.nextButton.setOnClickListener {
-                                viewModel.updateTask()
+                        viewModel.needToUpdate()
+                        binding.nextButton.setOnClickListener {
+                            viewModel.updateTask()
 
-                                viewModel.originalTask.id = result.id
-                                // we set the image when we upload the image to firebase (in viewModel not here)
-                                viewModel.originalTask.stage = result.stage
-                                viewModel.originalTask.name = result.name
-                                viewModel.originalTask.question = result.question
-                                viewModel.originalTask.answer = result.answer
-                                viewModel.originalTask.location = result.location
-                                viewModel.originalTask.introduction = result.introduction
-                                viewModel.originalTask.guide = result.guide
-                            }
+                            viewModel.originalTask.id = result.id
+                            // we set the image when we upload the image to firebase (in viewModel not here)
+                            viewModel.originalTask.stage = result.stage
+                            viewModel.originalTask.name = result.name
+                            viewModel.originalTask.question = result.question
+                            viewModel.originalTask.answer = result.answer
+                            viewModel.originalTask.location = result.location
+                            viewModel.originalTask.introduction = result.introduction
+                            viewModel.originalTask.guide = result.guide
+                        }
 
                     } else if (viewModel.originalTask == viewModel.task && binding.nextButton.text == getString(R.string.update)){
                         binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
@@ -89,6 +97,7 @@ class CustomDetailFragment : Fragment() {
             if (result != null) {
 
                 viewModel.task = result
+                viewModel.setContinueStage(result.stage)
 
                 viewModel.originalTask.id = result.id
                 viewModel.originalTask.image = result.image
@@ -136,6 +145,7 @@ class CustomDetailFragment : Fragment() {
                 binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
                 binding.nextButton.setOnClickListener(null)
                 Timber.i("task image ${viewModel.task.image} original image ${viewModel.originalTask.image}")
+                viewModel.needToUpdate()
                 binding.nextButton.setOnClickListener {
                     viewModel.updateTask()
                 }
@@ -185,7 +195,24 @@ class CustomDetailFragment : Fragment() {
             -1 -> {
                 viewModel.loadFirstOrUnfinishedEditing()
                 Timber.i("-1 -> current stage ${UserManager.customCurrentStage}, total stage ${UserManager.customTotalStage}")
-                binding.customGuideText.text = getString(R.string.customGuideTextOne) + "1" + getString(R.string.customGuideTextTwo)
+                if (this.findNavController().previousBackStackEntry?.destination?.id == R.id.overviewFragment) {
+                    viewModel.continueEditingStage.observe(viewLifecycleOwner, Observer { stage ->
+                        if (binding.nextButton.text == getString(R.string.update)) {
+                            binding.customGuideText.text = getString(R.string.custom_guide_text_continue) +
+                                    "$stage" + getString(R.string.stage)
+                        }
+                    })
+                    viewModel.isUnfinished.observe(viewLifecycleOwner, Observer { isUnfinished ->
+                        if (isUnfinished) {
+                            if (binding.nextButton.text != getString(R.string.update)) {
+                                binding.customGuideText.text = getString(R.string.custom_guide_text_unfinished) +
+                                        "${UserManager.customCurrentStage}" + getString(R.string.stage)
+                            }
+                        }
+                    })
+                } else {
+                    binding.customGuideText.text = getString(R.string.customGuideTextOne) + "1" + getString(R.string.customGuideTextTwo)
+                }
             }
             else -> {
                 UserManager.customCurrentStage = UserManager.customCurrentStage?.plus(1)
@@ -223,12 +250,126 @@ class CustomDetailFragment : Fragment() {
                     UserManager.customCurrentStage = null
                     UserManager.customTotalStage = null
                     if (binding.nextButton.text == getString(R.string.update)) {
-                        this@CustomDetailFragment.findNavController().navigateUp()
+                        if (viewModel.isUpdated.value == false) {
+                            val defaultBuilder = AlertDialog.Builder(requireContext())
+                                .setTitle("尚未儲存")
+                                .setMessage("編輯尚未更新，確定要退出嗎?")
+                                .setPositiveButton("確定", object : DialogInterface.OnClickListener {
+                                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                                        this@CustomDetailFragment.findNavController().navigateUp()
+                                    }
+                                })
+                                .setNegativeButton("取消", object : DialogInterface.OnClickListener {
+                                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    }
+                                }).show()
+                            defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
+                                .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                            defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
+                                .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                        } else {
+                            this@CustomDetailFragment.findNavController().navigateUp()
+                        }
                     } else {
-                        this@CustomDetailFragment.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
+                        if (this@CustomDetailFragment.findNavController().previousBackStackEntry?.destination?.id ==
+                                R.id.overviewFragment) {
+                            val defaultBuilder = AlertDialog.Builder(requireContext())
+                                .setTitle("暫停編輯")
+                                .setMessage("進度會自動儲存，要暫時退出嗎?")
+                                .setPositiveButton("確定", object : DialogInterface.OnClickListener {
+                                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                                        this@CustomDetailFragment.findNavController().navigateUp()
+                                    }
+                                })
+                                .setNegativeButton("取消", object : DialogInterface.OnClickListener {
+                                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    }
+                                })
+                                .setNeutralButton("清除挑戰", object : DialogInterface.OnClickListener {
+                                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                                        viewModel.cleanCustomChallenge(viewModel.customChallengeId)
+                                        this@CustomDetailFragment.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
+                                    }
+                                })
+                                .show()
+                            defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
+                                .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                            defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
+                                .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                            defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
+                                .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                        } else {
+                            val defaultBuilder = AlertDialog.Builder(requireContext())
+                                .setTitle("暫停編輯")
+                                .setMessage("進度會自動儲存，要暫時退出嗎?")
+                                .setPositiveButton("確定", object : DialogInterface.OnClickListener {
+                                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                                        this@CustomDetailFragment.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
+                                    }
+                                })
+                                .setNegativeButton("取消", object : DialogInterface.OnClickListener {
+                                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                                    }
+                                })
+                                .setNeutralButton("清除挑戰", object : DialogInterface.OnClickListener {
+                                    override fun onClick(p0: DialogInterface?, p1: Int) {
+                                        viewModel.cleanCustomChallenge(viewModel.customChallengeId)
+                                        this@CustomDetailFragment.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
+                                    }
+                                })
+                                .show()
+                            defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
+                                .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                            defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
+                                .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                            defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
+                                .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                        }
                     }
                 }
             })
+
+        // search bar
+        binding.cleanSearchIcon.setOnClickListener {
+            binding.searchBar.setText("")
+        }
+        binding.searchBar.addTextChangedListener {
+            it?.length?.let { textNumber ->
+                if (textNumber > 0) {
+                    binding.searchIcon.visibility = View.GONE
+                    binding.cleanSearchIcon.visibility = View.VISIBLE
+                } else {
+                    binding.searchIcon.visibility = View.VISIBLE
+                    binding.cleanSearchIcon.visibility = View.GONE
+                    viewModel.cleanSearchResult()
+                }
+            }
+            viewModel.searchPlace(it.toString(), 3, BuildConfig.MAPBOX_ACCESS_TOKEN)
+        }
+
+        // search recyclerView
+        val searchAdapter = SearchResultAdapter { resultPosition ->
+            val point = Point.fromLngLat(
+                viewModel.featureList.value?.get(resultPosition)?.geometry?.coordinates?.get(0) ?: 0.0,
+                viewModel.featureList.value?.get(resultPosition)?.geometry?.coordinates?.get(1) ?: 0.0
+            )
+            mapBoxMap.flyTo(CameraOptions.Builder().center(point).zoom(15.0).build(), mapAnimationOptions {
+                duration(2000)
+            })
+            addAnnotationToMap(point)
+            changeButtonStatus()
+            viewModel.setTaskLocation(point)
+            Timber.i("task ${viewModel.task}")
+        }
+        binding.searchRecycler.adapter = searchAdapter
+
+        // observe search result and show in searchRecycler
+        viewModel.featureList.observe(viewLifecycleOwner, Observer { featureList ->
+            Timber.i("$featureList")
+            searchAdapter.submitList(featureList)
+            searchAdapter.notifyDataSetChanged()
+        })
+
         return binding.root
     }
 
@@ -290,5 +431,4 @@ class CustomDetailFragment : Fragment() {
             bitmap
         }
     }
-
 }

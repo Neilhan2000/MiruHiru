@@ -65,7 +65,7 @@ class TaskSuccessFragment : Fragment() {
                 viewModel.navigateToLogFragmentCompleted()
 
             } else if (completeEvent && UserManager.isPersonal == true) {
-                this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment())
+                this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment(UserManager.user.completedEvents.last()))
                 viewModel.navigateToLogFragmentCompleted()
             }
         })

@@ -110,7 +110,11 @@
         android:id="@+id/logFragment"
         android:name="com.neil.miruhiru.log.LogFragment"
         android:label="fragment_log"
-        tools:layout="@layout/fragment_log" />
+        tools:layout="@layout/fragment_log" >
+        <argument
+            android:name="eventId"
+            app:argType="string" />
+    </fragment>
     <action
         android:id="@+id/action_global_logFragment"
         app:destination="@id/logFragment" />
@@ -199,4 +203,25 @@
             app:argType="string" />
     </fragment>
     <action android:id="@+id/action_global_overviewFragment" app:destination="@id/overviewFragment" />
+    <fragment
+        android:id="@+id/likeChallengeFragment"
+        android:name="com.neil.miruhiru.likeChallenge.LikeChallengeFragment"
+        android:label="fragment_like_challenge"
+        tools:layout="@layout/fragment_like_challenge" /><action android:id="@+id/action_global_likeChallengeFragment" app:destination="@id/likeChallengeFragment"/>
+    <fragment
+        android:id="@+id/verifyDetailFragment"
+        android:name="com.neil.miruhiru.verifydetail.VerifyDetailFragment"
+        android:label="fragment_verify_detail"
+        tools:layout="@layout/fragment_verify_detail" >
+        <argument
+            android:name="challengeId"
+            app:argType="string" />
+    </fragment>
+    <action android:id="@+id/action_global_verifyDetailFragment" app:destination="@id/verifyDetailFragment" />
+    <fragment
+        android:id="@+id/verifyFragment"
+        android:name="com.neil.miruhiru.verify.VerifyFragment"
+        android:label="fragment_verify"
+        tools:layout="@layout/fragment_verify" />
+    <action android:id="@+id/action_global_verifyFragment" app:destination="@id/verifyFragment" />
 </navigation>

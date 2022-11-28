@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/fragment_explore"
+        android:id="@+id/exploreFragment"
         android:icon="@drawable/location_black_icon"
         android:title="@string/explore_fragment"/>
 
     <item
-        android:id="@+id/fragment_custom"
+        android:id="@+id/customFragment"
         android:icon="@drawable/custom_black_icon"
         android:title="@string/custom_fragment"/>
 
     <item
-        android:id="@+id/fragment_community"
+        android:id="@+id/communityFragment"
         android:icon="@drawable/community_black_icon"
         android:title="@string/community_fragment"/>
 
     <item
-        android:id="@+id/fragment_profile"
+        android:id="@+id/profileFragment"
         android:icon="@drawable/profile_black_icon"
         android:title="@string/profile_fragment"/>
 </menu>

@@ -38,7 +38,6 @@ class ParcelableGeoPoint() : Parcelable {
             return arrayOfNulls(size)
         }
     }
-
 }
 
 @Parcelize
@@ -46,7 +45,7 @@ data class Challenge(
     var description: String = "",
     var id: String = "",
     var image: String = "",
-    var isUpload: Boolean = false,
+    var upload: Boolean = false,
     var likeList: List<String> = listOf(),
     var location:  @RawValue GeoPoint = GeoPoint(0.0, 0.0),
     var name: String = "",
@@ -56,5 +55,8 @@ data class Challenge(
     var type: String = "",
     var completedList: List<String> = listOf(),
     var commentQuantity: Long = -1,
-    var createdTime: Timestamp = Timestamp(Date(0))
+    var createdTime: Timestamp = Timestamp(Date(0)),
+    var finished: Boolean = false,
+    var author: String = "",
+    var public: Boolean = false
 ) : Parcelable

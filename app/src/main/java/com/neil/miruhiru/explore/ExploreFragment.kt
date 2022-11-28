@@ -96,11 +96,11 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
     // listeners and observers
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
-        mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().bearing(it).build())
+        mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().zoom(14.0).bearing(it).build())
     }
 
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
-        mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().center(it).build())
+        mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().center(it).zoom(14.0).build())
         mapView?.gestures?.focalPoint = mapView?.getMapboxMap()?.pixelForCoordinate(it)
     }
 
@@ -207,11 +207,6 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
     // set up map
     private fun onMapReady() {
-        mapView?.getMapboxMap()?.setCamera(
-            CameraOptions.Builder()
-                .zoom(14.0)
-                .build()
-        )
         mapView?.getMapboxMap()?.loadStyleUri(
             Style.MAPBOX_STREETS
         ) {
@@ -236,6 +231,9 @@ class ExploreFragment : Fragment(), PermissionsListener {
         return when (type) {
             getString(R.string.food) -> R.drawable.ic_food_location
             getString(R.string.couple) -> R.drawable.ic_love_location
+            getString(R.string.history) -> R.drawable.ic_histoty_location
+            getString(R.string.travel) -> R.drawable.ic_travel_location
+            getString(R.string.special) -> R.drawable.ic_special_location
             else -> R.drawable.anya_icon2
         }
     }
@@ -526,13 +524,16 @@ class ExploreFragment : Fragment(), PermissionsListener {
         var currentPoint: Point? = null
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
-                Log.i("neil", "current location = ${location?.latitude}, ${location?.longitude}")
-                currentPoint = Point.fromLngLat(
-                    location!!.longitude,
-                    location!!.latitude
-                )
+                currentPoint = location?.let {
+                    Point.fromLngLat(
+                        location.longitude,
+                        location.latitude
+                    )
+                }
                 val distance = viewModel.calculateDistance(currentPoint, destination)
-                binding.challengeDistance.text = "${distance.roundToInt()} Ms"
+                if (distance.roundToInt() != 0) {
+                    binding.challengeDistance.text = "${distance.roundToInt()} Ms"
+                }
             }
     }
 

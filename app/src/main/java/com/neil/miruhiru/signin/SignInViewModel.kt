@@ -99,7 +99,8 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
             "id" to account.email,
             "blockList" to listOf<String>(),
             "icon" to account.photoUrl,
-            "completedEvents" to listOf<String>()
+            "completedEvents" to listOf<String>(),
+            "likeChallenges" to listOf<String>()
         )
 
         db.collection("users")
