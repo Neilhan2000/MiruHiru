@@ -101,7 +101,7 @@
                 mapbox:layout_constraintBottom_toBottomOf="@+id/location"
                 mapbox:layout_constraintStart_toEndOf="@+id/location"
                 mapbox:layout_constraintTop_toTopOf="@+id/location"
-                tools:text="距離起點 ?? Ms" />
+                android:text="@string/no_gps" />
 
             <TextView
                 android:id="@+id/stageText"

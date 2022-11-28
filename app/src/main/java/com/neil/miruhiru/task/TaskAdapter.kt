@@ -30,7 +30,6 @@ class TaskAdapter(viewModel: TaskViewModel) : ListAdapter<Task, TaskAdapter.View
 
     private lateinit var context: Context
     private val scope = CoroutineScope(Job() + Dispatchers.IO)
-    private var distanceGlobal = 0
     private val viewModel = viewModel
 
     inner class ViewHolder(private val binding: ItemTaskTaskBinding) :
@@ -42,9 +41,17 @@ class TaskAdapter(viewModel: TaskViewModel) : ListAdapter<Task, TaskAdapter.View
             binding.challengeTitle.text = item.name
             binding.challengeStage.text = item.stage.toString()
             startTrackingDistance(item.location)
+
+            var distance = 0
+            if (binding.challengeDistance.text != context.getString(R.string.no_gps)) {
+                distance = binding.challengeDistance.text.toString().filter { it.isDigit() }.toInt()
+            } else {
+                distance = 0
+            }
+
             binding.startTaskButton.setOnClickListener {
                 val locationInfo = LocationInfo(
-                    item.name, binding.challengeDistance.text.toString().filter { it.isDigit() }.toInt(),
+                    item.name, distance,
                     item.introduction, item.image, item.question, item.answer)
                 itemView.findNavController().navigate(NavGraphDirections.actionGlobalTaskDetailFragment(locationInfo))
             }
@@ -79,8 +86,9 @@ class TaskAdapter(viewModel: TaskViewModel) : ListAdapter<Task, TaskAdapter.View
                         )
                     }
                     val distance = calculateDistance(currentPoint, destination)
-                    binding.challengeDistance.text = "${distance.roundToInt()} Ms"
-                    distanceGlobal = distance.roundToInt()
+                    if (distance.roundToInt() != 0) {
+                        binding.challengeDistance.text = "${distance.roundToInt()} Ms"
+                    }
                 }
         }
 

@@ -46,16 +46,19 @@ class ExploreViewModel: ViewModel() {
 
     fun calculateDistance(currentPoint: Point?, destinationPoint: GeoPoint): Float {
         val current = Location("current")
-        current.latitude = currentPoint?.latitude()!!
-        current.longitude = currentPoint.latitude()
+        currentPoint?.latitude()?.let { current.latitude = it }
+        currentPoint?.longitude()?.let { current.longitude = it }
 
         val destination = Location("current")
         destination.latitude = destinationPoint.latitude
         destination.longitude = destinationPoint.longitude
 
         val result =  floatArrayOf(0.0F)
-        val distance = Location.distanceBetween(currentPoint.latitude(), currentPoint.longitude(),
-        destinationPoint.latitude, destinationPoint.longitude, result)
+        val distance = currentPoint?.let { currentPoint
+            Location.distanceBetween(
+                currentPoint.latitude(), currentPoint.longitude(),
+            destinationPoint.latitude, destinationPoint.longitude, result)
+        }
 
         return result[0]
 

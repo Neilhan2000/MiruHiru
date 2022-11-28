@@ -52,9 +52,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="5 ms"
                 android:textColor="@color/black"
                 android:textSize="12sp"
+                android:text="@string/no_gps"
                 mapbox:layout_constraintBottom_toBottomOf="@+id/locationIcon"
                 mapbox:layout_constraintStart_toEndOf="@+id/locationIcon"
                 mapbox:layout_constraintTop_toTopOf="@+id/locationIcon" />

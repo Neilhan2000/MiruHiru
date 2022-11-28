@@ -272,16 +272,16 @@ class ChallengeDetailFragment : Fragment() {
         // calculate and show distance
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
-//                Log.i("neil", "current location = ${location?.latitude}, ${location?.longitude}")
-                currentPoint = Point.fromLngLat(
-                    location!!.longitude,
-                    location!!.latitude
-                )
-                val distance = viewModel.calculateDistance(currentPoint, destination)
-                binding.distanceText.text = "距離起點 ${distance.roundToInt()} Ms"
-            }.addOnFailureListener { exception ->
-                binding.distanceText.text = "${exception.message}"
+                location?.let {
+                    currentPoint = Point.fromLngLat(
+                        location.longitude,
+                        location.latitude
+                    )
+                    val distance = viewModel.calculateDistance(currentPoint, destination)
+                    binding.distanceText.text = "距離起點 ${distance.roundToInt()} Ms"
+                }
             }
+
     }
 
 

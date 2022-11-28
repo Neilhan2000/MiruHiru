@@ -524,13 +524,16 @@ class ExploreFragment : Fragment(), PermissionsListener {
         var currentPoint: Point? = null
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
-                Log.i("neil", "current location = ${location?.latitude}, ${location?.longitude}")
-                currentPoint = Point.fromLngLat(
-                    location!!.longitude,
-                    location!!.latitude
-                )
+                currentPoint = location?.let {
+                    Point.fromLngLat(
+                        location.longitude,
+                        location.latitude
+                    )
+                }
                 val distance = viewModel.calculateDistance(currentPoint, destination)
-                binding.challengeDistance.text = "${distance.roundToInt()} Ms"
+                if (distance.roundToInt() != 0) {
+                    binding.challengeDistance.text = "${distance.roundToInt()} Ms"
+                }
             }
     }
 
