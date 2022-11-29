@@ -43,13 +43,13 @@ class TaskAdapter(viewModel: TaskViewModel) : ListAdapter<Task, TaskAdapter.View
             startTrackingDistance(item.location)
 
             var distance = 0
-            if (binding.challengeDistance.text != context.getString(R.string.no_gps)) {
-                distance = binding.challengeDistance.text.toString().filter { it.isDigit() }.toInt()
-            } else {
-                distance = 0
-            }
 
             binding.startTaskButton.setOnClickListener {
+                if (binding.challengeDistance.text != context.getString(R.string.no_gps)) {
+                    distance = binding.challengeDistance.text.toString().filter { it.isDigit() }.toInt()
+                } else {
+                    distance = 0
+                }
                 val locationInfo = LocationInfo(
                     item.name, distance,
                     item.introduction, item.image, item.question, item.answer)

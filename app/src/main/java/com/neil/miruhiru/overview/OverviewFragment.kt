@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
@@ -131,6 +132,19 @@ class OverviewFragment : Fragment() {
             this.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
         }
 
+        // handle back press
+        requireActivity().onBackPressedDispatcher
+            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val previousFragment = findNavController().previousBackStackEntry?.destination
+
+                    if (previousFragment?.id == R.id.customDetailFragment) {
+                        findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
+                    } else {
+                        findNavController().navigateUp()
+                    }
+                }
+            })
 
         return binding.root
     }

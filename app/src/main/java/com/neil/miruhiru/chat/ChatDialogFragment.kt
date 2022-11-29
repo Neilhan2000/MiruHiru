@@ -35,9 +35,12 @@ class ChatDialogFragment : DialogFragment() {
         val builder = AlertDialog.Builder(requireActivity())
         builder.setView(binding.root)
         dialog = builder.create()
-        dialog.window!!.setBackgroundDrawableResource(R.drawable.dialog_border)
+        dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_border)
         val messageAdapter = MessageAdapter(viewModel)
-        binding.recyclerMessage.adapter = messageAdapter
+        binding.messageRecycler.adapter = messageAdapter
+        val memberAdapter = ChatMemberAdapter()
+        binding.memberRecycler.adapter = memberAdapter
+        binding.memberRecycler.addItemDecoration(MemberItemDecorator())
 
         binding.sendIcon.setOnClickListener {
             if (binding.editTextMessage.text.isNotEmpty()) {
@@ -54,18 +57,22 @@ class ChatDialogFragment : DialogFragment() {
 
         // observe message and update
         viewModel.messageList.observe(this, Observer {
-
-            if (viewModel.messageList.value?.isNotEmpty() == true) {
+            if (it.isNotEmpty()) {
                 messageAdapter.submitList(it)
                 messageAdapter.notifyDataSetChanged()
-                binding.recyclerMessage.scrollToPosition(messageAdapter.itemCount - 1)
+                binding.messageRecycler.scrollToPosition(messageAdapter.itemCount - 1)
 
                 scope.launch {
                     delay(100)
-                    binding.recyclerMessage.smoothScrollToPosition(messageAdapter.itemCount - 1)
+                    binding.messageRecycler.smoothScrollToPosition(messageAdapter.itemCount - 1)
                 }
             }
         })
+        // observe load user and display user icon
+        viewModel.memberIcons.observe(this, Observer {
+            memberAdapter.submitList(it)
+        })
+
         // Main user can kick other users
         viewModel.isMainUser.observe(this, Observer { isMainUser ->
             if (isMainUser) {

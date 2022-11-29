@@ -43,7 +43,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_bottom_step3.xml" value="0.29615384615384616" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_detail.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_success.xml" value="0.35737704918032787" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_type.xml" value="0.2" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_type.xml" value="0.1" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_community.xml" value="0.536" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom_bottom_sheet.xml" value="0.297008547008547" />
@@ -66,8 +66,9 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task_dialog.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task_success.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_verify.xml" value="0.4" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragmet_chat_dialog.xml" value="0.264" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragmet_chat_dialog.xml" value="0.536" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_challenge_comment.xml" value="0.536" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_chat_member.xml" value="0.536" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_chat_my_message.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_chat_other_message.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_community_banner.xml" value="1.25" />
