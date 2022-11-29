@@ -117,7 +117,4 @@ dependencies {
     // Lottie
     implementation 'com.airbnb.android:lottie:5.2.0'
 
-    // Fluid Bottom Navigation
-    implementation 'com.github.10clouds:FluidBottomNavigation-android:1.2'
-
 }

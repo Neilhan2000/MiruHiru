@@ -2,6 +2,7 @@ package com.neil.miruhiru
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -17,10 +18,10 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.database.collection.LLRBNode
 import com.neil.miruhiru.databinding.ActivityMainBinding
-import com.tenclouds.fluidbottomnavigation.FluidBottomNavigationItem
-import com.tenclouds.fluidbottomnavigation.listener.OnTabSelectedListener
 import timber.log.Timber
 import timber.log.Timber.Forest.plant
 
@@ -28,6 +29,7 @@ import timber.log.Timber.Forest.plant
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
+    lateinit var badge: BadgeDrawable
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(this).get(MainViewModel::class.java)
     }
@@ -67,36 +69,7 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG) {
             plant(Timber.DebugTree())
         }
-//        binding.fluidBottomNavigation.items =
-//            listOf(
-//                FluidBottomNavigationItem(
-//                    getString(R.string.explore_fragment),
-//                    ContextCompat.getDrawable(this, R.drawable.location_black_icon)),
-//                FluidBottomNavigationItem(
-//                    getString(R.string.custom_fragment),
-//                    ContextCompat.getDrawable(this, R.drawable.custom_black_icon)),
-//                FluidBottomNavigationItem(
-//                    getString(R.string.community_fragment),
-//                    ContextCompat.getDrawable(this, R.drawable.community_black_icon)),
-//                FluidBottomNavigationItem(
-//                    getString(R.string.profile_fragment),
-//                    ContextCompat.getDrawable(this, R.drawable.profile_black_icon)))
-//        binding.fluidBottomNavigation.accentColor = ContextCompat.getColor(this, R.color.grey)
-//        binding.fluidBottomNavigation.backColor = ContextCompat.getColor(this, R.color.grey)
-//        binding.fluidBottomNavigation.textColor = ContextCompat.getColor(this, R.color.grey)
-//        binding.fluidBottomNavigation.iconColor = ContextCompat.getColor(this, R.color.grey)
-//        binding.fluidBottomNavigation.iconSelectedColor = ContextCompat.getColor(this, R.color.grey)
-//        binding.fluidBottomNavigation.onTabSelectedListener = object : OnTabSelectedListener {
-//            override fun onTabSelected(position: Int) {
-//                when (position) {
-//                    0 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalExploreFragment())
-//                    1 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCustomFragment())
-//                    2 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCommunityFragment())
-//                    3 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalProfileFragment())
-//                }
-//            }
-//
-//        }
+        viewModel.detectNotifications()
     }
     private fun setupBottomNav() {
         val navController = Navigation.findNavController(this, R.id.myNavHostFragment)
@@ -104,24 +77,38 @@ class MainActivity : AppCompatActivity() {
         binding.activityMainBottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.exploreFragment -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalExploreFragment())
+                    navController.navigate(NavGraphDirections.actionGlobalExploreFragment())
                     return@setOnItemSelectedListener true
                 }
                 R.id.customFragment -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCustomFragment())
+                    navController.navigate(NavGraphDirections.actionGlobalCustomFragment())
                     return@setOnItemSelectedListener true
                 }
                 R.id.communityFragment -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCommunityFragment())
+                    navController.navigate(NavGraphDirections.actionGlobalCommunityFragment())
                     return@setOnItemSelectedListener true
                 }
                 R.id.profileFragment -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalProfileFragment())
+                    navController.navigate(NavGraphDirections.actionGlobalProfileFragment())
                     return@setOnItemSelectedListener true
                 }
             }
             false
         }
+
+        badge = binding.activityMainBottomNavigationView.getOrCreateBadge(R.id.profileFragment)
+        badge.isVisible = false
+        badge.backgroundColor = ContextCompat.getColor(this, R.color.red)
+        viewModel.notificationList.observe(this, Observer {
+            val unReadNotifications = it.size - (UserManager.readNotifications ?: 0)
+            if (unReadNotifications != 0) {
+                badge.number = unReadNotifications
+                badge.isVisible = true
+            } else {
+                badge.isVisible = false
+            }
+
+        })
     }
 
     private fun setupToolbar() {
@@ -211,6 +198,15 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    // for Profile Fragment to use
+    fun cleanBadge() {
+        badge.isVisible = false
+    }
+
+    fun isBadgeVisible(): Boolean {
+        return badge.isVisible
     }
 
 

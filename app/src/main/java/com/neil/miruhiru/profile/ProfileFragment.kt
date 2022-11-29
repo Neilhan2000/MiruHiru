@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.Timestamp
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
@@ -47,7 +48,8 @@ class ProfileFragment : Fragment() {
             this.findNavController().navigate(NavGraphDirections.actionGlobalJoinFragment())
         }
         binding.notification.setOnClickListener {
-
+            (activity as MainActivity).cleanBadge()
+            this.findNavController().navigate(NavGraphDirections.actionGlobalNotificationFragment())
         }
         var lastClickTime = 0L
         var firstClickTime = 0L
@@ -120,11 +122,19 @@ class ProfileFragment : Fragment() {
         val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
 
-        binding.notification.setOnClickListener {
-            notificationManager.notify(0, notification)
-        }
+//        binding.notification.setOnClickListener {
+//            notificationManager.notify(0, notification)
+//        }
 
+        // notification icon
+        if ((activity as MainActivity).isBadgeVisible()) {
+            binding.notificationIcon.visibility = View.VISIBLE
+        } else {
+            binding.notificationIcon.visibility = View.GONE
+        }
         return binding.root
     }
+
+
 
 }

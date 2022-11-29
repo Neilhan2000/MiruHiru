@@ -69,6 +69,10 @@ class CustomDetailFragment : Fragment() {
                     if (viewModel.originalTask != viewModel.task && binding.nextButton.text == getString(R.string.update)) {
                         viewModel.needToUpdate()
                         binding.nextButton.setOnClickListener {
+                            // reAssign edited location to viewModel task if they are not the same
+                            if (viewModel.originalTask.location != viewModel.task.location) {
+                                viewModel.task.location = viewModel.originalTask.location
+                            }
                             viewModel.updateTask()
 
                             viewModel.originalTask.id = result.id
@@ -140,7 +144,6 @@ class CustomDetailFragment : Fragment() {
             changeButtonStatus()
             if (binding.nextButton.text == getString(R.string.update)) {
                 viewModel.setOriginalTaskLocation(point)
-                viewModel.setTaskLocation(point)
 
                 binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
                 binding.nextButton.setOnClickListener(null)

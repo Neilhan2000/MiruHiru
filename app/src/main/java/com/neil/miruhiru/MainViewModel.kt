@@ -1,5 +1,6 @@
 package com.neil.miruhiru
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
@@ -7,12 +8,17 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.data.Event
+import com.neil.miruhiru.data.Notification
 import com.neil.miruhiru.data.User
 import timber.log.Timber
 
 class MainViewModel: ViewModel() {
 
     val currentFragmentType = MutableLiveData<CurrentFragmentType>()
+
+    private val _notificationList = MutableLiveData<List<Notification>>()
+    val notificationList: LiveData<List<Notification>>
+        get() = _notificationList
 
     fun cleanEventSingle() {
         val db = Firebase.firestore
@@ -63,6 +69,30 @@ class MainViewModel: ViewModel() {
                                 UserManager.getUser()
                             }
 
+                    }
+
+            }
+
+    }
+
+    fun detectNotifications() {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference.collection("notifications")
+                    .addSnapshotListener { value, error ->
+                        val notificationList = mutableListOf<Notification>()
+
+                        value?.documents?.forEach {
+                            val notification = it.toObject<Notification>()
+                            if (notification != null) {
+                                notificationList.add(notification)
+                            }
+                        }
+                        _notificationList.value = notificationList
                     }
 
             }

@@ -3,6 +3,7 @@ package com.neil.miruhiru.verifydetail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -89,6 +90,20 @@ class VerifyDetailViewModel : ViewModel() {
                         it.documents[0].reference
                             .update("public", true)
                     }
+            }
+
+        // send notification
+        db.collection("users").whereEqualTo("id", _unverifiedChallenge.value?.author)
+            .get()
+            .addOnSuccessListener {
+                val notification = hashMapOf(
+                    "title" to "挑戰上傳成功",
+                    "content" to "恭喜! 你創建的挑戰${_unverifiedChallenge.value?.name}已通過審核，現在你可以在公開社群看到它囉OuO",
+                    "sendTime" to Timestamp.now()
+                )
+
+                it.documents[0].reference.collection("notifications")
+                    .add(notification)
             }
     }
 

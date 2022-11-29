@@ -21,4 +21,5 @@
     <color name="travel_type">#0A3963</color>
     <color name="special_type">#706969</color>
     <color name="green_progress">#4C9900</color>
+    <color name="red">#F44336</color>
 </resources>

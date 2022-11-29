@@ -40,7 +40,7 @@ class ChatDialogFragment : DialogFragment() {
         binding.messageRecycler.adapter = messageAdapter
         val memberAdapter = ChatMemberAdapter()
         binding.memberRecycler.adapter = memberAdapter
-        binding.memberRecycler.addItemDecoration(MemberItemDecorator())
+        binding.memberRecycler.addItemDecoration(MemberItemDecorator(-20))
 
         binding.sendIcon.setOnClickListener {
             if (binding.editTextMessage.text.isNotEmpty()) {

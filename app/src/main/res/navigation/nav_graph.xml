@@ -224,4 +224,9 @@
         android:label="fragment_verify"
         tools:layout="@layout/fragment_verify" />
     <action android:id="@+id/action_global_verifyFragment" app:destination="@id/verifyFragment" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.neil.miruhiru.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" /><action android:id="@+id/action_global_notificationFragment" app:destination="@id/notificationFragment"/>
 </navigation>
