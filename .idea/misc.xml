@@ -9,6 +9,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_border_deep_yellow.xml" value="0.281" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/button_disable_border.xml" value="0.1745" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/challenge_success_border.xml" value="0.1195" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/chat_room_edit_text_border.xml" value="0.2445" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/circle_text_border.xml" value="0.3205" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/community_challenge_name_border.xml" value="0.363" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/community_searchbar_border.xml" value="0.254" />
@@ -69,7 +70,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task_dialog.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_task_success.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_verify.xml" value="0.4" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragmet_chat_dialog.xml" value="0.536" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragmet_chat_dialog.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_challenge_comment.xml" value="0.536" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_chat_member.xml" value="0.536" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_chat_my_message.xml" value="0.4" />

@@ -23,16 +23,24 @@
         android:label="ProfileFragment" />
     <action
         android:id="@+id/action_global_exploreFragment"
-        app:destination="@id/exploreFragment" />
+        app:destination="@id/exploreFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
     <action
         android:id="@+id/action_global_customFragment"
-        app:destination="@id/customFragment" />
+        app:destination="@id/customFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
     <action
         android:id="@+id/action_global_communityFragment"
-        app:destination="@id/communityFragment" />
+        app:destination="@id/communityFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
     <action
         android:id="@+id/action_global_profileFragment"
-        app:destination="@id/profileFragment" />
+        app:destination="@id/profileFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
     <fragment
         android:id="@+id/challengeDetailFragment"
         android:name="com.neil.miruhiru.challengedetail.ChallengeDetailFragment"
@@ -172,7 +180,9 @@
         tools:layout="@layout/fragment_sign_in" />
     <action
         android:id="@+id/action_global_signInFragment"
-        app:destination="@id/signInFragment" />
+        app:destination="@id/signInFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
     <fragment
         android:id="@+id/customDetailFragment"
         android:name="com.neil.miruhiru.customdetail.CustomDetailFragment"
