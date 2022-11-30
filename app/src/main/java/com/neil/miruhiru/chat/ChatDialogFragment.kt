@@ -58,6 +58,7 @@ class ChatDialogFragment : DialogFragment() {
         // observe message and update
         viewModel.messageList.observe(this, Observer {
             if (it.isNotEmpty()) {
+                UserManager.readMessages = it.size
                 messageAdapter.submitList(it)
                 messageAdapter.notifyDataSetChanged()
                 binding.messageRecycler.scrollToPosition(messageAdapter.itemCount - 1)

@@ -145,4 +145,29 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
+    <TextView
+        android:id="@+id/messageNotification"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:background="@drawable/circle_text_border"
+        android:elevation="100dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/fabAdd"
+        app:layout_constraintTop_toTopOf="@+id/fabAdd" />
+
+    <TextView
+        android:id="@+id/messageQuantity"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/circle_text_border"
+        android:elevation="100dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/fabChat"
+        app:layout_constraintTop_toTopOf="@+id/fabChat"
+        tools:text="11" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,4 +42,5 @@
     <string name="challenge_deleted">挑戰已刪除</string>
     <string name="popularity">熱門</string>
     <string name="no_gps">未開啟定位</string>
+    <string name="created_by">created by</string>
 </resources>

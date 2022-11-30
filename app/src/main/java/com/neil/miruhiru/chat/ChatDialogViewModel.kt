@@ -101,12 +101,12 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
                                         _messageList.value = messageList
 
                                     }
+
                             }
                         }
+
                 }
-
             }
-
 
     }
 

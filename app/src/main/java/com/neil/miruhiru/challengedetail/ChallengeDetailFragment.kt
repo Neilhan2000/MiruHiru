@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Button
@@ -31,6 +32,7 @@ import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
@@ -157,7 +159,7 @@ class ChallengeDetailFragment : Fragment() {
     }
 
     private fun showDialog(position: Int) {
-        val dialog = Dialog(requireContext())
+        val dialog = Dialog(requireContext(), R.style.fullScreenDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.bottom_sheet_report)
         val reportButton = dialog.findViewById<Button>(R.id.reportButton)
@@ -175,7 +177,6 @@ class ChallengeDetailFragment : Fragment() {
             dialog.dismiss()
         }
         dialog.show()
-//        dialog.window?.setBackgroundDrawable()
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
@@ -234,7 +235,7 @@ class ChallengeDetailFragment : Fragment() {
         }
         // observe to display author name
         viewModel.authorName.observe(viewLifecycleOwner, Observer {
-            binding.author.text = "created by $it"
+            binding.author.text = getString(R.string.created_by) + " $it"
         })
 
         // observe if has uncompleted event

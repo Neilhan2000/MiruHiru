@@ -15,6 +15,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Event
+import com.neil.miruhiru.data.Message
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.data.User
 import timber.log.Timber
@@ -38,6 +39,10 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
     private val _isKicked = MutableLiveData<Boolean>()
     val isKicked: LiveData<Boolean>
         get() = _isKicked
+
+    private val _messageQuantity = MutableLiveData<Int>()
+    val messageQuantity: LiveData<Int>
+        get() = _messageQuantity
 
     var currentStage = -1
     var totalStage = -1
@@ -83,15 +88,18 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                                                         .addOnSuccessListener {
                                                             UserManager.getUser()
                                                         }
+
                                                 }
+
                                         }
 
                                 }
+
                         }
                     }
                 }
-
             }
+
     }
 
     fun kickUser(userId: String) {
@@ -225,11 +233,13 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                                         _taskList.value = taskList
                                         _annotationList.value = annotationList
                                     }
-                            }
-                    }
 
+                            }
+
+                    }
                 }
             }
+
     }
 
     private fun addTask(challengeId: String) {
@@ -319,8 +329,6 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
 
                                     }
 
-
-
                             }
 
                     }
@@ -331,5 +339,30 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
 
     fun navigateUpCompleted() {
         _navigateUp.value = false
+    }
+
+    fun detectMessages() {
+        val db = Firebase.firestore
+
+        db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference.collection("messages")
+                    .addSnapshotListener { value, error ->
+                        val messageList = value?.toObjects(Message::class.java) as MutableList
+
+                        messageList.removeIf {
+                            it.senderId == UserManager.userId
+                        }
+                        _messageQuantity.value = messageList.size
+                    }
+
+            }
+
+    }
+
+    fun readMessage() {
+        _messageQuantity.value = _messageQuantity.value
     }
 }

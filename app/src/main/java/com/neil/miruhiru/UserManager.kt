@@ -21,6 +21,7 @@ object UserManager {
     private const val CUSTOM_TOTAL_STAGE = "custom_total_stage"
     private const val IS_PERSONAL = "is_personal"
     private const val NOTIFICATION = "notification"
+    private const val MESSAGE = "message"
 
 
 
@@ -199,6 +200,9 @@ object UserManager {
                 }
             }
         }
+
+    // messages
+    var readMessages = 0
 
 
     /**

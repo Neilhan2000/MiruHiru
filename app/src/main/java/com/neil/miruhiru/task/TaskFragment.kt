@@ -66,6 +66,7 @@ class TaskFragment : Fragment() {
     private val fromBottom: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.fab_form_bottom_anim) }
     private val toBottom: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.fab_to_bottom_anim) }
     private var clicked = false
+    private var hasMessages = false
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
         val cameraOptions = CameraOptions.Builder().center(it).zoom(15.0).build()
         mapView.getMapboxMap().setCamera(cameraOptions)
@@ -102,6 +103,9 @@ class TaskFragment : Fragment() {
             onAddButtonClick()
         }
         binding.fabChat.setOnClickListener {
+            binding.messageQuantity.clearAnimation()
+            binding.messageQuantity.visibility = View.INVISIBLE
+            hasMessages = false
             this.findNavController().navigate(NavGraphDirections.actionGlobalChatDialogFragment())
         }
         binding.fabAndroid.setOnClickListener {
@@ -251,6 +255,22 @@ class TaskFragment : Fragment() {
         })
         viewModel.detectUserKicked()
 
+        // observe messages and show unread quantity
+        viewModel.messageQuantity.observe(viewLifecycleOwner, Observer { quantity ->
+            Timber.i("quantity ${viewModel.messageQuantity.value}, user message ${UserManager.readMessages}")
+            val unreadMessages = quantity - UserManager.readMessages
+
+            if (unreadMessages != 0) {
+                binding.messageNotification.visibility = View.VISIBLE
+                binding.messageQuantity.text = unreadMessages.toString()
+                hasMessages = true
+            } else {
+                binding.messageNotification.visibility = View.INVISIBLE
+                hasMessages = false
+            }
+        })
+        viewModel.detectMessages()
+
 
 
 
@@ -274,10 +294,18 @@ class TaskFragment : Fragment() {
             binding.fabChat.visibility = View.VISIBLE
             binding.fabAndroid.visibility = View.VISIBLE
             binding.fabLocation.visibility = View.VISIBLE
+            if (hasMessages) {
+                binding.messageQuantity.visibility = View.VISIBLE
+                binding.messageNotification.visibility = View.INVISIBLE
+            }
         } else {
             binding.fabChat.visibility = View.INVISIBLE
             binding.fabAndroid.visibility = View.INVISIBLE
             binding.fabLocation.visibility = View.INVISIBLE
+            if (hasMessages) {
+                binding.messageQuantity.visibility = View.INVISIBLE
+                binding.messageNotification.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -286,11 +314,17 @@ class TaskFragment : Fragment() {
             binding.fabChat.startAnimation(fromBottom)
             binding.fabAndroid.startAnimation(fromBottom)
             binding.fabLocation.startAnimation(fromBottom)
+            if (hasMessages) {
+                binding.messageQuantity.startAnimation(fromBottom)
+            }
             binding.fabAdd.startAnimation(rotateOpen)
         } else {
             binding.fabChat.startAnimation(toBottom)
             binding.fabAndroid.startAnimation(toBottom)
             binding.fabLocation.startAnimation(toBottom)
+            if (hasMessages) {
+                binding.messageQuantity.startAnimation(toBottom)
+            }
             binding.fabAdd.startAnimation(rotateClose)
         }
     }
