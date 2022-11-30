@@ -9,6 +9,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 
 class ChallengeSuccessViewModel : ViewModel() {
@@ -17,8 +18,26 @@ class ChallengeSuccessViewModel : ViewModel() {
     val navigateToLogFragment: LiveData<Boolean>
         get() = _navigateToLogFragment
 
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
+
     // post comment and clean local challenge document id
     fun postComment(rating: Float, text: String) {
+        startLoading()
+
         val db = Firebase.firestore
         val comment = hashMapOf(
             "rating" to rating,
@@ -55,6 +74,7 @@ class ChallengeSuccessViewModel : ViewModel() {
 
                                             UserManager.userChallengeDocumentId = null
                                             _navigateToLogFragment.value = true
+                                            loadingCompleted()
                                         }
 
                                 }

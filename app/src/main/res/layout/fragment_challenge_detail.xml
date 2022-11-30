@@ -23,6 +23,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/deep_yellow"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent" />
+
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
@@ -315,6 +329,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/Description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/Description" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

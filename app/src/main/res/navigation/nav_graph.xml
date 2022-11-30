@@ -105,7 +105,8 @@
         android:label="LogDialogFragment" />
     <action
         android:id="@+id/action_global_logDialogFragment"
-        app:destination="@id/logDialogFragment" />
+        app:destination="@id/logDialogFragment"
+         />
     <fragment
         android:id="@+id/challengeSuccessFragment"
         android:name="com.neil.miruhiru.challengesuccess.ChallengeSuccessFragment"
@@ -125,7 +126,8 @@
     </fragment>
     <action
         android:id="@+id/action_global_logFragment"
-        app:destination="@id/logFragment" />
+        app:destination="@id/logFragment"
+        />
     <fragment
         android:id="@+id/challengeTypeFragment"
         android:name="com.neil.miruhiru.challengetype.ChallengeTypeFragment"

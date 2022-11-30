@@ -30,6 +30,7 @@ import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import com.mapbox.maps.extension.style.expressions.dsl.generated.has
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
 import com.neil.miruhiru.MainActivity
@@ -41,6 +42,7 @@ import com.neil.miruhiru.data.ChallengeInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
 import com.neil.miruhiru.factory.ChallengeDetailViewModelFactory
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
@@ -238,9 +240,30 @@ class ChallengeDetailFragment : Fragment() {
             binding.author.text = getString(R.string.created_by) + " $it"
         })
 
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            if (status == LoadingStatus.LOADING) {
+                MainActivity.getInstanceFromMainActivity().window.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.VISIBLE
+            } else if (status == LoadingStatus.DONE) {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.GONE
+            } else {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+            }
+        })
+
         // observe if has uncompleted event
         viewModel.hasCurrentEvent.observe(viewLifecycleOwner, Observer { hasEvent ->
-            if (hasEvent) {
+            if (hasEvent == true) {
                 val defaultBuilder = AlertDialog.Builder(requireContext())
                     .setTitle("發現上次儲存的紀錄")
                     .setMessage("要繼續上次的挑戰嗎?")
@@ -258,9 +281,10 @@ class ChallengeDetailFragment : Fragment() {
                     .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
                 defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
                     .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
-            } else {
+            } else if (hasEvent == false){
                 this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment(
                     ChallengeInfo(challenge.id, challenge.stage)))
+                viewModel.navigateToChallengeTypeFragmentCompleted()
             }
         })
     }

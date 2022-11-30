@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -45,6 +46,7 @@ import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
@@ -52,6 +54,7 @@ import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentTaskBinding
+import com.neil.miruhiru.network.LoadingStatus
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -271,7 +274,26 @@ class TaskFragment : Fragment() {
         })
         viewModel.detectMessages()
 
-
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            if (status == LoadingStatus.LOADING) {
+                MainActivity.getInstanceFromMainActivity().window.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.VISIBLE
+            } else if (status == LoadingStatus.DONE) {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.GONE
+            } else {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+            }
+        })
 
 
         return binding.root

@@ -13,10 +13,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.UserManager
-import com.neil.miruhiru.data.Challenge
-import com.neil.miruhiru.data.ChallengeInfo
-import com.neil.miruhiru.data.Event
-import com.neil.miruhiru.data.User
+import com.neil.miruhiru.data.*
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 import java.lang.Exception
 
@@ -26,9 +24,28 @@ class ChallengeTypeViewModel() : ViewModel() {
     val navigateToTaskFragment: LiveData<String?>
         get() = _navigateToTaskFragment
 
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
+    private lateinit var comments: MutableList<Comment>
+
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
+
     private var eventDocumentId = ""
 
     fun postEvent(eventId: String, challenge: ChallengeInfo, type: String) {
+        startLoading()
         val event = hashMapOf(
             "id" to eventId,
             "members" to listOf<String>(),
@@ -117,8 +134,8 @@ class ChallengeTypeViewModel() : ViewModel() {
                 for (document in result) {
                     val user = document.toObject<User>()
                     UserManager.user = user
-                    Timber.i("get user $user")
                     _navigateToTaskFragment.value = type
+                    loadingCompleted()
                 }
             }
     }

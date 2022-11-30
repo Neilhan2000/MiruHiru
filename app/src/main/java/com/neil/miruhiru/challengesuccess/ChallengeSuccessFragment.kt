@@ -7,15 +7,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.challengedetail.ChallengeDetailViewModel
 import com.neil.miruhiru.challengetype.ChallengeTypeViewModel
 import com.neil.miruhiru.databinding.FragmentChallengeSuccessBinding
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 
 class ChallengeSuccessFragment : Fragment() {
@@ -50,6 +54,26 @@ class ChallengeSuccessFragment : Fragment() {
             this.findNavController().navigate(NavGraphDirections.actionGlobalLogFragment(UserManager.user.completedEvents.last()))
         }
 
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            Timber.i("status ${status.name}")
+            if (status == LoadingStatus.LOADING) {
+                MainActivity.getInstanceFromMainActivity().window.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.VISIBLE
+            } else if (status == LoadingStatus.DONE) {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.GONE
+            } else {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
-
 }
