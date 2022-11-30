@@ -180,7 +180,7 @@ object UserManager {
     var readNotifications: Int? = null
         get() = MiruHiruApplication.instance
             .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE)
-            .getInt(NOTIFICATION, -1)
+            .getInt(NOTIFICATION, 0)
         set(value) {
             field = when (value) {
                 null -> {

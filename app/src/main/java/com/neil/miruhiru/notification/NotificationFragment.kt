@@ -31,6 +31,10 @@ class NotificationFragment : Fragment() {
         viewModel.notificationList.observe(viewLifecycleOwner, Observer {
             notificationAdapter.submitList(it)
             UserManager.readNotifications = it.size
+            if (it.size == 0) {
+                binding.lottieAnimationView.visibility = View.VISIBLE
+                binding.hint.visibility = View.VISIBLE
+            }
         })
         viewModel.detectNotifications()
 

@@ -8,6 +8,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
+import timber.log.Timber
 
 class LikeChallengeViewModel : ViewModel() {
 
@@ -44,6 +45,10 @@ class LikeChallengeViewModel : ViewModel() {
                         _likeChallengeList.value = likeChallengeList.reversed()
                     }
                 }
+
+        }
+        if (UserManager.user.likeChallenges.isEmpty()) {
+            _likeChallengeList.value = mutableListOf()
         }
     }
 }

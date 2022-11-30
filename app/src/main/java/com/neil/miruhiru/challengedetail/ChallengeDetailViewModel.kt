@@ -293,4 +293,13 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
                     }
             }
     }
+
+    fun isLike(challenge: Challenge): Boolean {
+        challenge.likeList.forEach { likeUser ->
+            if (likeUser == UserManager.userId) {
+                return true
+            }
+        }
+        return false
+    }
 }

@@ -21,6 +21,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.database.collection.LLRBNode
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import com.neil.miruhiru.data.Notification
 import com.neil.miruhiru.databinding.ActivityMainBinding
 import timber.log.Timber
 import timber.log.Timber.Forest.plant
@@ -51,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         // toolbar
         UserManager.userLiveData.observe(this, Observer {
             setupToolbar()
+            viewModel.detectNotifications()
         })
 
         UserManager.customCurrentStage = null
@@ -69,7 +74,6 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG) {
             plant(Timber.DebugTree())
         }
-        viewModel.detectNotifications()
     }
     private fun setupBottomNav() {
         val navController = Navigation.findNavController(this, R.id.myNavHostFragment)
@@ -100,6 +104,7 @@ class MainActivity : AppCompatActivity() {
         badge.isVisible = false
         badge.backgroundColor = ContextCompat.getColor(this, R.color.red)
         viewModel.notificationList.observe(this, Observer {
+            Timber.i("notifications $it manager notifications ${UserManager.readNotifications}")
             val unReadNotifications = it.size - (UserManager.readNotifications ?: 0)
             if (unReadNotifications != 0) {
                 badge.number = unReadNotifications

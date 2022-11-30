@@ -209,15 +209,15 @@ class ChallengeDetailFragment : Fragment() {
         // like or unlike challenge
         challenge.location?.let { calculateAndShowDistance(it) }
 
-        challenge.likeList.forEach { likeUser ->
-            if (likeUser == UserManager.userId) {
-                like = true
-                binding.likeIcon.visibility = View.VISIBLE
-            } else {
-                like = false
-                binding.likeIcon.visibility = View.INVISIBLE
-            }
+
+        if (viewModel.isLike(challenge)) {
+            like = true
+            binding.likeIcon.visibility = View.VISIBLE
+        } else {
+            like = false
+            binding.likeIcon.visibility = View.INVISIBLE
         }
+
         binding.likeClick.setOnClickListener {
             if (like) {
                 binding.likeIcon.visibility = View.INVISIBLE
@@ -341,4 +341,6 @@ class ChallengeDetailFragment : Fragment() {
         }
         return iconRes
     }
+
+
 }

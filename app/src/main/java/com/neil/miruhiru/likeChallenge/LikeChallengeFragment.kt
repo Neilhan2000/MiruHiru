@@ -12,6 +12,7 @@ import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.databinding.FragmentLikeChallengeBinding
 import com.neil.miruhiru.invite.InviteFragmentViewModel
+import timber.log.Timber
 
 class LikeChallengeFragment : Fragment() {
 
@@ -32,9 +33,12 @@ class LikeChallengeFragment : Fragment() {
         binding.likeChallengeRecycler.adapter = challengeAdapter
         viewModel.likeChallengeList.observe(viewLifecycleOwner, Observer {
             challengeAdapter.submitList(it)
+            if (it.size == 0) {
+                binding.hint.visibility = View.VISIBLE
+                binding.lottieAnimationView.visibility = View.VISIBLE
+            }
         })
         viewModel.loadLikeChallenges()
-
 
         return binding.root
     }

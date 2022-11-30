@@ -149,6 +149,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     fun signOut() {
         googleSignInClient.signOut().addOnCompleteListener {
             _navigateToSignInFragment.value = true
+            UserManager.readNotifications = null
         }
     }
 
