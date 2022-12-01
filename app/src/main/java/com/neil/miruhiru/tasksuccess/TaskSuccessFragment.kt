@@ -127,22 +127,27 @@ class TaskSuccessFragment : Fragment() {
         // observe loading status and show progress bar
         viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
             Timber.i("status ${status.name}")
-            if (status == LoadingStatus.LOADING) {
-                MainActivity.getInstanceFromMainActivity().window.setFlags(
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                )
-                binding.progressBar2.visibility = View.VISIBLE
-            } else if (status == LoadingStatus.DONE) {
-                MainActivity.getInstanceFromMainActivity().window.clearFlags(
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                )
-                binding.progressBar2.visibility = View.GONE
-            } else {
-                MainActivity.getInstanceFromMainActivity().window.clearFlags(
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                )
-                Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+            when (status) {
+                LoadingStatus.LOADING -> {
+                    MainActivity.getInstanceFromMainActivity().window.setFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.VISIBLE
+                }
+                LoadingStatus.DONE -> {
+                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.GONE
+                }
+                LoadingStatus.ERROR -> {
+                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.GONE
+                    Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+                }
             }
         })
 

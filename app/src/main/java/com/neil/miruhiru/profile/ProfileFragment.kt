@@ -8,11 +8,9 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
+import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.getSystemService
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -25,6 +23,7 @@ import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.databinding.FragmentProfileBinding
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 import java.time.LocalDateTime
 
@@ -132,6 +131,24 @@ class ProfileFragment : Fragment() {
         } else {
             binding.notificationIcon.visibility = View.GONE
         }
+
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            Timber.i("status ${status.name}")
+            when (status) {
+                LoadingStatus.LOADING -> {
+                    binding.progressBar2.visibility = View.VISIBLE
+                }
+                LoadingStatus.DONE -> {
+                    binding.progressBar2.visibility = View.GONE
+                }
+                LoadingStatus.ERROR -> {
+                    binding.progressBar2.visibility = View.GONE
+                    Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
         return binding.root
     }
 

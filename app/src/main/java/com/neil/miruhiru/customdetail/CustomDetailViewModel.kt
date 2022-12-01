@@ -17,6 +17,7 @@ import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Feature
 import com.neil.miruhiru.data.Task
+import com.neil.miruhiru.network.LoadingStatus
 import com.neil.miruhiru.network.MapBoxApi
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -65,6 +66,22 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     private lateinit var job: Job
     private var jobInitialized = false
 
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
+
     var originalTask = Task()
 
     fun setTaskLocation(point: Point) {
@@ -84,6 +101,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun postTask() {
+        startLoading()
 
         val customTask = hashMapOf(
             "id" to UserManager.customCurrentStage.toString(),
@@ -118,7 +136,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
                         Timber.i("post task first ${UserManager.customCurrentStage}")
 
-                        // add challenge location
+                        // add challenge location(in the custom challenge fragment we don't have location so we add location here)
                         if (UserManager.customCurrentStage == 1) {
                             db.collection("users").document(userDocumentId).collection("customChallenges")
                                 .document(customChallengeDocumentId)
@@ -179,15 +197,21 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                         if (isLastStage.value == true) {
                                             UserManager.customCurrentStage = null
                                             UserManager.customTotalStage = null
+                                            loadingCompleted()
                                             _navigateToOverviewFragment.value = true
                                             customChallengeEditingCompleted()
                                         } else {
+                                            loadingCompleted()
                                             _navigateToCustomDetailFragment.value = true
                                         }
                                     }
+
                             }
+
                     }
+
             }
+
     }
 
     private fun customChallengeEditingCompleted() {
@@ -203,7 +227,9 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
                         it.documents[0].reference.update("finished", true)
                     }
+
             }
+
     }
 
     fun navigateToCustomDetailFragmentCompleted() {
@@ -246,6 +272,8 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
 
     fun loadFirstOrUnfinishedEditing() {
+        startLoading()
+
         val db = Firebase.firestore
 
         db.collection("users").whereEqualTo("id", UserManager.userId)
@@ -279,11 +307,13 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                 if (challenge?.stage == it.documents.size + 1) {
                                     _isLastStage.value = true
                                 }
-
+                                loadingCompleted()
                             }
+
                     }
 
             }
+
     }
 
     fun setLastStage() {
@@ -291,6 +321,8 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun updateTask() {
+        startLoading()
+
         val db = Firebase.firestore
 
         db.collection("users").whereEqualTo("id", UserManager.userId)
@@ -332,6 +364,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                             originalTask.image = task.image
                                         } else {
                                             _isUpdated.value = true
+                                            loadingCompleted()
                                         }
                                     }
                             }
@@ -388,7 +421,10 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                             .get()
                             .addOnSuccessListener {
                                 it.documents[0].reference.update("image", uri)
-                                    .addOnSuccessListener { _isUpdated.value = true }
+                                    .addOnSuccessListener {
+                                        _isUpdated.value = true
+                                        loadingCompleted()
+                                    }
                             }
                     }
             }
@@ -407,7 +443,9 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
                         it.documents[0].reference.delete()
                     }
+
             }
+
     }
 
     fun searchPlace(place: String, limit: Int, accessToken: String) {

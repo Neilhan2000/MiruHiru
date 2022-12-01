@@ -18,6 +18,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.*
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -56,6 +57,22 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
     var text = ""
 
     var challengeName = ""
+
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
 
 
 
@@ -150,6 +167,7 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun loadNewestCompletedEventLog(eventId: String) {
+
         val db = Firebase.firestore
         var eventDocumentId = ""
         val logList = mutableListOf<Log>()
@@ -215,6 +233,7 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
 
                                 if (event.members.size == userInfoList.size) {
                                     _userInfoList.value = userInfoList
+                                    loadingCompleted()
                                 }
                             }
                         }
@@ -225,6 +244,8 @@ class LogViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadCompletedChallenge(eventId: String) {
+        startLoading()
+
         val db = Firebase.firestore
         var challengeId = ""
         var challengeDocumentId = ""

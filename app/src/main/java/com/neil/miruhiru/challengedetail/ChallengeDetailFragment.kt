@@ -192,7 +192,7 @@ class ChallengeDetailFragment : Fragment() {
     private fun setupScreen(challenge: Challenge) {
         binding.ChallengeTitle.text = challenge.name
         Glide.with(binding.challengeMainImage.context).load(challenge.image).centerCrop().apply(
-            RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
+            RequestOptions().placeholder(R.drawable.image_placeholder).error(R.drawable.image_placeholder)
         ).into(binding.challengeMainImage)
         challenge.totalRating?.let { binding.ratingBar.rating  = it }
         binding.ratingText.text = "${challenge.totalRating?.let { viewModel.roundOffDecimal(it) }} (${challenge.commentQuantity})"

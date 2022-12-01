@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class CustomFragment : Fragment() {
 
@@ -29,6 +30,11 @@ class CustomFragment : Fragment() {
         if (this.findNavController().previousBackStackEntry?.destination?.id == R.id.overviewFragment) {
             binding.viewPager.setCurrentItem(1, false)
         }
+
+        for (fragment in this.findNavController().backQueue) {
+            Timber.i("fragment ${fragment.destination.displayName}")
+        }
+        Timber.i("previous fragment ${this.findNavController().previousBackStackEntry?.destination?.displayName}")
 
 
         return binding.root

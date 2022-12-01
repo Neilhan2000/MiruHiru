@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.neil.miruhiru.MainActivity
@@ -13,6 +15,7 @@ import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.custom.item.MyCustomViewModel
 import com.neil.miruhiru.data.Notification
 import com.neil.miruhiru.databinding.FragmentNotificationBinding
+import com.neil.miruhiru.network.LoadingStatus
 
 class NotificationFragment : Fragment() {
 
@@ -37,6 +40,32 @@ class NotificationFragment : Fragment() {
             }
         })
         viewModel.detectNotifications()
+
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            when (status) {
+                LoadingStatus.LOADING -> {
+                    MainActivity.getInstanceFromMainActivity().window.setFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.VISIBLE
+                }
+                LoadingStatus.DONE -> {
+                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.GONE
+                }
+                LoadingStatus.ERROR -> {
+                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.GONE
+                    Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
 
 
         return binding.root

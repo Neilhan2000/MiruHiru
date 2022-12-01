@@ -9,6 +9,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 
 class MyCustomViewModel : ViewModel() {
@@ -17,7 +18,25 @@ class MyCustomViewModel : ViewModel() {
     val myCustomList: LiveData<List<Challenge>>
         get() = _myCustomList
 
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
+
     fun loadMyCustom() {
+        startLoading()
+
         val db = Firebase.firestore
 
         db.collection("users").whereEqualTo("id", UserManager.userId)
@@ -37,6 +56,7 @@ class MyCustomViewModel : ViewModel() {
                             }
                         }
                         _myCustomList.value = myCustomList
+                        loadingCompleted()
                     }
             }
     }

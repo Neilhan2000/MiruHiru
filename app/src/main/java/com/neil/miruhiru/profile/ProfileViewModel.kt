@@ -16,9 +16,15 @@ import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.Task
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
+
+    init {
+        // load CompletedList here to prevent fragment onCreateView reloading
+        loadCompletedChallenge()
+    }
 
     private val viewModelApplication = application
 
@@ -37,12 +43,25 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     val eventList = mutableListOf<Event>()
 
-    init {
-        // load CompletedList here to prevent fragment onCreateView reloading
-        loadCompletedChallenge()
+    lateinit var _loadingStatus: MutableLiveData<LoadingStatus>
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
     }
 
     private fun loadCompletedChallenge() {
+        _loadingStatus = MutableLiveData<LoadingStatus>()
+        startLoading()
 
         val db = Firebase.firestore
 
@@ -89,6 +108,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                                     }
 
                                     _completedChallengeList.value = completedChallengeList.reversed()
+                                    loadingCompleted()
 
                                 }
                             }
@@ -130,6 +150,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                                             }
 
                                             _completedChallengeList.value = completedChallengeList.reversed()
+                                            loadingCompleted()
                                         }
                                     }
 
