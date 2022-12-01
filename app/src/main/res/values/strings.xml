@@ -43,4 +43,5 @@
     <string name="popularity">熱門</string>
     <string name="no_gps">未開啟定位</string>
     <string name="created_by">created by</string>
+    <string name="select_to_delete">選取挑戰刪除</string>
 </resources>

@@ -17,6 +17,7 @@ import com.neil.miruhiru.R
 import com.neil.miruhiru.databinding.FragmentMyCustomBinding
 import com.neil.miruhiru.network.LoadingStatus
 import com.neil.miruhiru.task.TaskViewModel
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.*
 
@@ -31,13 +32,14 @@ class MyCustomFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentMyCustomBinding.inflate(inflater, container, false)
-        val customAdapter = MyCustomAdapter { customChallengeId ->
+        val customAdapter = MyCustomAdapter(viewModel) { customChallengeId ->
             this.findNavController().navigate(NavGraphDirections.actionGlobalOverviewFragment(customChallengeId))
         }
         binding.myCustomRecycler.adapter = customAdapter
 
         viewModel.myCustomList.observe(viewLifecycleOwner, Observer {
             customAdapter.submitList(it)
+            customAdapter.notifyDataSetChanged()
         })
         viewModel.loadMyCustom()
 
@@ -64,6 +66,33 @@ class MyCustomFragment : Fragment() {
                     binding.progressBar2.visibility = View.GONE
                     Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
                 }
+            }
+        })
+
+        // show or hide delete texts
+        viewModel.showDeleteText.observe(viewLifecycleOwner, Observer { show ->
+            if (show) {
+                // change toolbar title
+                (activity as MainActivity).binding.toolbarTitle.text = getString(R.string.select_to_delete)
+                // cancel
+                (activity as MainActivity).binding.cancelText.visibility = View.VISIBLE
+                (activity as MainActivity).binding.cancelText.setOnClickListener {
+                    viewModel.cancelLongClick()
+                    viewModel.cleanSelectedPositions()
+                    customAdapter.notifyDataSetChanged()
+                    viewModel.hideDeleteText()
+                }
+                // delete
+                (activity as MainActivity).binding.deleteText.visibility = View.VISIBLE
+                (activity as MainActivity).binding.toolbar.setOnClickListener {
+                    viewModel.deleteSelectedItems()
+                    viewModel.hideDeleteText()
+                }
+            }
+            else {
+                (activity as MainActivity).binding.toolbarTitle.text = getString(R.string.custom_fragment)
+                (activity as MainActivity).binding.cancelText.visibility = View.GONE
+                (activity as MainActivity).binding.deleteText.visibility = View.GONE
             }
         })
 

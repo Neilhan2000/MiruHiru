@@ -13,6 +13,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
+import com.neil.miruhiru.challengesuccess.ChallengeSuccessFragmentDirections
 import com.neil.miruhiru.databinding.FragmentOverviewBinding
 import com.neil.miruhiru.network.LoadingStatus
 import kotlinx.coroutines.*
@@ -80,7 +83,6 @@ class OverviewFragment : Fragment() {
         binding = FragmentOverviewBinding.inflate(inflater, container, false)
         viewModel.customChallengeId = OverviewFragmentArgs.fromBundle(requireArguments()).customChallengeId
 
-
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
         itemTouchHelper.attachToRecyclerView(binding.customTaskRecycler)
         taskAdapter = OverViewAdapter(viewModel)  { task ->
@@ -133,7 +135,7 @@ class OverviewFragment : Fragment() {
         }
 
         binding.completeCustomButton.setOnClickListener {
-            this.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
+            this.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment(1))
         }
 
         // handle back press
@@ -142,9 +144,10 @@ class OverviewFragment : Fragment() {
                 override fun handleOnBackPressed() {
                     val previousFragment = findNavController().previousBackStackEntry?.destination
                     if (previousFragment?.id == R.id.customDetailFragment) {
-                        findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
+                        val navOptions = NavOptions.Builder().setPopUpTo(R.id.overviewFragment, false).build()
+                        this@OverviewFragment.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment(), navOptions)
                     } else {
-                        findNavController().navigateUp()
+                        this@OverviewFragment.findNavController().navigateUp()
                     }
                 }
             })

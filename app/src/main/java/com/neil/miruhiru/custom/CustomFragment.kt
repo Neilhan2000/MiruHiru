@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
+import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.databinding.FragmentCustomBinding
 import kotlinx.coroutines.CoroutineScope
@@ -22,19 +25,16 @@ class CustomFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentCustomBinding.inflate(inflater, container, false)
+        val position = CustomFragmentArgs.fromBundle(requireArguments()).position
 
         binding.viewPager.adapter = CustomPageAdapter(this)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = CustomTypeFilter.values()[position].value
         }.attach()
-        if (this.findNavController().previousBackStackEntry?.destination?.id == R.id.overviewFragment) {
-            binding.viewPager.setCurrentItem(1, false)
-        }
 
-        for (fragment in this.findNavController().backQueue) {
-            Timber.i("fragment ${fragment.destination.displayName}")
-        }
-        Timber.i("previous fragment ${this.findNavController().previousBackStackEntry?.destination?.displayName}")
+        // scroll to position by args
+        binding.viewPager.setCurrentItem(position, false)
+
 
 
         return binding.root

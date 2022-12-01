@@ -1,8 +1,13 @@
 package com.neil.miruhiru.custom.item
 
+import android.graphics.Color
 import android.location.Geocoder
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,14 +15,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
-import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.ItemMyCustomChallengeBinding
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.*
 
 
-class MyCustomAdapter(val onClick: (String) -> Unit)  : ListAdapter<Challenge, MyCustomAdapter.ViewHolder>(DiffCallBack()) {
-
+class MyCustomAdapter(val viewModel: MyCustomViewModel, val onClick: (String) -> Unit)  : ListAdapter<Challenge, MyCustomAdapter.ViewHolder>(DiffCallBack()) {
 
     inner class ViewHolder(private val binding: ItemMyCustomChallengeBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -51,11 +55,39 @@ class MyCustomAdapter(val onClick: (String) -> Unit)  : ListAdapter<Challenge, M
             if (address.size > 0) {
                 binding.locationText.text = "${address[0].countryName}, ${address[0].adminArea}"
             }
-            itemView.setOnClickListener {
-                onClick(item.id)
+
+            // long click to open delete mode
+            if (!viewModel.isLongClick) {
+                itemView.setOnClickListener {
+                    onClick(item.id)
+                }
+            } else {
+                itemView.setOnClickListener {
+                    if (!viewModel.selectedPositions.contains(adapterPosition)) {
+                        viewModel.selectedPositions.add(adapterPosition)
+                        this@MyCustomAdapter.notifyDataSetChanged()
+                    } else {
+                        viewModel.selectedPositions.remove(adapterPosition)
+                        this@MyCustomAdapter.notifyDataSetChanged()
+                    }
+                }
             }
-
-
+            // change selected item background
+            if (viewModel.selectedPositions.contains(adapterPosition)) {
+                binding.customBorder.setBackgroundResource(R.drawable.text_border_mini_selecetd)
+            } else {
+                binding.customBorder.setBackgroundResource(R.drawable.text_border_mini)
+            }
+            itemView.setOnLongClickListener(object : View.OnLongClickListener {
+                override fun onLongClick(p0: View?): Boolean {
+                    viewModel.isLongClick = true
+                    viewModel.selectedPositions.add(adapterPosition)
+                    viewModel.showDeleteText()
+                    this@MyCustomAdapter.notifyDataSetChanged()
+                    // return true will not trigger short click after long click
+                    return true
+                }
+            })
         }
     }
 

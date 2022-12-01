@@ -87,23 +87,16 @@ class CommunityFragment : Fragment() {
             Timber.i("status ${status.name}")
             when (status) {
                 LoadingStatus.LOADING -> {
-                    MainActivity.getInstanceFromMainActivity().window.setFlags(
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                    )
                     binding.progressBar2.visibility = View.VISIBLE
+                    binding.progressBar3.visibility = View.VISIBLE
                 }
                 LoadingStatus.DONE -> {
-                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                    )
                     binding.progressBar2.visibility = View.GONE
+                    binding.progressBar3.visibility = View.GONE
                 }
                 LoadingStatus.ERROR -> {
-                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                    )
                     binding.progressBar2.visibility = View.GONE
+                    binding.progressBar3.visibility = View.GONE
                     Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
                 }
             }

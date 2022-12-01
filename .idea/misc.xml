@@ -28,6 +28,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/ratingbar_empty.xml" value="0.1" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/ratingbar_filled.xml" value="0.1" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/text_border_mini.xml" value="0.248" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/text_border_mini_selecetd.xml" value="0.1" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_couple_border.xml" value="0.248" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_history_border.xml" value="0.248" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/drawable/type_public_border.xml" value="0.234" />
@@ -47,7 +48,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_detail.xml" value="0.1" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_success.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_type.xml" value="0.1" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_community.xml" value="0.536" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_community.xml" value="0.2" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom_bottom_sheet.xml" value="0.297008547008547" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_custom_challenge.xml" value="0.245018115942029" />
@@ -84,7 +85,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_log_photo.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_log_photo_comment.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_log_stage.xml" value="0.2" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_my_custom_challenge.xml" value="0.33" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_my_custom_challenge.xml" value="0.26672950047125354" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_my_message.xml" value="0.2" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_notification_notification.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_overview_task.xml" value="0.259963768115942" />

@@ -12,7 +12,12 @@
     <fragment
         android:id="@+id/customFragment"
         android:name="com.neil.miruhiru.custom.CustomFragment"
-        android:label="CustomFragment" />
+        android:label="CustomFragment" >
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
     <fragment
         android:id="@+id/communityFragment"
         android:name="com.neil.miruhiru.community.CommunityFragment"
@@ -214,7 +219,9 @@
             android:name="customChallengeId"
             app:argType="string" />
     </fragment>
-    <action android:id="@+id/action_global_overviewFragment" app:destination="@id/overviewFragment" />
+    <action android:id="@+id/action_global_overviewFragment"
+        app:destination="@id/overviewFragment"
+        />
     <fragment
         android:id="@+id/likeChallengeFragment"
         android:name="com.neil.miruhiru.likeChallenge.LikeChallengeFragment"

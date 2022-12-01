@@ -6,94 +6,128 @@ android:layout_height="match_parent"
 xmlns:mapbox="http://schemas.android.com/apk/res-auto"
 tools:context=".community.CommunityFragment">
 
-    <com.zhpan.bannerview.BannerViewPager
-        android:id="@+id/banner_view"
-        android:layout_width="match_parent"
-        android:layout_height="190dp"
-        android:layout_margin="10dp"
-        android:layout_marginTop="16dp"
-        mapbox:layout_constraintEnd_toEndOf="parent"
-        mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tagRecycler"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        mapbox:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        mapbox:layout_constraintEnd_toEndOf="parent"
-        mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toBottomOf="@+id/banner_view" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/challengeRecycler"
+    <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/button_border_deep_yellow"
-        android:paddingStart="6dp"
-        android:paddingTop="6dp"
-        android:paddingEnd="6dp"
-        mapbox:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        mapbox:layout_constraintBottom_toBottomOf="parent"
-        mapbox:layout_constraintEnd_toEndOf="@+id/banner_view"
-        mapbox:layout_constraintStart_toStartOf="@+id/searchText"
-        mapbox:layout_constraintTop_toBottomOf="@+id/searchText"
-        mapbox:spanCount="2" />
-
-    <EditText
-        android:id="@+id/searchText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/community_searchbar_border"
-        android:ems="10"
-        android:gravity="start|top"
-        android:inputType="text"
-        android:maxLength="35"
-        android:maxLines="1"
-        android:paddingStart="20dp"
-        android:paddingTop="3dp"
-        android:paddingEnd="38dp"
-        android:paddingBottom="3dp"
-        mapbox:layout_constraintEnd_toEndOf="@+id/banner_view"
-        mapbox:layout_constraintStart_toStartOf="@+id/banner_view"
-        mapbox:layout_constraintTop_toBottomOf="@+id/tagRecycler" />
-
-    <ImageView
-        android:id="@+id/communitySearchIcon"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_search"
-        mapbox:layout_constraintBottom_toBottomOf="@+id/searchText"
-        mapbox:layout_constraintEnd_toEndOf="@+id/searchText"
-        mapbox:layout_constraintTop_toTopOf="@+id/searchText" />
-
-    <ImageView
-        android:id="@+id/searchView"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        mapbox:layout_constraintBottom_toBottomOf="@+id/searchText"
-        mapbox:layout_constraintEnd_toEndOf="@+id/searchText"
-        mapbox:layout_constraintStart_toStartOf="@+id/communitySearchIcon"
-        mapbox:layout_constraintTop_toTopOf="@+id/searchText" />
-
-    <ProgressBar
-        android:id="@+id/progressBar2"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:indeterminateTint="@color/deep_grey"
-        android:indeterminateTintMode="src_atop"
-        android:visibility="gone"
+        android:fillViewport="true"
         mapbox:layout_constraintBottom_toBottomOf="parent"
         mapbox:layout_constraintEnd_toEndOf="parent"
         mapbox:layout_constraintStart_toStartOf="parent"
-        mapbox:layout_constraintTop_toTopOf="parent" />
+        mapbox:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.zhpan.bannerview.BannerViewPager
+                android:id="@+id/banner_view"
+                android:layout_width="match_parent"
+                android:layout_height="190dp"
+                android:layout_margin="10dp"
+                android:layout_marginTop="16dp"
+                mapbox:layout_constraintEnd_toEndOf="parent"
+                mapbox:layout_constraintStart_toStartOf="parent"
+                mapbox:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tagRecycler"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                mapbox:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                mapbox:layout_constraintEnd_toEndOf="parent"
+                mapbox:layout_constraintStart_toStartOf="parent"
+                mapbox:layout_constraintTop_toBottomOf="@+id/banner_view" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/challengeRecycler"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/button_border_deep_yellow"
+                android:paddingStart="6dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="6dp"
+                mapbox:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                mapbox:layout_constraintBottom_toBottomOf="parent"
+                mapbox:layout_constraintEnd_toEndOf="@+id/banner_view"
+                mapbox:layout_constraintStart_toStartOf="@+id/searchText"
+                mapbox:layout_constraintTop_toBottomOf="@+id/searchText"
+                mapbox:layout_constraintVertical_bias="0.0"
+                mapbox:spanCount="2" />
+
+            <EditText
+                android:id="@+id/searchText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/community_searchbar_border"
+                android:ems="10"
+                android:gravity="start|top"
+                android:inputType="text"
+                android:maxLength="35"
+                android:maxLines="1"
+                android:paddingStart="20dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="38dp"
+                android:paddingBottom="3dp"
+                mapbox:layout_constraintEnd_toEndOf="@+id/banner_view"
+                mapbox:layout_constraintStart_toStartOf="@+id/banner_view"
+                mapbox:layout_constraintTop_toBottomOf="@+id/tagRecycler" />
+
+            <ImageView
+                android:id="@+id/communitySearchIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_search"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/searchText"
+                mapbox:layout_constraintEnd_toEndOf="@+id/searchText"
+                mapbox:layout_constraintTop_toTopOf="@+id/searchText" />
+
+            <ImageView
+                android:id="@+id/searchView"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/searchText"
+                mapbox:layout_constraintEnd_toEndOf="@+id/searchText"
+                mapbox:layout_constraintStart_toStartOf="@+id/communitySearchIcon"
+                mapbox:layout_constraintTop_toTopOf="@+id/searchText" />
+
+            <ProgressBar
+                android:id="@+id/progressBar2"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/deep_yellow"
+                android:indeterminateTintMode="src_atop"
+                android:visibility="gone"
+                mapbox:layout_constraintBottom_toBottomOf="parent"
+                mapbox:layout_constraintEnd_toEndOf="parent"
+                mapbox:layout_constraintStart_toStartOf="parent"
+                mapbox:layout_constraintTop_toTopOf="@+id/challengeRecycler" />
+
+            <ProgressBar
+                android:id="@+id/progressBar3"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/deep_yellow"
+                android:indeterminateTintMode="src_atop"
+                android:visibility="gone"
+                mapbox:layout_constraintBottom_toBottomOf="@+id/banner_view"
+                mapbox:layout_constraintEnd_toEndOf="parent"
+                mapbox:layout_constraintStart_toStartOf="parent"
+                mapbox:layout_constraintTop_toTopOf="@+id/banner_view" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
