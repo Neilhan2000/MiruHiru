@@ -153,7 +153,6 @@ class TaskFragment : Fragment() {
             val guildTextList = listOf<Task>(Task(), it[0], Task())
             guideAdapter.submitList(guildTextList)
             binding.guideTextRecycler.scrollToPosition(1)
-
         })
 
         viewModel.annotationList.observe(viewLifecycleOwner, Observer {
@@ -189,7 +188,7 @@ class TaskFragment : Fragment() {
                     if (viewModel.isMultiple == true) {
                         val defaultBuilder = AlertDialog.Builder(requireContext())
                             .setTitle("要退出挑戰嗎?")
-                            .setMessage("發現挑戰有其他玩家，退出後將無法再參與歐")
+                            .setMessage("挑戰為多人挑戰，退出後將無法再參與歐")
                             .setPositiveButton("確定", object: DialogInterface.OnClickListener{
                                 override fun onClick(p0: DialogInterface?, p1: Int) {
                                     viewModel.cleanEventMultiple()

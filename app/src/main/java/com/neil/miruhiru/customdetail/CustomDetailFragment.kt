@@ -250,8 +250,6 @@ class CustomDetailFragment : Fragment() {
         requireActivity().onBackPressedDispatcher
             .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    UserManager.customCurrentStage = null
-                    UserManager.customTotalStage = null
                     if (binding.nextButton.text == getString(R.string.update)) {
                         if (viewModel.isUpdated.value == false) {
                             val defaultBuilder = AlertDialog.Builder(requireContext())
@@ -259,6 +257,8 @@ class CustomDetailFragment : Fragment() {
                                 .setMessage("編輯尚未更新，確定要退出嗎?")
                                 .setPositiveButton("確定", object : DialogInterface.OnClickListener {
                                     override fun onClick(p0: DialogInterface?, p1: Int) {
+                                        UserManager.customCurrentStage = null
+                                        UserManager.customTotalStage = null
                                         this@CustomDetailFragment.findNavController().navigateUp()
                                     }
                                 })

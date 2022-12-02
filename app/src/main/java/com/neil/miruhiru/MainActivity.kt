@@ -60,8 +60,8 @@ class MainActivity : AppCompatActivity() {
             viewModel.detectNotifications()
         })
 
-        UserManager.customCurrentStage = null
-        UserManager.customTotalStage = null
+//        UserManager.customCurrentStage = null
+//        UserManager.customTotalStage = null
 
         // set activity instance
         instance = this
@@ -114,7 +114,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 badge.isVisible = false
             }
-
         })
     }
 
@@ -136,6 +135,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.likeChallengeFragment -> CurrentFragmentType.LIKE
                 R.id.joinFragment -> CurrentFragmentType.JOIN
                 R.id.notificationFragment -> CurrentFragmentType.NOTIFICATION
+                R.id.inviteFragment -> CurrentFragmentType.INVITE
+                R.id.challengeTypeFragment -> CurrentFragmentType.CHALLENGETYPE
                 else -> CurrentFragmentType.OTHER
             }
         }
@@ -234,7 +235,6 @@ class MainActivity : AppCompatActivity() {
     fun cleanBadge() {
         badge.isVisible = false
     }
-
     fun isBadgeVisible(): Boolean {
         return badge.isVisible
     }

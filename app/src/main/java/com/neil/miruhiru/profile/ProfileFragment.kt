@@ -83,21 +83,20 @@ class ProfileFragment : Fragment() {
 
         // observe user live data to make sure user data load success before setup profile info
         UserManager.userLiveData.observe(viewLifecycleOwner, Observer {
-
-            Timber.i("user $it")
-            if (it.completedEvents.isNotEmpty()) {
-                viewModel.completedList.observe(viewLifecycleOwner, Observer { completedChallenges ->
-                    challengeAdapter.submitList(completedChallenges)
-                    challengeAdapter.notifyItemRangeChanged(0, challengeAdapter.itemCount)
-                    binding.profileCompletedChallenges.text = "完成的挑數量：" + "${completedChallenges.size}"
-                })
-            }
             if (it.name.isNotEmpty()) {
                 Glide.with(binding.profileIcon.context).load(UserManager.user.icon).circleCrop().apply(
                     RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
                 ).into(binding.profileIcon)
                 binding.profileName.text = "名稱：" + UserManager.user.name
+                viewModel.cleanCompletedChallengeList()
+                viewModel.loadCompletedChallenge()
             }
+        })
+
+        viewModel.completedList.observe(viewLifecycleOwner, Observer { completedChallenges ->
+            challengeAdapter.submitList(completedChallenges)
+            challengeAdapter.notifyItemRangeChanged(0, challengeAdapter.itemCount)
+            binding.profileCompletedChallenges.text = "完成的挑數量：" + "${completedChallenges.size}"
         })
 
         // observe sign out and navigate to sign in fragment

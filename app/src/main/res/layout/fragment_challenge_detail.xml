@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             tools:context=".challengedetail.ChallengeDetailFragment">
 
-            <com.mapbox.maps.MapView
+            <com.neil.miruhiru.CustomMapView
                 android:id="@+id/mapView"
                 android:layout_width="0dp"
                 android:layout_height="300dp"
@@ -68,7 +68,7 @@
                 mapbox:mapbox_cameraTargetLng="121.0000"
                 mapbox:mapbox_cameraZoom="15.0">
 
-            </com.mapbox.maps.MapView>
+            </com.neil.miruhiru.CustomMapView>
 
             <ImageView
                 android:id="@+id/challengeMainImage"

@@ -21,10 +21,10 @@ import timber.log.Timber
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
 
-    init {
-        // load CompletedList here to prevent fragment onCreateView reloading
-        loadCompletedChallenge()
-    }
+//    init {
+//        // load CompletedList here to prevent fragment onCreateView reloading
+//        loadCompletedChallenge()
+//    }
 
     private val viewModelApplication = application
 
@@ -43,7 +43,11 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     val eventList = mutableListOf<Event>()
 
-    lateinit var _loadingStatus: MutableLiveData<LoadingStatus>
+//    lateinit var _loadingStatus: MutableLiveData<LoadingStatus>
+//    val loadingStatus: LiveData<LoadingStatus>
+//        get() = _loadingStatus
+
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
     val loadingStatus: LiveData<LoadingStatus>
         get() = _loadingStatus
 
@@ -59,9 +63,17 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         _loadingStatus.value = LoadingStatus.ERROR
     }
 
-    private fun loadCompletedChallenge() {
-        _loadingStatus = MutableLiveData<LoadingStatus>()
+    // prevent adding repeated challenge to list
+    fun cleanCompletedChallengeList() {
+        completedChallengeList = mutableListOf()
+    }
+
+    fun loadCompletedChallenge() {
         startLoading()
+        if (UserManager.user.completedEvents.isEmpty()) {
+            loadingCompleted()
+        }
+        Timber.i("completeEvents" + UserManager.user.completedEvents)
 
         val db = Firebase.firestore
 
@@ -84,6 +96,8 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                                 if (challenge != null) {
                                     completedChallengeList.add(challenge)
                                 }
+                                Timber.i("user manager list" + UserManager.user.completedEvents.size +
+                                        "completedChallengeList" + completedChallengeList.size)
                                 if (completedChallengeList.size == UserManager.user.completedEvents.size) {
 
                                     // sort event to list
@@ -106,13 +120,13 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                                             completedChallengeList.add(it)
                                         }
                                     }
-
                                     _completedChallengeList.value = completedChallengeList.reversed()
                                     loadingCompleted()
 
                                 }
                             }
                     } else {
+                        Timber.i("personal")
                         db.collection("users").whereEqualTo("id", event?.members?.first())
                             .get()
                             .addOnSuccessListener {
