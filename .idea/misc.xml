@@ -45,7 +45,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_bottom_step.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_bottom_step2.xml" value="0.297008547008547" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_bottom_step3.xml" value="0.29615384615384616" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_detail.xml" value="0.1" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_detail.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_success.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_challenge_type.xml" value="0.1" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/fragment_community.xml" value="0.2" />
@@ -78,7 +78,7 @@
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_chat_my_message.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_chat_other_message.xml" value="0.264" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_community_banner.xml" value="1.25" />
-        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_community_challenge.xml" value="0.5" />
+        <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_community_challenge.xml" value="0.4" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_community_tag.xml" value="0.5" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_invite_user.xml" value="0.33" />
         <entry key="..\:/Users/user/Desktop/MiruHiru/app/src/main/res/layout/item_like_challenge.xml" value="0.5" />

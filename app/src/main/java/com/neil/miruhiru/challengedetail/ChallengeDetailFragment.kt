@@ -232,6 +232,10 @@ class ChallengeDetailFragment : Fragment() {
             like = !like
         }
 
+        binding.detailBackArrow.setOnClickListener {
+            this.findNavController().navigateUp()
+        }
+
         binding.startButton.setOnClickListener {
             viewModel.checkHasCurrentEvent(challengeId)
         }

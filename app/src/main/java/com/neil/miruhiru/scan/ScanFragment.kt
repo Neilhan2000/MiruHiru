@@ -54,13 +54,6 @@ class ScanFragment : Fragment() {
                 viewModel.navigateToTaskFragmentCompleted()
             }
         })
-
-
-
-
-
-
-
         return binding.root
     }
 
@@ -116,7 +109,7 @@ class ScanFragment : Fragment() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Timber.i("onrequest call")
+        Timber.i("onRequest")
         if (requestCode == 123) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(requireContext(), "camera permission granted", Toast.LENGTH_SHORT).show()

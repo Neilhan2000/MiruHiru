@@ -5,5 +5,13 @@ enum class CurrentFragmentType(val value: String) {
     CUSTOM("自訂"),
     COMMUNITY("社群"),
     PROFILE("個人"),
-    OTHER("其他")
+    OTHER("其他"),
+    CHALLENGEDETAIL("挑戰"),
+    CUSTOMDETAIL("創造"),
+    OVERVIEW("總覽"),
+    LIKE("收藏"),
+    JOIN("參加挑戰"),
+    NOTIFICATION("通知")
+
+
 }

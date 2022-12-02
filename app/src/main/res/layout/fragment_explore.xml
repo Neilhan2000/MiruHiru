@@ -99,7 +99,7 @@
                 mapbox:layout_constraintStart_toEndOf="@+id/timeIcon"
                 mapbox:layout_constraintTop_toTopOf="@+id/timeIcon" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/challengeImage"
                 android:layout_width="100dp"
                 android:layout_height="0dp"
@@ -107,6 +107,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:scaleType="centerCrop"
+                mapbox:shapeAppearance="@style/AllCornerStyle"
                 mapbox:layout_constraintBottom_toBottomOf="parent"
                 mapbox:layout_constraintStart_toStartOf="parent"
                 mapbox:layout_constraintTop_toTopOf="parent"

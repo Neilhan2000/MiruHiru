@@ -59,11 +59,11 @@ class MyCustomViewModel : ViewModel() {
 
         val db = Firebase.firestore
         val myCustomList = _myCustomList.value as MutableList
-        val remainItemListSize = _myCustomList.value?.size?.minus(selectedPositions.size)
 
         db.collection("users").whereEqualTo("id", UserManager.userId)
             .get()
             .addOnSuccessListener {
+                val removeList = mutableListOf<Challenge>()
 
                 selectedPositions.forEach { position ->
                     Timber.i("delete $position")
@@ -71,14 +71,15 @@ class MyCustomViewModel : ViewModel() {
                         .whereEqualTo("id", _myCustomList.value?.get(position)?.id)
                         .get()
                         .addOnSuccessListener {
+                            removeList.add(myCustomList[position])
 
                             it.documents[0].reference
                                 .delete()
                                 .addOnSuccessListener {
-                                    myCustomList.removeAt(position)
-                                    if (myCustomList.size == remainItemListSize) {
+                                    if (removeList.size == selectedPositions.size) {
                                         cleanSelectedPositions()
                                         cancelLongClick()
+                                        myCustomList.removeAll(removeList)
                                         _myCustomList.value = myCustomList
                                         loadingCompleted()
                                     }

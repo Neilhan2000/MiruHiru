@@ -6,6 +6,7 @@
     <string name="custom_fragment">自訂</string>
     <string name="community_fragment">社群</string>
     <string name="profile_fragment">個人</string>
+    <string name="challenge_detail_fragment">挑戰</string>
     <string name="title_activity_main_activitytwo">MainActivitytwo</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

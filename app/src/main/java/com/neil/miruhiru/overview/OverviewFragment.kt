@@ -144,8 +144,7 @@ class OverviewFragment : Fragment() {
                 override fun handleOnBackPressed() {
                     val previousFragment = findNavController().previousBackStackEntry?.destination
                     if (previousFragment?.id == R.id.customDetailFragment) {
-                        val navOptions = NavOptions.Builder().setPopUpTo(R.id.overviewFragment, false).build()
-                        this@OverviewFragment.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment(), navOptions)
+                        this@OverviewFragment.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment(1))
                     } else {
                         this@OverviewFragment.findNavController().navigateUp()
                     }
