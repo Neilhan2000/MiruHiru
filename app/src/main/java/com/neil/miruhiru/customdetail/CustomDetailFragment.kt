@@ -70,7 +70,8 @@ class CustomDetailFragment : Fragment() {
                         viewModel.needToUpdate()
                         binding.nextButton.setOnClickListener {
                             // reAssign edited location to viewModel task if they are not the same
-                            if (viewModel.originalTask.location != viewModel.task.location) {
+                            if (viewModel.originalTask.location != viewModel.task.location &&
+                                this.findNavController().previousBackStackEntry?.destination?.id != R.id.overviewFragment) {
                                 viewModel.task.location = viewModel.originalTask.location
                             }
                             viewModel.updateTask()
@@ -143,14 +144,24 @@ class CustomDetailFragment : Fragment() {
             addAnnotationToMap(point)
             changeButtonStatus()
             if (binding.nextButton.text == getString(R.string.update)) {
-                viewModel.setOriginalTaskLocation(point)
+                if (this.findNavController().previousBackStackEntry?.destination?.id == R.id.overviewFragment) {
+                    viewModel.setTaskLocation(point)
+                    binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                    binding.nextButton.setOnClickListener(null)
+                    viewModel.needToUpdate()
+                    binding.nextButton.setOnClickListener {
+                        viewModel.updateTask()
+                    }
+                } else {
+                    viewModel.setOriginalTaskLocation(point)
 
-                binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
-                binding.nextButton.setOnClickListener(null)
-                Timber.i("task image ${viewModel.task.image} original image ${viewModel.originalTask.image}")
-                viewModel.needToUpdate()
-                binding.nextButton.setOnClickListener {
-                    viewModel.updateTask()
+                    binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                    binding.nextButton.setOnClickListener(null)
+                    Timber.i("task image ${viewModel.task.image} original image ${viewModel.originalTask.image}")
+                    viewModel.needToUpdate()
+                    binding.nextButton.setOnClickListener {
+                        viewModel.updateTask()
+                    }
                 }
             } else {
                 viewModel.setTaskLocation(point)
@@ -257,8 +268,6 @@ class CustomDetailFragment : Fragment() {
                                 .setMessage("編輯尚未更新，確定要退出嗎?")
                                 .setPositiveButton("確定", object : DialogInterface.OnClickListener {
                                     override fun onClick(p0: DialogInterface?, p1: Int) {
-                                        UserManager.customCurrentStage = null
-                                        UserManager.customTotalStage = null
                                         this@CustomDetailFragment.findNavController().navigateUp()
                                     }
                                 })
@@ -350,6 +359,7 @@ class CustomDetailFragment : Fragment() {
             viewModel.searchPlace(it.toString(), 3, BuildConfig.MAPBOX_ACCESS_TOKEN)
         }
 
+        Timber.i("task location ${viewModel.task.location}")
         // search recyclerView
         val searchAdapter = SearchResultAdapter { resultPosition ->
             val point = Point.fromLngLat(
@@ -360,9 +370,22 @@ class CustomDetailFragment : Fragment() {
                 duration(2000)
             })
             addAnnotationToMap(point)
-            changeButtonStatus()
-            viewModel.setTaskLocation(point)
-            Timber.i("task ${viewModel.task}")
+            if (this.findNavController().previousBackStackEntry?.destination?.id == R.id.overviewFragment &&
+                    binding.nextButton.text == getString(R.string.update)) {
+                viewModel.setTaskLocation(point)
+                binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                binding.nextButton.setOnClickListener(null)
+                viewModel.needToUpdate()
+                binding.nextButton.setOnClickListener {
+                    viewModel.updateTask()
+                }
+
+            } else {
+                addAnnotationToMap(point)
+                changeButtonStatus()
+                viewModel.setTaskLocation(point)
+            }
+            Timber.i("task location new ${viewModel.task}")
         }
         binding.searchRecycler.adapter = searchAdapter
 

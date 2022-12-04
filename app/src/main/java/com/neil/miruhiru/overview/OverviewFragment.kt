@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.challengesuccess.ChallengeSuccessFragmentDirections
 import com.neil.miruhiru.databinding.FragmentOverviewBinding
 import com.neil.miruhiru.network.LoadingStatus
@@ -88,6 +89,8 @@ class OverviewFragment : Fragment() {
         taskAdapter = OverViewAdapter(viewModel)  { task ->
             // send task and navigate to custom detail page
             setFragmentResult("fromOverview", bundleOf("task" to task))
+            UserManager.customCurrentStage = null
+            UserManager.customTotalStage = null
             this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment(viewModel.customChallengeId))
         }
         binding.customTaskRecycler.adapter = taskAdapter
@@ -114,6 +117,8 @@ class OverviewFragment : Fragment() {
 
             } else {
                 binding.editOrUploadButton.text = getString(R.string.edit)
+                UserManager.customCurrentStage = null
+                UserManager.customTotalStage = null
                 binding.editOrUploadButton.setOnClickListener {
                     this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment(viewModel.customChallengeId))
                 }

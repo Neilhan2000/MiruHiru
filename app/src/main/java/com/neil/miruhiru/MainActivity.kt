@@ -3,12 +3,16 @@ package com.neil.miruhiru
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.graphics.Color
+import android.graphics.Color.argb
 import android.os.Bundle
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
+import android.widget.Toast.makeText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -19,6 +23,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.SimpleTarget
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.database.collection.LLRBNode
@@ -27,6 +32,12 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.data.Notification
 import com.neil.miruhiru.databinding.ActivityMainBinding
+import com.takusemba.spotlight.OnSpotlightListener
+import com.takusemba.spotlight.OnTargetListener
+import com.takusemba.spotlight.Spotlight
+import com.takusemba.spotlight.Target
+import com.takusemba.spotlight.effet.RippleEffect
+import com.takusemba.spotlight.shape.Circle
 import timber.log.Timber
 import timber.log.Timber.Forest.plant
 
@@ -59,6 +70,40 @@ class MainActivity : AppCompatActivity() {
             setupToolbar()
             viewModel.detectNotifications()
         })
+
+//        val target = Target.Builder()
+//            .setAnchor(100f, 100f)
+//            .setShape(Circle(100f))
+//            .setEffect(RippleEffect(100f, 200f, argb(30, 124, 255, 90)))
+//            .setOverlay(binding.root)
+//            .setOnTargetListener(object : OnTargetListener {
+//                override fun onStarted() {
+//                    makeText(this@MainActivity, "first target is started", Toast.LENGTH_SHORT).show()
+//                }
+//                override fun onEnded() {
+//                    makeText(this@MainActivity, "first target is ended", Toast.LENGTH_SHORT).show()
+//                }
+//            })
+//            .build()
+//
+//        val spotlight = Spotlight.Builder(this)
+//            .setDuration(3000L)
+//            .setBackgroundColorRes(R.color.deep_yellow)
+//            .setTargets(target)
+//            .setAnimation(DecelerateInterpolator(2f))
+//            .setContainer(binding.root)
+//            .setOnSpotlightListener(object : OnSpotlightListener {
+//                override fun onStarted() {
+//                    Toast.makeText(this@MainActivity, "spotlight is started", Toast.LENGTH_SHORT).show()
+//                }
+//                override fun onEnded() {
+//                    Toast.makeText(this@MainActivity, "spotlight is ended", Toast.LENGTH_SHORT).show()
+//                }
+//            })
+//            .build()
+//
+//        binding.root.doOnPreDraw { spotlight.start() }
+
 
 //        UserManager.customCurrentStage = null
 //        UserManager.customTotalStage = null

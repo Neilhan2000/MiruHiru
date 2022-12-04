@@ -31,7 +31,7 @@ class LogLogAdapter(viewModel: LogViewModel, adapterPosition: Int) : ListAdapter
                 // photo
                 if (item.photo.isNotEmpty()) {
                     Glide.with(binding.taskPhoto.context).load(item.photo).centerCrop().apply(
-                        RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
+                        RequestOptions().placeholder(R.drawable.image_placeholder).error(R.drawable.image_placeholder)
                     ).into(binding.taskPhoto)
                     Timber.i("photo not empty ${item.photo}")
                 } else {

@@ -16,7 +16,6 @@ class CustomMapView : MapView {
     constructor(context: Context, attributeSet: AttributeSet, int: Int):
             super(context, attributeSet, int)
 
-
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_UP -> {
