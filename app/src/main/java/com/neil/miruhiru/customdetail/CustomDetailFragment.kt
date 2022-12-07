@@ -11,7 +11,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.webkit.URLUtil
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
@@ -34,12 +36,10 @@ import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
-import com.neil.miruhiru.BuildConfig
-import com.neil.miruhiru.NavGraphDirections
-import com.neil.miruhiru.R
-import com.neil.miruhiru.UserManager
+import com.neil.miruhiru.*
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentCustomDetailBinding
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 
 class CustomDetailFragment : Fragment() {
@@ -69,6 +69,11 @@ class CustomDetailFragment : Fragment() {
                     if (viewModel.originalTask != viewModel.task && binding.nextButton.text == getString(R.string.update)) {
                         viewModel.needToUpdate()
                         binding.nextButton.setOnClickListener {
+                            // reAssign edited location to viewModel task if they are not the same
+                            if (viewModel.originalTask.location != viewModel.task.location &&
+                                this.findNavController().previousBackStackEntry?.destination?.id != R.id.overviewFragment) {
+                                viewModel.task.location = viewModel.originalTask.location
+                            }
                             viewModel.updateTask()
 
                             viewModel.originalTask.id = result.id
@@ -139,15 +144,19 @@ class CustomDetailFragment : Fragment() {
             addAnnotationToMap(point)
             changeButtonStatus()
             if (binding.nextButton.text == getString(R.string.update)) {
-                viewModel.setOriginalTaskLocation(point)
-                viewModel.setTaskLocation(point)
+                if (this.findNavController().previousBackStackEntry?.destination?.id == R.id.overviewFragment) {
+                    viewModel.setTaskLocation(point)
+                } else {
+                    viewModel.setOriginalTaskLocation(point)
+                }
 
-                binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
-                binding.nextButton.setOnClickListener(null)
-                Timber.i("task image ${viewModel.task.image} original image ${viewModel.originalTask.image}")
-                viewModel.needToUpdate()
-                binding.nextButton.setOnClickListener {
-                    viewModel.updateTask()
+                if (viewModel.isInputValidNoToast()) {
+                    binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                    binding.nextButton.setOnClickListener(null)
+                    viewModel.needToUpdate()
+                    binding.nextButton.setOnClickListener {
+                        viewModel.updateTask()
+                    }
                 }
             } else {
                 viewModel.setTaskLocation(point)
@@ -168,6 +177,8 @@ class CustomDetailFragment : Fragment() {
             pointAnnotationManager.deleteAll()
             changeButtonStatus()
             viewModel.deleteTask()
+            binding.nextButton.setOnClickListener(null)
+            binding.nextButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
         }
         binding.nextButton.setOnClickListener {
             if (viewModel.isInputValid()) {
@@ -247,8 +258,6 @@ class CustomDetailFragment : Fragment() {
         requireActivity().onBackPressedDispatcher
             .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    UserManager.customCurrentStage = null
-                    UserManager.customTotalStage = null
                     if (binding.nextButton.text == getString(R.string.update)) {
                         if (viewModel.isUpdated.value == false) {
                             val defaultBuilder = AlertDialog.Builder(requireContext())
@@ -347,6 +356,7 @@ class CustomDetailFragment : Fragment() {
             viewModel.searchPlace(it.toString(), 3, BuildConfig.MAPBOX_ACCESS_TOKEN)
         }
 
+        Timber.i("task location ${viewModel.task.location}")
         // search recyclerView
         val searchAdapter = SearchResultAdapter { resultPosition ->
             val point = Point.fromLngLat(
@@ -359,7 +369,21 @@ class CustomDetailFragment : Fragment() {
             addAnnotationToMap(point)
             changeButtonStatus()
             viewModel.setTaskLocation(point)
-            Timber.i("task ${viewModel.task}")
+            if (this.findNavController().previousBackStackEntry?.destination?.id == R.id.overviewFragment &&
+                binding.nextButton.text == getString(R.string.update) && viewModel.isInputValidNoToast()) {
+                binding.nextButton.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.deep_yellow
+                    )
+                )
+                binding.nextButton.setOnClickListener(null)
+                viewModel.needToUpdate()
+                binding.nextButton.setOnClickListener {
+                    viewModel.updateTask()
+                }
+            }
+            Timber.i("task location new ${viewModel.task}")
         }
         binding.searchRecycler.adapter = searchAdapter
 
@@ -368,6 +392,32 @@ class CustomDetailFragment : Fragment() {
             Timber.i("$featureList")
             searchAdapter.submitList(featureList)
             searchAdapter.notifyDataSetChanged()
+        })
+
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            when (status) {
+                LoadingStatus.LOADING -> {
+                    MainActivity.getInstanceFromMainActivity().window.setFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.VISIBLE
+                }
+                LoadingStatus.DONE -> {
+                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.GONE
+                }
+                LoadingStatus.ERROR -> {
+                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.GONE
+                    Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+                }
+            }
         })
 
         return binding.root

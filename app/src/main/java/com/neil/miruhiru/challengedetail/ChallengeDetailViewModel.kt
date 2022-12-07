@@ -16,6 +16,7 @@ import com.google.firebase.storage.ktx.storage
 import com.mapbox.geojson.Point
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.*
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -38,17 +39,34 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     val commentUsers: LiveData<List<User>>
         get() = _commentUsers
 
-    private val _hasCurrentEvent = MutableLiveData<Boolean>()
-    val hasCurrentEvent: LiveData<Boolean>
+    private val _hasCurrentEvent = MutableLiveData<Boolean?>()
+    val hasCurrentEvent: LiveData<Boolean?>
         get() = _hasCurrentEvent
 
     private val _authorName = MutableLiveData<String>()
     val authorName: LiveData<String>
         get() = _authorName
 
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
     private lateinit var comments: MutableList<Comment>
 
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
+
     fun checkHasCurrentEvent(challengeId: String) {
+        startLoading()
         val db = Firebase.firestore
 
         if (UserManager.user.currentEvent.isNotEmpty()) {
@@ -57,14 +75,16 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
                 .addOnSuccessListener {
                     val event = it.documents[0].toObject<Event>()
                     _hasCurrentEvent.value = event?.challengeId == challengeId
+                    loadingCompleted()
                 }
         } else {
             _hasCurrentEvent.value = false
+            loadingCompleted()
         }
     }
 
     fun navigateToChallengeTypeFragmentCompleted() {
-        _hasCurrentEvent.value = false
+        _hasCurrentEvent.value = null
     }
 
     fun cleanEventSingle() {
@@ -86,6 +106,7 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     private var challengeDocumentId = ""
 
     fun loadChallenge(challengeId: String) {
+        startLoading()
         val db = Firebase.firestore
 
         db.collection("challenges").whereEqualTo("id", challengeId)
@@ -102,6 +123,7 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
     }
 
     fun loadPersonalChallenge(customChallengeId: String) {
+        startLoading()
         val db = Firebase.firestore
 
         db.collection("users").whereEqualTo("id" , UserManager.userId)
@@ -147,7 +169,7 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
                     taskList.add(task)
                 }
                 _taskList.value = taskList
-                Timber.i("success load documents = %s", taskList)
+                loadingCompleted()
             }
             .addOnFailureListener { exception ->
                 Timber.i(exception, "Error getting documents.")
@@ -172,6 +194,7 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
                     }
                 }
                 _taskList.value = taskList
+                loadingCompleted()
             }
     }
 
@@ -292,5 +315,14 @@ class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
                         UserManager.getUser()
                     }
             }
+    }
+
+    fun isLike(challenge: Challenge): Boolean {
+        challenge.likeList.forEach { likeUser ->
+            if (likeUser == UserManager.userId) {
+                return true
+            }
+        }
+        return false
     }
 }

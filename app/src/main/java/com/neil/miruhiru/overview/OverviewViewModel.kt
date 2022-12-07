@@ -14,6 +14,7 @@ import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Task
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 import kotlin.reflect.full.memberProperties
 
@@ -41,7 +42,25 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
 
     private var challenge: Challenge? = Challenge()
 
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
+
     fun loadCustomTasks() {
+        startLoading()
+
         val db = Firebase.firestore
 
         db.collection("users").whereEqualTo("id", UserManager.userId)
@@ -69,9 +88,11 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                                 if (challenge?.upload == true) {
                                     _uploadToBeVerified.value = true
                                     _customTaskList.value = customTaskList
+                                    loadingCompleted()
                                 } else {
                                     _editingCompleted.value = challenge?.stage == customTaskList.size
                                     _customTaskList.value = customTaskList
+                                    loadingCompleted()
                                 }
                             }
                     }
@@ -79,6 +100,8 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun updateCustomChallenge() {
+        startLoading()
+
         val db = Firebase.firestore
 
         db.collection("users").whereEqualTo("id", UserManager.userId)
@@ -104,6 +127,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                                                 .addOnSuccessListener {
                                                     if (remoteTask.stage == result.documents.size) {
                                                         _resetStartButton.value = true
+                                                        loadingCompleted()
                                                     }
                                                 }
                                         }
@@ -115,9 +139,9 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun uploadCustomChallengeBeVerified() {
+        startLoading()
 
         val customChallenge = challenge?.asMap()
-
         val db = Firebase.firestore
 
         // upload challenge
@@ -168,6 +192,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                             .update("upload", true)
                             .addOnSuccessListener {
                                 _uploadToBeVerified.value = true
+                                loadingCompleted()
                                 Toast.makeText(viewModelApplication, viewModelApplication.getString(R.string.upload_challenge_success_toast), Toast.LENGTH_LONG).show()
                             }
                     }

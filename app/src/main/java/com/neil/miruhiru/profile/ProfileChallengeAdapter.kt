@@ -37,6 +37,13 @@ class ProfileChallengeAdapter(val onclick: (Int) -> Unit) : ListAdapter<Challeng
                     marginEnd = dpToPixel(8)
                     bottomMargin = dpToPixel(0)
                 }
+            } else {
+                (binding.completedChallengeImage.layoutParams as ConstraintLayout.LayoutParams).apply {
+                    marginStart = dpToPixel(8)
+                    topMargin = dpToPixel(0)
+                    marginEnd = dpToPixel(8)
+                    bottomMargin = dpToPixel(0)
+                }
             }
         }
 

@@ -5,18 +5,27 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
+import com.neil.miruhiru.UserManager
+import com.neil.miruhiru.challengesuccess.ChallengeSuccessFragmentDirections
 import com.neil.miruhiru.databinding.FragmentOverviewBinding
+import com.neil.miruhiru.network.LoadingStatus
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.*
@@ -75,12 +84,13 @@ class OverviewFragment : Fragment() {
         binding = FragmentOverviewBinding.inflate(inflater, container, false)
         viewModel.customChallengeId = OverviewFragmentArgs.fromBundle(requireArguments()).customChallengeId
 
-
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
         itemTouchHelper.attachToRecyclerView(binding.customTaskRecycler)
         taskAdapter = OverViewAdapter(viewModel)  { task ->
             // send task and navigate to custom detail page
             setFragmentResult("fromOverview", bundleOf("task" to task))
+            UserManager.customCurrentStage = null
+            UserManager.customTotalStage = null
             this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment(viewModel.customChallengeId))
         }
         binding.customTaskRecycler.adapter = taskAdapter
@@ -107,6 +117,8 @@ class OverviewFragment : Fragment() {
 
             } else {
                 binding.editOrUploadButton.text = getString(R.string.edit)
+                UserManager.customCurrentStage = null
+                UserManager.customTotalStage = null
                 binding.editOrUploadButton.setOnClickListener {
                     this.findNavController().navigate(NavGraphDirections.actionGlobalCustomDetailFragment(viewModel.customChallengeId))
                 }
@@ -128,9 +140,47 @@ class OverviewFragment : Fragment() {
         }
 
         binding.completeCustomButton.setOnClickListener {
-            this.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment())
+            this.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment(1))
         }
 
+        // handle back press
+        requireActivity().onBackPressedDispatcher
+            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val previousFragment = findNavController().previousBackStackEntry?.destination
+                    if (previousFragment?.id == R.id.customDetailFragment) {
+                        this@OverviewFragment.findNavController().navigate(NavGraphDirections.actionGlobalCustomFragment(1))
+                    } else {
+                        this@OverviewFragment.findNavController().navigateUp()
+                    }
+                }
+            })
+
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            when (status) {
+                LoadingStatus.LOADING -> {
+                    MainActivity.getInstanceFromMainActivity().window.setFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.VISIBLE
+                }
+                LoadingStatus.DONE -> {
+                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.GONE
+                }
+                LoadingStatus.ERROR -> {
+                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.GONE
+                    Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
 
         return binding.root
     }

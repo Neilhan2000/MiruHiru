@@ -1,7 +1,9 @@
 package com.neil.miruhiru.explore
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
@@ -74,10 +76,11 @@ import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.databinding.FragmentExploreBinding
+import timber.log.Timber
 import kotlin.math.roundToInt
 
 
-class ExploreFragment : Fragment(), PermissionsListener {
+class ExploreFragment : Fragment() {
 
     private val viewModel: ExploreViewModel by lazy {
         ViewModelProvider(this).get(ExploreViewModel::class.java)
@@ -120,7 +123,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
     val routeProgressObserver = object : RouteProgressObserver {
         override fun onRouteProgressChanged(routeProgress: RouteProgress) {
             routeProgress.currentState?.let { currentState ->
-                Log.i("neil", "fetch route state = $currentState")
+                Timber.i("fetch route state = " + currentState)
             }
         }
     }
@@ -136,9 +139,14 @@ class ExploreFragment : Fragment(), PermissionsListener {
         }
 
         override fun onFinalDestinationArrival(routeProgress: RouteProgress) {
-            Toast.makeText(this@ExploreFragment.context, "arrive destination", Toast.LENGTH_SHORT).show()
-            Log.i("neil", "stage $stage completed")
-            Toast.makeText(this@ExploreFragment.context, "stage ${stage++} completed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@ExploreFragment.context, "arrive destination", Toast.LENGTH_SHORT)
+                .show()
+            Timber.i("stage " + stage + " completed")
+            Toast.makeText(
+                this@ExploreFragment.context,
+                "stage ${stage++} completed",
+                Toast.LENGTH_SHORT
+            ).show()
 //            mapboxNavigation?.unregisterRouteProgressObserver(routeProgressObserver)
             val secondWaypoint = Point.fromLngLat(121.532658603193, 24.038928111026806)
 
@@ -216,7 +224,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
         // add map click listener, it will cause conflict with onAnnotationClickListener
         mapBoxMap?.addOnMapClickListener { point ->
-            Log.i("neil", "location = ${point.latitude()}, ${point.longitude()}")
+            Timber.i("location = " + point.latitude() + ", " + point.longitude())
             val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_down)
             binding.locationCardView.animation = animation
             animation.start()
@@ -243,7 +251,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
         // Create an instance of the Annotation API and get the PointAnnotationManager.
         bitmapFromDrawableRes(
             this.requireContext(),
-            determineChallengeIcon(challenge.type!!)
+            determineChallengeIcon(challenge.type)
         )?.let {
             val annotationApi = mapView?.annotations
             pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView!!)!!
@@ -253,8 +261,8 @@ class ExploreFragment : Fragment(), PermissionsListener {
             // Set options for the resulting symbol layer.
             val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
                 .withPoint(Point.fromLngLat(
-                    challenge.location?.longitude!!,
-                    challenge.location?.latitude!!
+                    challenge.location.longitude,
+                    challenge.location.latitude
                 ))
                 .withIconImage(it)
                 .withIconSize(2.0)
@@ -281,7 +289,7 @@ class ExploreFragment : Fragment(), PermissionsListener {
                         RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
                     ).into(binding.challengeImage)
                     // this function will show distance the between your location and challenge in the cardView
-                    challenge.location?.let { calculateAndShowDistance(it) }
+                    challenge.location.let { calculateAndShowDistance(it) }
                     binding.locationCardView.setOnClickListener {
                         this@ExploreFragment.findNavController().navigate(NavGraphDirections.actionGlobalChallengeDetailFragment(challenge.id ?: "null"))
                     }
@@ -423,24 +431,28 @@ class ExploreFragment : Fragment(), PermissionsListener {
 
     }
 
-    override fun onExplanationNeeded(permissionsToExplain: MutableList<String>?) {
-        Toast.makeText(this.context, "if you want to use map you need to agree permission", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onPermissionResult(granted: Boolean) {
-        if (granted) {
-            enableLocation()
-        }
-    }
-
     // check permission and set up map
     private fun enableLocation() {
         if (PermissionsManager.areLocationPermissionsGranted(this.context)) {
             onMapReady()
         } else {
-            permissionManager = PermissionsManager(this)
-            permissionManager.requestLocationPermissions(this.activity)
-            onMapReady()
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), 123)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        Timber.i("onRequest")
+        if (requestCode == 123) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                onMapReady()
+            } else {
+                Toast.makeText(requireContext(), "location permission denied", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

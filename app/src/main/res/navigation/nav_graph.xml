@@ -12,7 +12,12 @@
     <fragment
         android:id="@+id/customFragment"
         android:name="com.neil.miruhiru.custom.CustomFragment"
-        android:label="CustomFragment" />
+        android:label="CustomFragment" >
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
     <fragment
         android:id="@+id/communityFragment"
         android:name="com.neil.miruhiru.community.CommunityFragment"
@@ -23,16 +28,24 @@
         android:label="ProfileFragment" />
     <action
         android:id="@+id/action_global_exploreFragment"
-        app:destination="@id/exploreFragment" />
+        app:destination="@id/exploreFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
     <action
         android:id="@+id/action_global_customFragment"
-        app:destination="@id/customFragment" />
+        app:destination="@id/customFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
     <action
         android:id="@+id/action_global_communityFragment"
-        app:destination="@id/communityFragment" />
+        app:destination="@id/communityFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
     <action
         android:id="@+id/action_global_profileFragment"
-        app:destination="@id/profileFragment" />
+        app:destination="@id/profileFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
     <fragment
         android:id="@+id/challengeDetailFragment"
         android:name="com.neil.miruhiru.challengedetail.ChallengeDetailFragment"
@@ -97,7 +110,8 @@
         android:label="LogDialogFragment" />
     <action
         android:id="@+id/action_global_logDialogFragment"
-        app:destination="@id/logDialogFragment" />
+        app:destination="@id/logDialogFragment"
+         />
     <fragment
         android:id="@+id/challengeSuccessFragment"
         android:name="com.neil.miruhiru.challengesuccess.ChallengeSuccessFragment"
@@ -117,7 +131,8 @@
     </fragment>
     <action
         android:id="@+id/action_global_logFragment"
-        app:destination="@id/logFragment" />
+        app:destination="@id/logFragment"
+        />
     <fragment
         android:id="@+id/challengeTypeFragment"
         android:name="com.neil.miruhiru.challengetype.ChallengeTypeFragment"
@@ -172,7 +187,9 @@
         tools:layout="@layout/fragment_sign_in" />
     <action
         android:id="@+id/action_global_signInFragment"
-        app:destination="@id/signInFragment" />
+        app:destination="@id/signInFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
     <fragment
         android:id="@+id/customDetailFragment"
         android:name="com.neil.miruhiru.customdetail.CustomDetailFragment"
@@ -202,7 +219,9 @@
             android:name="customChallengeId"
             app:argType="string" />
     </fragment>
-    <action android:id="@+id/action_global_overviewFragment" app:destination="@id/overviewFragment" />
+    <action android:id="@+id/action_global_overviewFragment"
+        app:destination="@id/overviewFragment"
+        />
     <fragment
         android:id="@+id/likeChallengeFragment"
         android:name="com.neil.miruhiru.likeChallenge.LikeChallengeFragment"
@@ -224,4 +243,9 @@
         android:label="fragment_verify"
         tools:layout="@layout/fragment_verify" />
     <action android:id="@+id/action_global_verifyFragment" app:destination="@id/verifyFragment" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.neil.miruhiru.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" /><action android:id="@+id/action_global_notificationFragment" app:destination="@id/notificationFragment"/>
 </navigation>

@@ -48,6 +48,10 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
     val isMainUser: LiveData<Boolean>
         get() = _isMainUser
 
+    private val _memberIcons = MutableLiveData<List<User>>()
+    val memberIcons: LiveData<List<User>>
+        get() = _memberIcons
+
     var event: Event? = Event()
 
     private fun detectUserMessages() {
@@ -93,15 +97,16 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
 
                                             }
                                         }
+                                        _memberIcons.value = memberList
                                         _messageList.value = messageList
 
                                     }
+
                             }
                         }
+
                 }
-
             }
-
 
     }
 
@@ -149,7 +154,7 @@ class ChatDialogViewModel(application: Application) : AndroidViewModel(applicati
                             .update("currentEvent", "")
                     }
 
-                // we do not remove user progress and currentEvent here, just let kicked user remove themself in TaskViewModel(fun detectUserKick)
+                // we not remove user progress and currentEvent here, just let kicked user remove themself in TaskViewModel(fun detectUserKick)
             }
     }
 }

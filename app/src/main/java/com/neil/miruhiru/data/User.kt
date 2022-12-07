@@ -7,5 +7,6 @@ data class User(
     val currentEvent: String = "",
     val icon: String = "",
     val completedEvents: List<String> = listOf(),
-    val likeChallenges: List<String> = listOf()
+    val likeChallenges: List<String> = listOf(),
+    val publicChallenges: Int = -1
 )

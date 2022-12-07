@@ -2,25 +2,42 @@ package com.neil.miruhiru
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.Color.argb
 import android.os.Bundle
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
+import android.widget.Toast.makeText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.SimpleTarget
+import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.database.collection.LLRBNode
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import com.neil.miruhiru.data.Notification
 import com.neil.miruhiru.databinding.ActivityMainBinding
-import com.tenclouds.fluidbottomnavigation.FluidBottomNavigationItem
-import com.tenclouds.fluidbottomnavigation.listener.OnTabSelectedListener
+import com.takusemba.spotlight.OnSpotlightListener
+import com.takusemba.spotlight.OnTargetListener
+import com.takusemba.spotlight.Spotlight
+import com.takusemba.spotlight.Target
+import com.takusemba.spotlight.effet.RippleEffect
+import com.takusemba.spotlight.shape.Circle
 import timber.log.Timber
 import timber.log.Timber.Forest.plant
 
@@ -28,6 +45,8 @@ import timber.log.Timber.Forest.plant
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
+    lateinit var badge: BadgeDrawable
+    private lateinit var navController: NavController
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(this).get(MainViewModel::class.java)
     }
@@ -49,10 +68,45 @@ class MainActivity : AppCompatActivity() {
         // toolbar
         UserManager.userLiveData.observe(this, Observer {
             setupToolbar()
+            viewModel.detectNotifications()
         })
 
-        UserManager.customCurrentStage = null
-        UserManager.customTotalStage = null
+//        val target = Target.Builder()
+//            .setAnchor(100f, 100f)
+//            .setShape(Circle(100f))
+//            .setEffect(RippleEffect(100f, 200f, argb(30, 124, 255, 90)))
+//            .setOverlay(binding.root)
+//            .setOnTargetListener(object : OnTargetListener {
+//                override fun onStarted() {
+//                    makeText(this@MainActivity, "first target is started", Toast.LENGTH_SHORT).show()
+//                }
+//                override fun onEnded() {
+//                    makeText(this@MainActivity, "first target is ended", Toast.LENGTH_SHORT).show()
+//                }
+//            })
+//            .build()
+//
+//        val spotlight = Spotlight.Builder(this)
+//            .setDuration(3000L)
+//            .setBackgroundColorRes(R.color.deep_yellow)
+//            .setTargets(target)
+//            .setAnimation(DecelerateInterpolator(2f))
+//            .setContainer(binding.root)
+//            .setOnSpotlightListener(object : OnSpotlightListener {
+//                override fun onStarted() {
+//                    Toast.makeText(this@MainActivity, "spotlight is started", Toast.LENGTH_SHORT).show()
+//                }
+//                override fun onEnded() {
+//                    Toast.makeText(this@MainActivity, "spotlight is ended", Toast.LENGTH_SHORT).show()
+//                }
+//            })
+//            .build()
+//
+//        binding.root.doOnPreDraw { spotlight.start() }
+
+
+//        UserManager.customCurrentStage = null
+//        UserManager.customTotalStage = null
 
         // set activity instance
         instance = this
@@ -67,94 +121,103 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG) {
             plant(Timber.DebugTree())
         }
-//        binding.fluidBottomNavigation.items =
-//            listOf(
-//                FluidBottomNavigationItem(
-//                    getString(R.string.explore_fragment),
-//                    ContextCompat.getDrawable(this, R.drawable.location_black_icon)),
-//                FluidBottomNavigationItem(
-//                    getString(R.string.custom_fragment),
-//                    ContextCompat.getDrawable(this, R.drawable.custom_black_icon)),
-//                FluidBottomNavigationItem(
-//                    getString(R.string.community_fragment),
-//                    ContextCompat.getDrawable(this, R.drawable.community_black_icon)),
-//                FluidBottomNavigationItem(
-//                    getString(R.string.profile_fragment),
-//                    ContextCompat.getDrawable(this, R.drawable.profile_black_icon)))
-//        binding.fluidBottomNavigation.accentColor = ContextCompat.getColor(this, R.color.grey)
-//        binding.fluidBottomNavigation.backColor = ContextCompat.getColor(this, R.color.grey)
-//        binding.fluidBottomNavigation.textColor = ContextCompat.getColor(this, R.color.grey)
-//        binding.fluidBottomNavigation.iconColor = ContextCompat.getColor(this, R.color.grey)
-//        binding.fluidBottomNavigation.iconSelectedColor = ContextCompat.getColor(this, R.color.grey)
-//        binding.fluidBottomNavigation.onTabSelectedListener = object : OnTabSelectedListener {
-//            override fun onTabSelected(position: Int) {
-//                when (position) {
-//                    0 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalExploreFragment())
-//                    1 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCustomFragment())
-//                    2 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCommunityFragment())
-//                    3 -> findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalProfileFragment())
-//                }
-//            }
-//
-//        }
     }
     private fun setupBottomNav() {
-        val navController = Navigation.findNavController(this, R.id.myNavHostFragment)
+        navController = Navigation.findNavController(this, R.id.myNavHostFragment)
         binding.activityMainBottomNavigationView.setupWithNavController(navController)
         binding.activityMainBottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.exploreFragment -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalExploreFragment())
+                    navController.navigate(NavGraphDirections.actionGlobalExploreFragment())
                     return@setOnItemSelectedListener true
                 }
                 R.id.customFragment -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCustomFragment())
+                    navController.navigate(NavGraphDirections.actionGlobalCustomFragment())
                     return@setOnItemSelectedListener true
                 }
                 R.id.communityFragment -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalCommunityFragment())
+                    navController.navigate(NavGraphDirections.actionGlobalCommunityFragment())
                     return@setOnItemSelectedListener true
                 }
                 R.id.profileFragment -> {
-                    findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalProfileFragment())
+                    navController.navigate(NavGraphDirections.actionGlobalProfileFragment())
                     return@setOnItemSelectedListener true
                 }
             }
             false
         }
+
+        badge = binding.activityMainBottomNavigationView.getOrCreateBadge(R.id.profileFragment)
+        badge.isVisible = false
+        badge.backgroundColor = ContextCompat.getColor(this, R.color.red)
+        viewModel.notificationList.observe(this, Observer {
+            Timber.i("notifications $it manager notifications ${UserManager.readNotifications}")
+            val unReadNotifications = it.size - (UserManager.readNotifications ?: 0)
+            if (unReadNotifications != 0) {
+                badge.number = unReadNotifications
+                badge.isVisible = true
+            } else {
+                badge.isVisible = false
+            }
+        })
     }
 
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
+        binding.backIcon.setOnClickListener {
+            navController.navigateUp()
+        }
 
-        findNavController(R.id.myNavHostFragment).addOnDestinationChangedListener { navController: NavController, _: NavDestination, _: Bundle? ->
+        navController.addOnDestinationChangedListener { navController: NavController, _: NavDestination, _: Bundle? ->
             viewModel.currentFragmentType.value = when (navController.currentDestination?.id) {
                 R.id.exploreFragment -> CurrentFragmentType.EXPLORE
                 R.id.customFragment -> CurrentFragmentType.CUSTOM
                 R.id.communityFragment -> CurrentFragmentType.COMMUNITY
                 R.id.profileFragment -> CurrentFragmentType.PROFILE
+                R.id.challengeDetailFragment -> CurrentFragmentType.CHALLENGEDETAIL
+                R.id.customChallengeFragment -> CurrentFragmentType.CUSTOMDETAIL
+                R.id.overviewFragment -> CurrentFragmentType.OVERVIEW
+                R.id.likeChallengeFragment -> CurrentFragmentType.LIKE
+                R.id.joinFragment -> CurrentFragmentType.JOIN
+                R.id.notificationFragment -> CurrentFragmentType.NOTIFICATION
+                R.id.inviteFragment -> CurrentFragmentType.INVITE
+                R.id.challengeTypeFragment -> CurrentFragmentType.CHALLENGETYPE
                 else -> CurrentFragmentType.OTHER
             }
         }
         viewModel.currentFragmentType.observe(this, Observer { fragmentType ->
-
-            if (fragmentType.value == getString(R.string.other)) {
-                supportActionBar?.hide()
-                binding.activityMainBottomNavigationView.visibility = View.GONE
-            } else {
-                supportActionBar?.show()
+            // bottom navigation and back icon
+            if (fragmentType.value == getString(R.string.explore_fragment) ||
+                    fragmentType.value == getString(R.string.custom_fragment) ||
+                    fragmentType.value == getString(R.string.community_fragment) ||
+                    fragmentType.value == getString(R.string.profile_fragment)) {
                 binding.activityMainBottomNavigationView.visibility = View.VISIBLE
+                binding.backIcon.visibility = View.GONE
+            } else {
+                binding.activityMainBottomNavigationView.visibility = View.GONE
+                binding.backIcon.visibility = View.VISIBLE
             }
 
-            if (fragmentType.value == getString(R.string.explore_fragment)) {
-                binding.userIconExplore.visibility = View.VISIBLE
-                Glide.with(binding.userIconExplore.context).load(UserManager.user.icon).circleCrop().apply(
-                    RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
-                ).into(binding.userIconExplore)
-                binding.toolbarTitle.text = UserManager.user.name
+            // toolbar
+            if (fragmentType.value == getString(R.string.other) || fragmentType.value == getString(R.string.challenge_detail_fragment)) {
+                supportActionBar?.hide()
             } else {
-                binding.toolbarTitle.text = fragmentType.value
-                binding.userIconExplore.visibility = View.GONE
+                supportActionBar?.show()
+                when (fragmentType.value) {
+                    getString(R.string.explore_fragment) -> {
+                        binding.userIconExplore.visibility = View.VISIBLE
+                        Glide.with(binding.userIconExplore.context).load(UserManager.user.icon)
+                            .circleCrop().apply(
+                            RequestOptions().placeholder(R.drawable.ic_user_no_photo)
+                                .error(R.drawable.ic_user_no_photo)
+                        ).into(binding.userIconExplore)
+                        binding.toolbarTitle.text = UserManager.user.name
+                    }
+                    else -> {
+                        binding.toolbarTitle.text = fragmentType.value
+                        binding.userIconExplore.visibility = View.GONE
+                    }
+                }
             }
         })
     }
@@ -211,6 +274,14 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    // for Profile Fragment to use
+    fun cleanBadge() {
+        badge.isVisible = false
+    }
+    fun isBadgeVisible(): Boolean {
+        return badge.isVisible
     }
 
 

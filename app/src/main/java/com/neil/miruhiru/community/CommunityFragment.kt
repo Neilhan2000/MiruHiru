@@ -5,18 +5,23 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.databinding.FragmentCommunityBinding
+import com.neil.miruhiru.network.LoadingStatus
 import com.zhpan.bannerview.BannerViewPager
 import com.zhpan.bannerview.constants.IndicatorGravity
 import com.zhpan.bannerview.constants.PageStyle
 import com.zhpan.indicator.enums.IndicatorSlideMode
+import timber.log.Timber
 
 class CommunityFragment : Fragment() {
 
@@ -36,7 +41,7 @@ class CommunityFragment : Fragment() {
         // Banner View Pager
         viewPager = binding.bannerView as BannerViewPager<Challenge>
 
-        viewModel.bannerList.observe(viewLifecycleOwner, Observer{ challengeList ->
+        viewModel.bannerList.observe(viewLifecycleOwner, Observer { challengeList ->
             binding.bannerView.apply {
                 viewPager.adapter = BannerAdapter()
                 registerLifecycleObserver(lifecycle)
@@ -76,6 +81,27 @@ class CommunityFragment : Fragment() {
         binding.searchView.setOnClickListener {
             viewModel.sortChallenges(searchTag, binding.searchText.text.toString())
         }
+
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            Timber.i("status ${status.name}")
+            when (status) {
+                LoadingStatus.LOADING -> {
+                    binding.progressBar2.visibility = View.VISIBLE
+                    binding.progressBar3.visibility = View.VISIBLE
+                }
+                LoadingStatus.DONE -> {
+                    binding.progressBar2.visibility = View.GONE
+                    binding.progressBar3.visibility = View.GONE
+                }
+                LoadingStatus.ERROR -> {
+                    binding.progressBar2.visibility = View.GONE
+                    binding.progressBar3.visibility = View.GONE
+                    Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
         return binding.root
     }
 

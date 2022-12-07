@@ -86,17 +86,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/successTitle2" />
 
-    <ImageView
-        android:id="@+id/successImage2"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_success_image"
-        app:layout_constraintEnd_toEndOf="@+id/successContent2"
-        app:layout_constraintStart_toStartOf="@+id/successContent2"
-        app:layout_constraintTop_toTopOf="@+id/successContent2"
-        app:srcCompat="@drawable/ic_challenge_success" />
-
     <TextView
         android:id="@+id/successText2"
         android:layout_width="0dp"
@@ -114,7 +103,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/successContent2"
         app:layout_constraintEnd_toEndOf="@+id/successContent2"
         app:layout_constraintStart_toStartOf="@+id/successContent2"
-        app:layout_constraintTop_toBottomOf="@+id/successImage2" />
+        app:layout_constraintTop_toBottomOf="@+id/challengeSuccessIcon" />
 
     <View
         android:id="@+id/greyLine5"
@@ -158,4 +147,29 @@
         app:layout_constraintEnd_toEndOf="@+id/successText2"
         app:layout_constraintStart_toStartOf="@+id/successText2"
         app:layout_constraintTop_toBottomOf="@+id/greyLine5" />
+
+    <ImageView
+        android:id="@+id/challengeSuccessIcon"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_challenge_success"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/successContent2" />
+
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/deep_yellow"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

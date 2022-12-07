@@ -198,4 +198,28 @@ tools:context=".profile.ProfileFragment">
         mapbox:layout_constraintEnd_toEndOf="parent"
         mapbox:layout_constraintStart_toStartOf="parent"
         mapbox:layout_constraintTop_toBottomOf="@+id/settings" />
+
+    <TextView
+        android:id="@+id/notificationIcon"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginStart="42dp"
+        android:background="@drawable/circle_text_border"
+        android:visibility="gone"
+        mapbox:layout_constraintStart_toStartOf="@+id/notification"
+        mapbox:layout_constraintTop_toTopOf="@+id/notification" />
+
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/deep_yellow"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="visible"
+        mapbox:layout_constraintBottom_toBottomOf="@+id/profileCompletedChallenges"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toTopOf="@+id/profileCompletedChallenges" />
 </androidx.constraintlayout.widget.ConstraintLayout>

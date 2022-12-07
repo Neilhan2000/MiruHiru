@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="400dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <EditText
@@ -12,24 +12,23 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/button_border"
+        android:background="@drawable/chat_room_edit_text_border"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
-        android:paddingStart="4dp"
-        android:paddingLeft="3dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="38dp"
-        android:paddingBottom="4dp"
+        android:paddingStart="10dp"
+        android:paddingTop="4.5dp"
+        android:paddingEnd="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sendIcon"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerMessage"
+        android:id="@+id/messageRecycler"
         android:layout_width="0dp"
         android:layout_height="550dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -37,38 +36,76 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/closeIcon"
+        app:layout_constraintTop_toBottomOf="@+id/greyLine11"
         app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/closeIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_close" />
 
     <ImageView
         android:id="@+id/sendIcon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="4dp"
-        app:layout_constraintEnd_toEndOf="@+id/editTextMessage"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextMessage"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/editTextMessage"
-        app:srcCompat="@drawable/ic_send_blue" />
+        app:srcCompat="@drawable/ic_send_black" />
 
     <ImageView
         android:id="@+id/removePersonIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:visibility="invisible"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_person_remove" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/memberRecycler"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="@+id/removePersonIcon"
+        app:layout_constraintEnd_toStartOf="@+id/chatRoom"
+        app:layout_constraintStart_toEndOf="@+id/removePersonIcon"
+        app:layout_constraintTop_toTopOf="@+id/removePersonIcon"
+        app:reverseLayout="true"
+        app:stackFromEnd="true" />
+
+    <TextView
+        android:id="@+id/greyLine11"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/grey_cccccc"
+        app:layout_constraintBottom_toTopOf="@+id/messageRecycler"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/memberRecycler" />
+
+    <TextView
+        android:id="@+id/chatRoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="聊天室"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/removePersonIcon"
+        app:layout_constraintEnd_toStartOf="@+id/closeIcon"
+        app:layout_constraintStart_toEndOf="@+id/removePersonIcon"
+        app:layout_constraintTop_toTopOf="@+id/removePersonIcon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

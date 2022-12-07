@@ -5,14 +5,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.ChallengeInfo
 import com.neil.miruhiru.databinding.FragmentChallengeTypeBinding
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 
 
@@ -56,13 +60,26 @@ class ChallengeTypeFragment : Fragment() {
             viewModel.postEvent(eventId, challenge, "multiple")
         }
 
-        // enable back press, it has problem that its navigateUp is no working
-        requireActivity().onBackPressedDispatcher
-            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    this@ChallengeTypeFragment.findNavController().navigate(NavGraphDirections.actionGlobalExploreFragment())
-                }
-            })
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            if (status == LoadingStatus.LOADING) {
+                MainActivity.getInstanceFromMainActivity().window.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.VISIBLE
+            } else if (status == LoadingStatus.DONE) {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.GONE
+            } else {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun getRandomString() : String {

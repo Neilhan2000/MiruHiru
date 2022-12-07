@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -45,6 +46,7 @@ import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
@@ -52,6 +54,7 @@ import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.LocationInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentTaskBinding
+import com.neil.miruhiru.network.LoadingStatus
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -66,6 +69,7 @@ class TaskFragment : Fragment() {
     private val fromBottom: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.fab_form_bottom_anim) }
     private val toBottom: Animation by lazy { AnimationUtils.loadAnimation(requireContext(), R.anim.fab_to_bottom_anim) }
     private var clicked = false
+    private var hasMessages = false
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
         val cameraOptions = CameraOptions.Builder().center(it).zoom(15.0).build()
         mapView.getMapboxMap().setCamera(cameraOptions)
@@ -102,6 +106,9 @@ class TaskFragment : Fragment() {
             onAddButtonClick()
         }
         binding.fabChat.setOnClickListener {
+            binding.messageQuantity.clearAnimation()
+            binding.messageQuantity.visibility = View.INVISIBLE
+            hasMessages = false
             this.findNavController().navigate(NavGraphDirections.actionGlobalChatDialogFragment())
         }
         binding.fabAndroid.setOnClickListener {
@@ -146,7 +153,6 @@ class TaskFragment : Fragment() {
             val guildTextList = listOf<Task>(Task(), it[0], Task())
             guideAdapter.submitList(guildTextList)
             binding.guideTextRecycler.scrollToPosition(1)
-
         })
 
         viewModel.annotationList.observe(viewLifecycleOwner, Observer {
@@ -182,7 +188,7 @@ class TaskFragment : Fragment() {
                     if (viewModel.isMultiple == true) {
                         val defaultBuilder = AlertDialog.Builder(requireContext())
                             .setTitle("要退出挑戰嗎?")
-                            .setMessage("發現挑戰有其他玩家，退出後將無法再參與歐")
+                            .setMessage("挑戰為多人挑戰，退出後將無法再參與歐")
                             .setPositiveButton("確定", object: DialogInterface.OnClickListener{
                                 override fun onClick(p0: DialogInterface?, p1: Int) {
                                     viewModel.cleanEventMultiple()
@@ -251,7 +257,42 @@ class TaskFragment : Fragment() {
         })
         viewModel.detectUserKicked()
 
+        // observe messages and show unread quantity
+        viewModel.messageQuantity.observe(viewLifecycleOwner, Observer { quantity ->
+            Timber.i("quantity ${viewModel.messageQuantity.value}, user message ${UserManager.readMessages}")
+            val unreadMessages = quantity - UserManager.readMessages
 
+            if (unreadMessages != 0) {
+                binding.messageNotification.visibility = View.VISIBLE
+                binding.messageQuantity.text = unreadMessages.toString()
+                hasMessages = true
+            } else {
+                binding.messageNotification.visibility = View.INVISIBLE
+                hasMessages = false
+            }
+        })
+        viewModel.detectMessages()
+
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            if (status == LoadingStatus.LOADING) {
+                MainActivity.getInstanceFromMainActivity().window.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.VISIBLE
+            } else if (status == LoadingStatus.DONE) {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.GONE
+            } else {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+            }
+        })
 
 
         return binding.root
@@ -274,10 +315,18 @@ class TaskFragment : Fragment() {
             binding.fabChat.visibility = View.VISIBLE
             binding.fabAndroid.visibility = View.VISIBLE
             binding.fabLocation.visibility = View.VISIBLE
+            if (hasMessages) {
+                binding.messageQuantity.visibility = View.VISIBLE
+                binding.messageNotification.visibility = View.INVISIBLE
+            }
         } else {
             binding.fabChat.visibility = View.INVISIBLE
             binding.fabAndroid.visibility = View.INVISIBLE
             binding.fabLocation.visibility = View.INVISIBLE
+            if (hasMessages) {
+                binding.messageQuantity.visibility = View.INVISIBLE
+                binding.messageNotification.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -286,11 +335,17 @@ class TaskFragment : Fragment() {
             binding.fabChat.startAnimation(fromBottom)
             binding.fabAndroid.startAnimation(fromBottom)
             binding.fabLocation.startAnimation(fromBottom)
+            if (hasMessages) {
+                binding.messageQuantity.startAnimation(fromBottom)
+            }
             binding.fabAdd.startAnimation(rotateOpen)
         } else {
             binding.fabChat.startAnimation(toBottom)
             binding.fabAndroid.startAnimation(toBottom)
             binding.fabLocation.startAnimation(toBottom)
+            if (hasMessages) {
+                binding.messageQuantity.startAnimation(toBottom)
+            }
             binding.fabAdd.startAnimation(rotateClose)
         }
     }

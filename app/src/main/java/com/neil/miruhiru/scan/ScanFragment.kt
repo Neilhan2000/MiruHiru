@@ -43,7 +43,7 @@ class ScanFragment : Fragment() {
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) ==
                 PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), 123)
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), 123)
         } else {
             startScanning()
         }
@@ -54,13 +54,6 @@ class ScanFragment : Fragment() {
                 viewModel.navigateToTaskFragmentCompleted()
             }
         })
-
-
-
-
-
-
-
         return binding.root
     }
 
@@ -116,6 +109,7 @@ class ScanFragment : Fragment() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        Timber.i("onRequest")
         if (requestCode == 123) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(requireContext(), "camera permission granted", Toast.LENGTH_SHORT).show()

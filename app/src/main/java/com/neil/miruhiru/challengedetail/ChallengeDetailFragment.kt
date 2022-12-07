@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Button
@@ -29,8 +30,10 @@ import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import com.mapbox.maps.extension.style.expressions.dsl.generated.has
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
@@ -39,6 +42,7 @@ import com.neil.miruhiru.data.ChallengeInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
 import com.neil.miruhiru.factory.ChallengeDetailViewModelFactory
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
@@ -157,7 +161,7 @@ class ChallengeDetailFragment : Fragment() {
     }
 
     private fun showDialog(position: Int) {
-        val dialog = Dialog(requireContext())
+        val dialog = Dialog(requireContext(), R.style.fullScreenDialog)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.bottom_sheet_report)
         val reportButton = dialog.findViewById<Button>(R.id.reportButton)
@@ -175,7 +179,6 @@ class ChallengeDetailFragment : Fragment() {
             dialog.dismiss()
         }
         dialog.show()
-//        dialog.window?.setBackgroundDrawable()
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
@@ -189,7 +192,7 @@ class ChallengeDetailFragment : Fragment() {
     private fun setupScreen(challenge: Challenge) {
         binding.ChallengeTitle.text = challenge.name
         Glide.with(binding.challengeMainImage.context).load(challenge.image).centerCrop().apply(
-            RequestOptions().placeholder(R.drawable.ic_image_loading).error(R.drawable.ic_image_loading)
+            RequestOptions().placeholder(R.drawable.image_placeholder).error(R.drawable.image_placeholder)
         ).into(binding.challengeMainImage)
         challenge.totalRating?.let { binding.ratingBar.rating  = it }
         binding.ratingText.text = "${challenge.totalRating?.let { viewModel.roundOffDecimal(it) }} (${challenge.commentQuantity})"
@@ -209,15 +212,15 @@ class ChallengeDetailFragment : Fragment() {
         // like or unlike challenge
         challenge.location?.let { calculateAndShowDistance(it) }
 
-        challenge.likeList.forEach { likeUser ->
-            if (likeUser == UserManager.userId) {
-                like = true
-                binding.likeIcon.visibility = View.VISIBLE
-            } else {
-                like = false
-                binding.likeIcon.visibility = View.INVISIBLE
-            }
+
+        if (viewModel.isLike(challenge)) {
+            like = true
+            binding.likeIcon.visibility = View.VISIBLE
+        } else {
+            like = false
+            binding.likeIcon.visibility = View.INVISIBLE
         }
+
         binding.likeClick.setOnClickListener {
             if (like) {
                 binding.likeIcon.visibility = View.INVISIBLE
@@ -229,17 +232,42 @@ class ChallengeDetailFragment : Fragment() {
             like = !like
         }
 
+        binding.detailBackArrow.setOnClickListener {
+            this.findNavController().navigateUp()
+        }
+
         binding.startButton.setOnClickListener {
             viewModel.checkHasCurrentEvent(challengeId)
         }
         // observe to display author name
         viewModel.authorName.observe(viewLifecycleOwner, Observer {
-            binding.author.text = "created by $it"
+            binding.author.text = getString(R.string.created_by) + " $it"
+        })
+
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            if (status == LoadingStatus.LOADING) {
+                MainActivity.getInstanceFromMainActivity().window.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.VISIBLE
+            } else if (status == LoadingStatus.DONE) {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.GONE
+            } else {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+            }
         })
 
         // observe if has uncompleted event
         viewModel.hasCurrentEvent.observe(viewLifecycleOwner, Observer { hasEvent ->
-            if (hasEvent) {
+            if (hasEvent == true) {
                 val defaultBuilder = AlertDialog.Builder(requireContext())
                     .setTitle("發現上次儲存的紀錄")
                     .setMessage("要繼續上次的挑戰嗎?")
@@ -257,9 +285,10 @@ class ChallengeDetailFragment : Fragment() {
                     .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
                 defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
                     .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
-            } else {
+            } else if (hasEvent == false){
                 this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment(
                     ChallengeInfo(challenge.id, challenge.stage)))
+                viewModel.navigateToChallengeTypeFragmentCompleted()
             }
         })
     }
@@ -341,4 +370,6 @@ class ChallengeDetailFragment : Fragment() {
         }
         return iconRes
     }
+
+
 }

@@ -13,6 +13,7 @@ import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.User
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 
 class TaskSAndLogDViewModel(): ViewModel() {
@@ -45,8 +46,23 @@ class TaskSAndLogDViewModel(): ViewModel() {
     var stageNumber = -1
     var kickNumber = 1
 
-    private fun loadEvent(eventId: String) {
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
 
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
+
+    private fun loadEvent(eventId: String) {
         val db = Firebase.firestore
 
         db.collection("events").whereEqualTo("id" ,eventId)
@@ -72,7 +88,6 @@ class TaskSAndLogDViewModel(): ViewModel() {
                     // set user manager current stage
                     UserManager.currentStage = currentStage + 1
                     Timber.i("set current stage ${UserManager.currentStage}")
-
                     detectUsersProgress()
                 }
             }
@@ -172,19 +187,23 @@ class TaskSAndLogDViewModel(): ViewModel() {
                                                         .addOnSuccessListener {
                                                             UserManager.getUser()
                                                         }
+
                                                 }
+
                                         }
 
                                 }
+
                         }
                     }
                 }
-
             }
+
     }
 
 
     fun completeEvent() {
+        startLoading()
 
         // set event isCompleted to true
         val db = Firebase.firestore
@@ -250,6 +269,7 @@ class TaskSAndLogDViewModel(): ViewModel() {
                     UserManager.user = user
                     UserManager.currentStage = null
                     _navigateToLogFragment.value = true
+                    loadingCompleted()
                 }
             }
 

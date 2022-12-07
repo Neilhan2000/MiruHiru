@@ -14,9 +14,8 @@ import com.google.firebase.firestore.ktx.snapshots
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.UserManager
-import com.neil.miruhiru.data.Event
-import com.neil.miruhiru.data.Task
-import com.neil.miruhiru.data.User
+import com.neil.miruhiru.data.*
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 
 class TaskViewModel(application: Application): AndroidViewModel(application) {
@@ -39,12 +38,32 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
     val isKicked: LiveData<Boolean>
         get() = _isKicked
 
+    private val _messageQuantity = MutableLiveData<Int>()
+    val messageQuantity: LiveData<Int>
+        get() = _messageQuantity
+
     var currentStage = -1
     var totalStage = -1
     var isMultiple: Boolean? = null
 
     // we use this number to make sure that user be kicked only once
     var kickNumber = 1
+
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
 
     fun detectUserKicked() {
         val db = Firebase.firestore
@@ -83,15 +102,18 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                                                         .addOnSuccessListener {
                                                             UserManager.getUser()
                                                         }
+
                                                 }
+
                                         }
 
                                 }
+
                         }
                     }
                 }
-
             }
+
     }
 
     fun kickUser(userId: String) {
@@ -109,6 +131,8 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
 
 
     fun loadEventsWithTask(challengeDocumentId: String, eventId: String) {
+        startLoading()
+
         val db = Firebase.firestore
         val taskList = mutableListOf<Task>()
         val annotationList = mutableListOf<Task>()
@@ -145,6 +169,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                             Timber.i("task list size ${taskList.size} current stage$currentStage")
                             _taskList.value = taskList
                             _annotationList.value = annotationList
+                            loadingCompleted()
                         }
                         .addOnFailureListener { exception ->
                             Timber.i(exception, "Error getting documents.")
@@ -160,6 +185,8 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun loadEventsWithPersonalTask(customDocumentId: String, eventId: String) {
+        startLoading()
+
         val db = Firebase.firestore
         val taskList = mutableListOf<Task>()
         val annotationList = mutableListOf<Task>()
@@ -200,6 +227,7 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                                         Timber.i("task list size ${taskList.size} current stage$currentStage")
                                         _taskList.value = taskList
                                         _annotationList.value = annotationList
+                                        loadingCompleted()
                                     }
                             }
                     } else {
@@ -224,12 +252,15 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                                         Timber.i("task list size ${taskList.size} current stage$currentStage")
                                         _taskList.value = taskList
                                         _annotationList.value = annotationList
+                                        loadingCompleted()
                                     }
-                            }
-                    }
 
+                            }
+
+                    }
                 }
             }
+
     }
 
     private fun addTask(challengeId: String) {
@@ -276,7 +307,9 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
                         UserManager.getUser()
                         _navigateUp.value = true
                     }
+
             }
+
     }
 
     fun cleanEventMultiple() {
@@ -319,8 +352,6 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
 
                                     }
 
-
-
                             }
 
                     }
@@ -331,5 +362,26 @@ class TaskViewModel(application: Application): AndroidViewModel(application) {
 
     fun navigateUpCompleted() {
         _navigateUp.value = false
+    }
+
+    fun detectMessages() {
+        val db = Firebase.firestore
+
+        db.collection("events").whereEqualTo("id", UserManager.user.currentEvent)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference.collection("messages")
+                    .addSnapshotListener { value, error ->
+                        val messageList = value?.toObjects(Message::class.java) as MutableList
+
+                        messageList.removeIf {
+                            it.senderId == UserManager.userId
+                        }
+                        _messageQuantity.value = messageList.size
+                    }
+
+            }
+
     }
 }

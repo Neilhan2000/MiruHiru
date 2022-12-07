@@ -17,6 +17,7 @@ import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Feature
 import com.neil.miruhiru.data.Task
+import com.neil.miruhiru.network.LoadingStatus
 import com.neil.miruhiru.network.MapBoxApi
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -65,6 +66,22 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     private lateinit var job: Job
     private var jobInitialized = false
 
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
+
     var originalTask = Task()
 
     fun setTaskLocation(point: Point) {
@@ -84,6 +101,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun postTask() {
+        startLoading()
 
         val customTask = hashMapOf(
             "id" to UserManager.customCurrentStage.toString(),
@@ -118,7 +136,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
                         Timber.i("post task first ${UserManager.customCurrentStage}")
 
-                        // add challenge location
+                        // add challenge location(in the custom challenge fragment we don't have location so we add location here)
                         if (UserManager.customCurrentStage == 1) {
                             db.collection("users").document(userDocumentId).collection("customChallenges")
                                 .document(customChallengeDocumentId)
@@ -179,15 +197,21 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                         if (isLastStage.value == true) {
                                             UserManager.customCurrentStage = null
                                             UserManager.customTotalStage = null
+                                            loadingCompleted()
                                             _navigateToOverviewFragment.value = true
                                             customChallengeEditingCompleted()
                                         } else {
+                                            loadingCompleted()
                                             _navigateToCustomDetailFragment.value = true
                                         }
                                     }
+
                             }
+
                     }
+
             }
+
     }
 
     private fun customChallengeEditingCompleted() {
@@ -203,7 +227,9 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
                         it.documents[0].reference.update("finished", true)
                     }
+
             }
+
     }
 
     fun navigateToCustomDetailFragmentCompleted() {
@@ -244,8 +270,30 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
         return true
     }
 
+    fun isInputValidNoToast(): Boolean {
+        if (task.location.latitude == 0.0) {
+            return false
+        } else if (task.image.isEmpty()) {
+            return false
+        } else if (task.name.isEmpty()) {
+            return false
+        } else if (task.introduction.isEmpty()) {
+            return false
+        } else if (task.name.isEmpty()) {
+            return false
+        } else if (task.guide.isEmpty()) {
+            return false
+        } else if (task.question.isEmpty()) {
+            return false
+        } else if (task.answer.isEmpty()) {
+            return false
+        }
+        return true
+    }
 
     fun loadFirstOrUnfinishedEditing() {
+        startLoading()
+
         val db = Firebase.firestore
 
         db.collection("users").whereEqualTo("id", UserManager.userId)
@@ -279,11 +327,13 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                 if (challenge?.stage == it.documents.size + 1) {
                                     _isLastStage.value = true
                                 }
-
+                                loadingCompleted()
                             }
+
                     }
 
             }
+
     }
 
     fun setLastStage() {
@@ -291,6 +341,8 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun updateTask() {
+        startLoading()
+
         val db = Firebase.firestore
 
         db.collection("users").whereEqualTo("id", UserManager.userId)
@@ -303,6 +355,11 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                     .get()
                     .addOnSuccessListener {
                         val customChallengeDocumentId = it.documents[0].id
+
+                        // if stage equal to one we update the challenge location together
+                        if (continueEditingStage.value == 1) {
+                            it.documents[0].reference.update("location", task.location)
+                        }
 
                         db.collection("users").document(userDocumentId)
                             .collection("customChallenges")
@@ -332,6 +389,7 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                                             originalTask.image = task.image
                                         } else {
                                             _isUpdated.value = true
+                                            loadingCompleted()
                                         }
                                     }
                             }
@@ -350,15 +408,20 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
         Timber.i("store image")
         // store image
         if (task.image.isNotEmpty()) {
+            // set file name
             val formatter = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.getDefault())
             val now = Date()
             val fileName = formatter.format(now)
 
+            // get storage instance
             val storageReference = FirebaseStorage.getInstance().getReference("images/$fileName")
 
+            // put image file to storage
             storageReference.putFile(task.image.toUri())
                 .addOnSuccessListener {
+                    // put file success and we get the image uri
                     storageReference.downloadUrl.addOnSuccessListener {
+                        // then we update this uri to firebase data base
                         updateImage(it)
                     }
                 }
@@ -388,7 +451,10 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                             .get()
                             .addOnSuccessListener {
                                 it.documents[0].reference.update("image", uri)
-                                    .addOnSuccessListener { _isUpdated.value = true }
+                                    .addOnSuccessListener {
+                                        _isUpdated.value = true
+                                        loadingCompleted()
+                                    }
                             }
                     }
             }
@@ -407,7 +473,9 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
 
                         it.documents[0].reference.delete()
                     }
+
             }
+
     }
 
     fun searchPlace(place: String, limit: Int, accessToken: String) {

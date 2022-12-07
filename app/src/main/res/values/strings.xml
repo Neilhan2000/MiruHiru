@@ -6,6 +6,7 @@
     <string name="custom_fragment">自訂</string>
     <string name="community_fragment">社群</string>
     <string name="profile_fragment">個人</string>
+    <string name="challenge_detail_fragment">挑戰</string>
     <string name="title_activity_main_activitytwo">MainActivitytwo</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -42,4 +43,6 @@
     <string name="challenge_deleted">挑戰已刪除</string>
     <string name="popularity">熱門</string>
     <string name="no_gps">未開啟定位</string>
+    <string name="created_by">created by</string>
+    <string name="select_to_delete">選取挑戰刪除</string>
 </resources>

@@ -10,6 +10,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.network.LoadingStatus
 
 class CommunityViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -26,7 +27,25 @@ class CommunityViewModel(application: Application) : AndroidViewModel(applicatio
     private lateinit var challengeList: MutableList<Challenge>
     private lateinit var sortedList: MutableList<Challenge>
 
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
+
     fun loadChallengesByPopularity() {
+        startLoading()
+
         val db = Firebase.firestore
 
         db.collection("challenges").orderBy("commentQuantity", Query.Direction.DESCENDING)
@@ -47,6 +66,7 @@ class CommunityViewModel(application: Application) : AndroidViewModel(applicatio
                 } else {
                     _bannerList.value = challengeList
                 }
+                loadingCompleted()
             }
     }
 

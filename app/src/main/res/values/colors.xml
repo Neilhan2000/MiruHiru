@@ -14,11 +14,13 @@
     <color name="orange">#FF8C00</color>
     <color name="deep_yellow_no_change">#fcd340</color>
     <color name="grey">#8E8B81</color>
-    <color name="grey_cccccc">#cccccc</color>
+    <color name="grey_cccccc">#EBE7E7</color>
+    <color name="light_grey">#F8F5F5</color>
     <color name="food_type">#FFFFB907</color>
     <color name="history_type">#C6443B</color>
     <color name="couple_type">#F492B4</color>
     <color name="travel_type">#0A3963</color>
     <color name="special_type">#706969</color>
     <color name="green_progress">#4C9900</color>
+    <color name="red">#F44336</color>
 </resources>

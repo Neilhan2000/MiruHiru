@@ -20,6 +20,8 @@ object UserManager {
     private const val CUSTOM_CURRENT_STAGE = "custom_current_stage"
     private const val CUSTOM_TOTAL_STAGE = "custom_total_stage"
     private const val IS_PERSONAL = "is_personal"
+    private const val NOTIFICATION = "notification"
+    private const val MESSAGE = "message"
 
 
 
@@ -174,6 +176,33 @@ object UserManager {
                 }
             }
         }
+
+    // notifications
+    var readNotifications: Int? = null
+        get() = MiruHiruApplication.instance
+            .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE)
+            .getInt(NOTIFICATION, 0)
+        set(value) {
+            field = when (value) {
+                null -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .remove(NOTIFICATION)
+                        .apply()
+                    null
+                }
+                else -> {
+                    MiruHiruApplication.instance
+                        .getSharedPreferences(USER_DATA, Context.MODE_PRIVATE).edit()
+                        .putInt(NOTIFICATION, value)
+                        .apply()
+                    value
+                }
+            }
+        }
+
+    // messages
+    var readMessages = 0
 
 
     /**

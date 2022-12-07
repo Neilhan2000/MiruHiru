@@ -20,6 +20,7 @@ import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.customdetail.item.BottomSheetViewModel
 import com.neil.miruhiru.customdetail.item.BottomStepFragment
 import com.neil.miruhiru.data.Challenge
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,8 +39,28 @@ class CustomChallengeViewModel(application: Application) : AndroidViewModel(appl
     val navigateToCustomDetailFragment: LiveData<Boolean>
         get() = _navigateToCustomDetailFragment
 
-    fun postChallenge() {
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
 
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
+    }
+
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
+
+    fun postChallenge() {
+        startLoading()
+
+        // clean last editing stage
+        UserManager.customCurrentStage = null
+        UserManager.customTotalStage = null
         val customChallenge = hashMapOf(
             "commentQuantity" to 0,
             "completedList" to listOf<String>(),
@@ -104,7 +125,10 @@ class CustomChallengeViewModel(application: Application) : AndroidViewModel(appl
         db.collection("users").document(userDocumentId).collection("customChallenges")
             .document(customDocumentId)
             .update("image", uri)
-            .addOnSuccessListener { _navigateToCustomDetailFragment.value = true }
+            .addOnSuccessListener {
+                _navigateToCustomDetailFragment.value = true
+                loadingCompleted()
+            }
 
     }
 

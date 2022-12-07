@@ -16,9 +16,15 @@ import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.Event
 import com.neil.miruhiru.data.Task
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
+
+//    init {
+//        // load CompletedList here to prevent fragment onCreateView reloading
+//        loadCompletedChallenge()
+//    }
 
     private val viewModelApplication = application
 
@@ -37,12 +43,37 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     val eventList = mutableListOf<Event>()
 
-    init {
-        // load CompletedList here to prevent fragment onCreateView reloading
-        loadCompletedChallenge()
+//    lateinit var _loadingStatus: MutableLiveData<LoadingStatus>
+//    val loadingStatus: LiveData<LoadingStatus>
+//        get() = _loadingStatus
+
+    private val _loadingStatus = MutableLiveData<LoadingStatus>()
+    val loadingStatus: LiveData<LoadingStatus>
+        get() = _loadingStatus
+
+    private fun startLoading() {
+        _loadingStatus.value = LoadingStatus.LOADING
     }
 
-    private fun loadCompletedChallenge() {
+    private fun loadingCompleted() {
+        _loadingStatus.value = LoadingStatus.DONE
+    }
+
+    private fun loadingError() {
+        _loadingStatus.value = LoadingStatus.ERROR
+    }
+
+    // prevent adding repeated challenge to list
+    fun cleanCompletedChallengeList() {
+        completedChallengeList = mutableListOf()
+    }
+
+    fun loadCompletedChallenge() {
+        startLoading()
+        if (UserManager.user.completedEvents.isEmpty()) {
+            loadingCompleted()
+        }
+        Timber.i("completeEvents" + UserManager.user.completedEvents)
 
         val db = Firebase.firestore
 
@@ -65,6 +96,8 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                                 if (challenge != null) {
                                     completedChallengeList.add(challenge)
                                 }
+                                Timber.i("user manager list" + UserManager.user.completedEvents.size +
+                                        "completedChallengeList" + completedChallengeList.size)
                                 if (completedChallengeList.size == UserManager.user.completedEvents.size) {
 
                                     // sort event to list
@@ -87,12 +120,13 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                                             completedChallengeList.add(it)
                                         }
                                     }
-
                                     _completedChallengeList.value = completedChallengeList.reversed()
+                                    loadingCompleted()
 
                                 }
                             }
                     } else {
+                        Timber.i("personal")
                         db.collection("users").whereEqualTo("id", event?.members?.first())
                             .get()
                             .addOnSuccessListener {
@@ -130,6 +164,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                                             }
 
                                             _completedChallengeList.value = completedChallengeList.reversed()
+                                            loadingCompleted()
                                         }
                                     }
 
@@ -149,6 +184,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     fun signOut() {
         googleSignInClient.signOut().addOnCompleteListener {
             _navigateToSignInFragment.value = true
+            UserManager.readNotifications = null
         }
     }
 

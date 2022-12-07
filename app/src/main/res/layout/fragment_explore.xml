@@ -17,6 +17,23 @@
         mapbox:layout_constraintStart_toStartOf="parent"
         mapbox:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/myLocationIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/light_yellow"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_target"
+        mapbox:borderWidth="0dp"
+        mapbox:elevation="6dp"
+        mapbox:layout_constraintBottom_toBottomOf="parent"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:maxImageSize="35dp"
+        mapbox:tint="@android:color/white" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/locationCardView"
         android:layout_width="match_parent"
@@ -26,6 +43,7 @@
         android:layout_marginBottom="10dp"
         android:visibility="gone"
         mapbox:cardCornerRadius="15dp"
+        mapbox:cardElevation="6.5dp"
         mapbox:layout_constraintBottom_toBottomOf="@+id/mapView"
         mapbox:layout_constraintEnd_toEndOf="parent"
         mapbox:layout_constraintStart_toStartOf="parent">
@@ -36,14 +54,18 @@
 
             <TextView
                 android:id="@+id/challengeTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:singleLine="true"
                 android:text="AppWorks美食大挑戰"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                mapbox:layout_constraintEnd_toEndOf="parent"
                 mapbox:layout_constraintStart_toEndOf="@+id/challengeImage"
                 mapbox:layout_constraintTop_toTopOf="parent" />
 
@@ -52,9 +74,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:text="@string/no_gps"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                android:text="@string/no_gps"
                 mapbox:layout_constraintBottom_toBottomOf="@+id/locationIcon"
                 mapbox:layout_constraintStart_toEndOf="@+id/locationIcon"
                 mapbox:layout_constraintTop_toTopOf="@+id/locationIcon" />
@@ -95,7 +117,7 @@
                 mapbox:layout_constraintStart_toEndOf="@+id/timeIcon"
                 mapbox:layout_constraintTop_toTopOf="@+id/timeIcon" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/challengeImage"
                 android:layout_width="100dp"
                 android:layout_height="0dp"
@@ -106,6 +128,7 @@
                 mapbox:layout_constraintBottom_toBottomOf="parent"
                 mapbox:layout_constraintStart_toStartOf="parent"
                 mapbox:layout_constraintTop_toTopOf="parent"
+                mapbox:shapeAppearance="@style/AllCornerStyle"
                 mapbox:srcCompat="@drawable/anya_icon" />
 
             <ImageView
@@ -163,16 +186,6 @@
         mapbox:mapbox_cameraZoom="7.0">
 
     </com.mapbox.maps.MapView>
-
-    <ImageView
-        android:id="@+id/myLocationIcon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_target"
-        mapbox:layout_constraintBottom_toBottomOf="parent"
-        mapbox:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

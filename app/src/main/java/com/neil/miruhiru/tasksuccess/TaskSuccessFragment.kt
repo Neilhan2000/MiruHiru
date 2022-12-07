@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
@@ -15,10 +16,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.databinding.FragmentTaskSuccessBinding
+import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 
 class TaskSuccessFragment : Fragment() {
@@ -55,6 +58,13 @@ class TaskSuccessFragment : Fragment() {
                     viewModel.completeEvent()
                     viewModel.completeChallenge()
                 }
+
+                requireActivity().onBackPressedDispatcher
+                    .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                        override fun handleOnBackPressed() {
+                            Toast.makeText(requireContext(), "按下完成挑戰才讓你離開OUo", Toast.LENGTH_SHORT).show()
+                        }
+                    })
             }
         })
 
@@ -113,6 +123,33 @@ class TaskSuccessFragment : Fragment() {
                     // do nothing
                 }
             })
+
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            Timber.i("status ${status.name}")
+            when (status) {
+                LoadingStatus.LOADING -> {
+                    MainActivity.getInstanceFromMainActivity().window.setFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.VISIBLE
+                }
+                LoadingStatus.DONE -> {
+                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.GONE
+                }
+                LoadingStatus.ERROR -> {
+                    MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
+                    binding.progressBar2.visibility = View.GONE
+                    Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
 
         return binding.root
     }
