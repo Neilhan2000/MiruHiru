@@ -1,5 +1,8 @@
 package com.neil.miruhiru.custom.item
 
+import android.app.Application
+import android.widget.Toast
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +15,9 @@ import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.network.LoadingStatus
 import timber.log.Timber
 
-class MyCustomViewModel : ViewModel() {
+class MyCustomViewModel(application: Application) : AndroidViewModel(application) {
+
+    val viewModelApplication = application
 
     private val _myCustomList = MutableLiveData<List<Challenge>>()
     val myCustomList: LiveData<List<Challenge>>
@@ -60,35 +65,40 @@ class MyCustomViewModel : ViewModel() {
         val db = Firebase.firestore
         val myCustomList = _myCustomList.value as MutableList
 
-        db.collection("users").whereEqualTo("id", UserManager.userId)
-            .get()
-            .addOnSuccessListener {
-                val removeList = mutableListOf<Challenge>()
+        if (selectedPositions.isEmpty()) {
+            loadingCompleted()
+            Toast.makeText(viewModelApplication, "未選取內容", Toast.LENGTH_SHORT).show()
+        } else {
+            db.collection("users").whereEqualTo("id", UserManager.userId)
+                .get()
+                .addOnSuccessListener {
+                    val removeList = mutableListOf<Challenge>()
 
-                selectedPositions.forEach { position ->
-                    Timber.i("delete $position")
-                    it.documents[0].reference.collection("customChallenges")
-                        .whereEqualTo("id", _myCustomList.value?.get(position)?.id)
-                        .get()
-                        .addOnSuccessListener {
-                            removeList.add(myCustomList[position])
+                    selectedPositions.forEach { position ->
+                        Timber.i("delete $position")
+                        it.documents[0].reference.collection("customChallenges")
+                            .whereEqualTo("id", _myCustomList.value?.get(position)?.id)
+                            .get()
+                            .addOnSuccessListener {
+                                removeList.add(myCustomList[position])
 
-                            it.documents[0].reference
-                                .delete()
-                                .addOnSuccessListener {
-                                    if (removeList.size == selectedPositions.size) {
-                                        cleanSelectedPositions()
-                                        cancelLongClick()
-                                        myCustomList.removeAll(removeList)
-                                        _myCustomList.value = myCustomList
-                                        loadingCompleted()
+                                it.documents[0].reference
+                                    .delete()
+                                    .addOnSuccessListener {
+                                        if (removeList.size == selectedPositions.size) {
+                                            cleanSelectedPositions()
+                                            cancelLongClick()
+                                            myCustomList.removeAll(removeList)
+                                            _myCustomList.value = myCustomList
+                                            loadingCompleted()
+                                        }
                                     }
-                                }
 
-                        }
+                            }
 
+                    }
                 }
-            }
+        }
 
     }
 

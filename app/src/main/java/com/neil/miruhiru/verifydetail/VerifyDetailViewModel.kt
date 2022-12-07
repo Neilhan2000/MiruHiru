@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -78,10 +80,13 @@ class VerifyDetailViewModel : ViewModel() {
                 it.documents[0].reference.delete()
             }
 
-        // update user custom challenge status
+        // update user custom challenge status and public challenges number
         db.collection("users").whereEqualTo("id", _unverifiedChallenge.value?.author)
             .get()
             .addOnSuccessListener {
+
+                it.documents[0].reference
+                    .update("publicChallenges", FieldValue.increment(1))
 
                 it.documents[0].reference.collection("customChallenges").whereEqualTo("id", challengeId)
                     .get()

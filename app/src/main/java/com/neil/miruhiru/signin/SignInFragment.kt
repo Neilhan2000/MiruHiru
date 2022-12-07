@@ -66,7 +66,6 @@ class SignInFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GOOGLE_SIGN_IN_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-
             viewModel.handleSignInResult(task)
         }
     }

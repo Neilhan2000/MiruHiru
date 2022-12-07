@@ -34,7 +34,11 @@ class ChallengeAdapter(val onclick: (String) -> Unit) : ListAdapter<Challenge, C
             val geoCoder = Geocoder(itemView.context, Locale.getDefault())
             val address = geoCoder.getFromLocation(item.location.latitude, item.location.longitude, 1)
             if (address.size > 0) {
-                binding.communityChallengeLocation.text = "${address[0].countryName}, ${address[0].adminArea}"
+                if (address[0].adminArea != null) {
+                    binding.communityChallengeLocation.text = "${address[0].countryName}, ${address[0].adminArea}"
+                } else {
+                    binding.communityChallengeLocation.text = "${address[0].countryName}"
+                }
             }
             itemView.setOnClickListener {
                 onclick(item.id)

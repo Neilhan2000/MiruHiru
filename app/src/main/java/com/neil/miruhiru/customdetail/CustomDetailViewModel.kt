@@ -270,6 +270,26 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
         return true
     }
 
+    fun isInputValidNoToast(): Boolean {
+        if (task.location.latitude == 0.0) {
+            return false
+        } else if (task.image.isEmpty()) {
+            return false
+        } else if (task.name.isEmpty()) {
+            return false
+        } else if (task.introduction.isEmpty()) {
+            return false
+        } else if (task.name.isEmpty()) {
+            return false
+        } else if (task.guide.isEmpty()) {
+            return false
+        } else if (task.question.isEmpty()) {
+            return false
+        } else if (task.answer.isEmpty()) {
+            return false
+        }
+        return true
+    }
 
     fun loadFirstOrUnfinishedEditing() {
         startLoading()
@@ -336,6 +356,11 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
                     .addOnSuccessListener {
                         val customChallengeDocumentId = it.documents[0].id
 
+                        // if stage equal to one we update the challenge location together
+                        if (continueEditingStage.value == 1) {
+                            it.documents[0].reference.update("location", task.location)
+                        }
+
                         db.collection("users").document(userDocumentId)
                             .collection("customChallenges")
                             .document(customChallengeDocumentId).collection("tasks")
@@ -383,15 +408,20 @@ class CustomDetailViewModel(application: Application) : AndroidViewModel(applica
         Timber.i("store image")
         // store image
         if (task.image.isNotEmpty()) {
+            // set file name
             val formatter = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.getDefault())
             val now = Date()
             val fileName = formatter.format(now)
 
+            // get storage instance
             val storageReference = FirebaseStorage.getInstance().getReference("images/$fileName")
 
+            // put image file to storage
             storageReference.putFile(task.image.toUri())
                 .addOnSuccessListener {
+                    // put file success and we get the image uri
                     storageReference.downloadUrl.addOnSuccessListener {
+                        // then we update this uri to firebase data base
                         updateImage(it)
                     }
                 }

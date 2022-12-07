@@ -53,7 +53,11 @@ class MyCustomAdapter(val viewModel: MyCustomViewModel, val onClick: (String) ->
             val geoCoder = Geocoder(itemView.context, Locale.getDefault())
             val address = geoCoder.getFromLocation(item.location.latitude, item.location.longitude, 1)
             if (address.size > 0) {
-                binding.locationText.text = "${address[0].countryName}, ${address[0].adminArea}"
+                if (address[0].adminArea != null) {
+                    binding.locationText.text = "${address[0].countryName}, ${address[0].adminArea}"
+                } else {
+                    binding.locationText.text = "${address[0].countryName}"
+                }
             }
 
             // long click to open delete mode

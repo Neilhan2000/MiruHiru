@@ -88,6 +88,7 @@ class ProfileFragment : Fragment() {
                     RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
                 ).into(binding.profileIcon)
                 binding.profileName.text = "名稱：" + UserManager.user.name
+                binding.profileCreateChallenges.text = "完成的挑戰數量：" + "${UserManager.user.publicChallenges}"
                 viewModel.cleanCompletedChallengeList()
                 viewModel.loadCompletedChallenge()
             }

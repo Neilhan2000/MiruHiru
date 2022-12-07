@@ -100,7 +100,8 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
             "blockList" to listOf<String>(),
             "icon" to account.photoUrl,
             "completedEvents" to listOf<String>(),
-            "likeChallenges" to listOf<String>()
+            "likeChallenges" to listOf<String>(),
+            "publicChallenges" to 0
         )
 
         db.collection("users")

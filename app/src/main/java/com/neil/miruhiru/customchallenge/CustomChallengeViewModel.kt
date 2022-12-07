@@ -58,6 +58,9 @@ class CustomChallengeViewModel(application: Application) : AndroidViewModel(appl
     fun postChallenge() {
         startLoading()
 
+        // clean last editing stage
+        UserManager.customCurrentStage = null
+        UserManager.customTotalStage = null
         val customChallenge = hashMapOf(
             "commentQuantity" to 0,
             "completedList" to listOf<String>(),
