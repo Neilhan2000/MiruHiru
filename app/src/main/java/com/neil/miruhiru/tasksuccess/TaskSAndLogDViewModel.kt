@@ -299,12 +299,16 @@ class TaskSAndLogDViewModel(): ViewModel() {
                     .addSnapshotListener { value, error ->
                         val event = value?.toObject<Event>()
                         event?.progress?.let {
-                            // check if all user have same progress
-                            Timber.i("progress changes = $it")
-                            _isButtonClickable.value = it.first() == it.last()
+                            if (it.size > 0) {
+                                // check if all user have same progress
+                                Timber.i("progress changes = $it")
+                                _isButtonClickable.value = it.first() == it.last()
+                            }
                         }
                     }
+
             }
+
     }
 
     fun removeDetectUsersProgress() {

@@ -12,8 +12,6 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
@@ -30,8 +28,7 @@ import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.databinding.FragmentExploreBinding
-import com.neil.miruhiru.ext.glideImage
-import timber.log.Timber
+import com.neil.miruhiru.ext.glideImageCenter
 
 /**
  * Created by Neil Tsai in Dec. 2022.
@@ -179,7 +176,7 @@ class ExploreFragment : Fragment() {
         binding.locationCardView.startAnimation(slideUp)
         binding.challengeTitle.text = challenge.name
         binding.challengeStage.text = challenge.stage.toString()
-        binding.challengeImage.glideImage(challenge.image)
+        binding.challengeImage.glideImageCenter(challenge.image, R.drawable.image_placeholder)
 
         val hours = challenge.timeSpent.div(ONE_HOUR)
         val totalRating = viewModel.roundOffDecimal(challenge.totalRating).toString()

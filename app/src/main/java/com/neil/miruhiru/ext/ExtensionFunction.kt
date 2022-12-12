@@ -6,8 +6,14 @@ import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.MiruHiruApplication
 import com.neil.miruhiru.R
 
-fun ImageView.glideImage(uri: String) {
+fun ImageView.glideImageCenter(uri: String, placeHolder: Int) {
     Glide.with(this.context).load(uri).centerCrop().apply(
-        RequestOptions().placeholder(R.drawable.image_placeholder).error(R.drawable.image_placeholder)
+        RequestOptions().placeholder(placeHolder).error(placeHolder)
+    ).into(this)
+}
+
+fun ImageView.glideImageCircle(uri: String, placeHolder: Int) {
+    Glide.with(this.context).load(uri).circleCrop().apply(
+        RequestOptions().placeholder(placeHolder).error(placeHolder)
     ).into(this)
 }
