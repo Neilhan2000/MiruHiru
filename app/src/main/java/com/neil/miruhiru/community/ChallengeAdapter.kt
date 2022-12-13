@@ -16,6 +16,7 @@ import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.databinding.ItemCommunityChallengeBinding
 import com.neil.miruhiru.databinding.ItemCommunityTagBinding
+import com.neil.miruhiru.util.Util.getString
 import timber.log.Timber
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -30,7 +31,12 @@ class ChallengeAdapter(val onclick: (String) -> Unit) : ListAdapter<Challenge, C
                 RequestOptions().placeholder(R.drawable.image_placeholder).error(R.drawable.image_placeholder)
             ).into(binding.CommunityChallengeImage)
             binding.communityChallnegeName.text = item.name
-            binding.communityChallengeRating.text = "${roundOffDecimal(item.totalRating)} (${item.commentQuantity})"
+            if (item.commentQuantity.toInt() != 0) {
+                binding.communityChallengeRating.text =
+                    "${roundOffDecimal(item.totalRating)} (${item.commentQuantity})"
+            } else {
+                binding.communityChallengeRating.text = getString(R.string.no_comment)
+            }
             val geoCoder = Geocoder(itemView.context, Locale.getDefault())
             val address = geoCoder.getFromLocation(item.location.latitude, item.location.longitude, 1)
             if (address.size > 0) {

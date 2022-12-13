@@ -123,9 +123,7 @@ class ChallengeDetailFragment : Fragment() {
         }
 
         // set recyclerView adapter
-        val adapter = CommentAdapter(
-            viewModel
-        ) { position ->
+        val adapter = CommentAdapter(viewModel) { position ->
             showDialog(position)
         }
         binding.recyclerComment.adapter = adapter
@@ -211,7 +209,6 @@ class ChallengeDetailFragment : Fragment() {
 
         // like or unlike challenge
         challenge.location?.let { calculateAndShowDistance(it) }
-
 
         if (viewModel.isLike(challenge)) {
             like = true

@@ -200,6 +200,7 @@ class OverviewFragment : Fragment() {
     }
 
     private fun resetStartButton() {
+        Timber.i("reset ${viewModel.editingCompleted.value}")
         if (viewModel.editingCompleted.value == true) {
             binding.startCustomButton.text = getString(R.string.challenge)
             binding.startCustomButton.setOnClickListener(null)

@@ -145,9 +145,6 @@ class MainActivity : AppCompatActivity() {
     private fun setupToolbar() {
 
         setSupportActionBar(binding.toolbar)
-        binding.backIcon.setOnClickListener {
-            navController.navigateUp()
-        }
 
         navController.addOnDestinationChangedListener { navController: NavController, _: NavDestination, _: Bundle? ->
             viewModel.currentFragmentType.value = when (navController.currentDestination?.id) {
@@ -180,6 +177,17 @@ class MainActivity : AppCompatActivity() {
             } else {
                 binding.activityMainBottomNavigationView.visibility = View.GONE
                 binding.backIcon.visibility = View.VISIBLE
+            }
+
+            // overview fragment back icon press
+            if (fragmentType.value == getString(R.string.overview_fragment)) {
+                binding.backIcon.setOnClickListener {
+                    navController.navigate(NavGraphDirections.actionGlobalCustomFragment(1))
+                }
+            } else {
+                binding.backIcon.setOnClickListener {
+                    navController.navigateUp()
+                }
             }
 
             // set toolbar

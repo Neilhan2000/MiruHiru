@@ -7,6 +7,7 @@
     <string name="community_fragment">社群</string>
     <string name="profile_fragment">個人</string>
     <string name="challenge_detail_fragment">挑戰</string>
+    <string name="overview_fragment">總覽</string>
     <string name="title_activity_main_activitytwo">MainActivitytwo</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -59,5 +60,6 @@
     <string name="internet_not_connected">尚未連接網路歐歐 (ゝ∀･)b</string>
     <string name="loading_fail">載入失敗 ヽ(゜▽゜　)－C (/;◇;)/~[拖走]</string>
     <string name="error_getting_document">error getting document ｡･ﾟ･(ﾉД`)ヽ(ﾟДﾟ )秀秀</string>
+    <string name="no_comment">無評價</string>
 
 </resources>
