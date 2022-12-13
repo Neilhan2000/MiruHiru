@@ -57,7 +57,7 @@ class OverviewFragment : Fragment() {
             if (jobInitialized) { job.cancel() }
             recyclerView.adapter?.notifyItemMoved(startPosition, endPosition)
 
-            Timber.i("duration ${recyclerView.itemAnimator?.moveDuration}")
+            Timber.i("animation duration ${recyclerView.itemAnimator?.moveDuration}")
             recyclerView.adapter?.itemCount?.let { itemCount ->
                 scope.launch {
                     job = launch {

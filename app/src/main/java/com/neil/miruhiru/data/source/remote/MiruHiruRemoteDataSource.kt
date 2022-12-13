@@ -190,6 +190,7 @@ object MiruHiruRemoteDataSource : MiruHiruDataSource {
             .addSnapshotListener { value, exception ->
 
                 if (exception != null) {
+
                     Timber.i(getString(R.string.error_getting_document) + exception.message)
                 } else {
 
@@ -199,9 +200,11 @@ object MiruHiruRemoteDataSource : MiruHiruDataSource {
                             notificationList.add(notification)
                         }
                     }
+                    liveData.value = notificationList
+                    Timber.i("liveData value ${liveData.value}")
                 }
-                liveData.value = notificationList
             }
+
         return liveData
     }
 }

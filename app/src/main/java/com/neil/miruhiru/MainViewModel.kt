@@ -122,60 +122,59 @@ class MainViewModel(private val repository: MiruHiruRepository): ViewModel() {
         }
     }
 
-    fun detectNotifications() {
-
-        coroutineScope.launch {
-
-            val resultUser = repository.getUserDocumentId()
-            when (resultUser) {
-                is Result.Success -> {
-                    _error.value = null
-                }
-                is Result.Fail -> {
-                    _error.value = resultUser.error
-                }
-                is Result.Error -> {
-                    _error.value = resultUser.exception.toString()
-                }
-                else -> {
-                    _error.value = getString(R.string.loading_fail)
-                }
-            }
-
-            if (resultUser is Result.Success) {
-
-                val resultNotification = repository.detectNotifications(resultUser.data)
-                _error.value = null
-                _notificationList = resultNotification
-                // Notification不會顯示
-            }
-        }
-    }
-
 //    fun detectNotifications() {
-//        val db = Firebase.firestore
 //
-//        db.collection("users").whereEqualTo("id", UserManager.userId)
-//            .get()
-//            .addOnSuccessListener {
+//        coroutineScope.launch {
 //
-//                it.documents[0].reference.collection("notifications")
-//                    .addSnapshotListener { value, error ->
-//                        val notificationList = mutableListOf<Notification>()
-//
-//                        value?.documents?.forEach {
-//                            val notification = it.toObject<Notification>()
-//                            if (notification != null) {
-//                                notificationList.add(notification)
-//                            }
-//                        }
-//                        _notificationList.value = notificationList
-//                        Timber.i("error $error")
-//                    }
-//
+//            val resultUser = repository.getUserDocumentId()
+//            when (resultUser) {
+//                is Result.Success -> {
+//                    _error.value = null
+//                }
+//                is Result.Fail -> {
+//                    _error.value = resultUser.error
+//                }
+//                is Result.Error -> {
+//                    _error.value = resultUser.exception.toString()
+//                }
+//                else -> {
+//                    _error.value = getString(R.string.loading_fail)
+//                }
 //            }
 //
+//            if (resultUser is Result.Success) {
+//
+//                val resultNotification = repository.detectNotifications(resultUser.data)
+//                _error.value = null
+//                _notificationList = resultNotification
+//            }
+//        }
 //    }
+
+    fun detectNotifications() {
+        val db = Firebase.firestore
+
+        db.collection("users").whereEqualTo("id", UserManager.userId)
+            .get()
+            .addOnSuccessListener {
+
+                it.documents[0].reference.collection("notifications")
+                    .addSnapshotListener { value, error ->
+                        val notificationList = mutableListOf<Notification>()
+
+                        value?.documents?.forEach {
+                            val notification = it.toObject<Notification>()
+                            if (notification != null) {
+                                notificationList.add(notification)
+                            }
+                        }
+                        _notificationList.value = notificationList
+                        Timber.i("error $error")
+                    }
+
+            }
+
+    }
 
     override fun onCleared() {
         super.onCleared()
