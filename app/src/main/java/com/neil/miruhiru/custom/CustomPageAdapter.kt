@@ -20,5 +20,4 @@ class CustomPageAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
             else -> MyCustomFragment()
         }
     }
-
 }

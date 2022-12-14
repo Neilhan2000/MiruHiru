@@ -1,13 +1,9 @@
 package com.neil.miruhiru.custom.item
 
-import android.graphics.Color
 import android.location.Geocoder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,8 +12,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.databinding.ItemMyCustomChallengeBinding
-import kotlinx.coroutines.*
-import timber.log.Timber
 import java.util.*
 
 

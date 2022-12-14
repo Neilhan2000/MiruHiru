@@ -9,6 +9,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import android.widget.Toast.makeText
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -32,6 +33,11 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.neil.miruhiru.data.Notification
 import com.neil.miruhiru.databinding.ActivityMainBinding
+import com.neil.miruhiru.ext.getVmFactory
+import com.neil.miruhiru.ext.glideImageCircle
+import com.neil.miruhiru.util.Util.showDialog2Options
+import com.neil.miruhiru.util.Util.showDialog3Options
+import com.neil.miruhiru.util.Util.showToast
 import com.takusemba.spotlight.OnSpotlightListener
 import com.takusemba.spotlight.OnTargetListener
 import com.takusemba.spotlight.Spotlight
@@ -41,15 +47,16 @@ import com.takusemba.spotlight.shape.Circle
 import timber.log.Timber
 import timber.log.Timber.Forest.plant
 
-
+/**
+ * Created by Neil Tsai on Dec 2022.
+ */
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     lateinit var badge: BadgeDrawable
     private lateinit var navController: NavController
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java)
-    }
+
+    private val viewModel by viewModels<MainViewModel> { getVmFactory() }
 
     companion object {
         private lateinit var instance: MainActivity
@@ -58,12 +65,14 @@ class MainActivity : AppCompatActivity() {
             return instance
         }
     }
-
-    @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // set activity instance
+        instance = this
 
         // toolbar
         UserManager.userLiveData.observe(this, Observer {
@@ -71,48 +80,15 @@ class MainActivity : AppCompatActivity() {
             viewModel.detectNotifications()
         })
 
-//        val target = Target.Builder()
-//            .setAnchor(100f, 100f)
-//            .setShape(Circle(100f))
-//            .setEffect(RippleEffect(100f, 200f, argb(30, 124, 255, 90)))
-//            .setOverlay(binding.root)
-//            .setOnTargetListener(object : OnTargetListener {
-//                override fun onStarted() {
-//                    makeText(this@MainActivity, "first target is started", Toast.LENGTH_SHORT).show()
-//                }
-//                override fun onEnded() {
-//                    makeText(this@MainActivity, "first target is ended", Toast.LENGTH_SHORT).show()
-//                }
-//            })
-//            .build()
-//
-//        val spotlight = Spotlight.Builder(this)
-//            .setDuration(3000L)
-//            .setBackgroundColorRes(R.color.deep_yellow)
-//            .setTargets(target)
-//            .setAnimation(DecelerateInterpolator(2f))
-//            .setContainer(binding.root)
-//            .setOnSpotlightListener(object : OnSpotlightListener {
-//                override fun onStarted() {
-//                    Toast.makeText(this@MainActivity, "spotlight is started", Toast.LENGTH_SHORT).show()
-//                }
-//                override fun onEnded() {
-//                    Toast.makeText(this@MainActivity, "spotlight is ended", Toast.LENGTH_SHORT).show()
-//                }
-//            })
-//            .build()
-//
-//        binding.root.doOnPreDraw { spotlight.start() }
-
-
-//        UserManager.customCurrentStage = null
-//        UserManager.customTotalStage = null
-
-        // set activity instance
-        instance = this
-
         // bottom navigation
         setupBottomNav()
+
+        // firebase error
+        viewModel.error.observe(this, Observer {
+            if (it != null) {
+                showToast(it)
+            }
+        })
 
         // login
         userLogin()
@@ -122,7 +98,9 @@ class MainActivity : AppCompatActivity() {
             plant(Timber.DebugTree())
         }
     }
+
     private fun setupBottomNav() {
+
         navController = Navigation.findNavController(this, R.id.myNavHostFragment)
         binding.activityMainBottomNavigationView.setupWithNavController(navController)
         binding.activityMainBottomNavigationView.setOnItemSelectedListener { item ->
@@ -149,8 +127,10 @@ class MainActivity : AppCompatActivity() {
 
         badge = binding.activityMainBottomNavigationView.getOrCreateBadge(R.id.profileFragment)
         badge.isVisible = false
-        badge.backgroundColor = ContextCompat.getColor(this, R.color.red)
+        badge.backgroundColor = getColor(R.color.red)
+
         viewModel.notificationList.observe(this, Observer {
+
             Timber.i("notifications $it manager notifications ${UserManager.readNotifications}")
             val unReadNotifications = it.size - (UserManager.readNotifications ?: 0)
             if (unReadNotifications != 0) {
@@ -163,10 +143,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
+
         setSupportActionBar(binding.toolbar)
-        binding.backIcon.setOnClickListener {
-            navController.navigateUp()
-        }
 
         navController.addOnDestinationChangedListener { navController: NavController, _: NavDestination, _: Bundle? ->
             viewModel.currentFragmentType.value = when (navController.currentDestination?.id) {
@@ -185,12 +163,15 @@ class MainActivity : AppCompatActivity() {
                 else -> CurrentFragmentType.OTHER
             }
         }
+
+        // observe fragment type
         viewModel.currentFragmentType.observe(this, Observer { fragmentType ->
-            // bottom navigation and back icon
+            // set bottom navigation and back icon
             if (fragmentType.value == getString(R.string.explore_fragment) ||
                     fragmentType.value == getString(R.string.custom_fragment) ||
                     fragmentType.value == getString(R.string.community_fragment) ||
-                    fragmentType.value == getString(R.string.profile_fragment)) {
+                    fragmentType.value == getString(R.string.profile_fragment)
+            ) {
                 binding.activityMainBottomNavigationView.visibility = View.VISIBLE
                 binding.backIcon.visibility = View.GONE
             } else {
@@ -198,7 +179,18 @@ class MainActivity : AppCompatActivity() {
                 binding.backIcon.visibility = View.VISIBLE
             }
 
-            // toolbar
+            // overview fragment back icon press
+            if (fragmentType.value == getString(R.string.overview_fragment)) {
+                binding.backIcon.setOnClickListener {
+                    navController.navigate(NavGraphDirections.actionGlobalCustomFragment(1))
+                }
+            } else {
+                binding.backIcon.setOnClickListener {
+                    navController.navigateUp()
+                }
+            }
+
+            // set toolbar
             if (fragmentType.value == getString(R.string.other) || fragmentType.value == getString(R.string.challenge_detail_fragment)) {
                 supportActionBar?.hide()
             } else {
@@ -206,11 +198,10 @@ class MainActivity : AppCompatActivity() {
                 when (fragmentType.value) {
                     getString(R.string.explore_fragment) -> {
                         binding.userIconExplore.visibility = View.VISIBLE
-                        Glide.with(binding.userIconExplore.context).load(UserManager.user.icon)
-                            .circleCrop().apply(
-                            RequestOptions().placeholder(R.drawable.ic_user_no_photo)
-                                .error(R.drawable.ic_user_no_photo)
-                        ).into(binding.userIconExplore)
+                        binding.userIconExplore.glideImageCircle(
+                            UserManager.user.icon ?: "",
+                            R.drawable.ic_user_no_photo
+                        )
                         binding.toolbarTitle.text = UserManager.user.name
                     }
                     else -> {
@@ -227,56 +218,26 @@ class MainActivity : AppCompatActivity() {
         // check if has uncompleted event
         UserManager.hasCurrentEvent.observe(this, Observer { event ->
             if (event.progress.size == 1) {
-                val defaultBuilder = AlertDialog.Builder(this)
-                    .setTitle("上次挑戰中斷")
-                    .setMessage("要繼續上次的進度嗎")
-                    .setPositiveButton("確定", object : DialogInterface.OnClickListener{
-                        override fun onClick(p0: DialogInterface?, p1: Int) {
-                            findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalTaskFragment())
-                        }
-                    })
-                    .setNegativeButton("取消", object : DialogInterface.OnClickListener{
-                        override fun onClick(p0: DialogInterface?, p1: Int) {
-                            // do nothing
-                        }
-                    })
-                    .setNeutralButton("清除紀錄", object : DialogInterface.OnClickListener{
-                        override fun onClick(p0: DialogInterface?, p1: Int) {
-                            viewModel.cleanEventSingle()
-                        }
-                    })
-                    .show()
-                defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
-                    .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
-                defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
-                    .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
-                defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
-                    .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
+                showDialog3Options(
+                    getString(R.string.challenge_interrupted),
+                    getString(R.string.continue_last_challenge),
+                    positiveFun = { navController.navigate(NavGraphDirections.actionGlobalTaskFragment()) },
+                    neutralFun = { viewModel.cleanEventSingle() }
+                )
             } else {
-                val defaultBuilder = AlertDialog.Builder(this)
-                    .setTitle("上次挑戰中斷")
-                    .setMessage("要繼續上次的進度嗎")
-                    .setPositiveButton("確定", object : DialogInterface.OnClickListener{
-                        override fun onClick(p0: DialogInterface?, p1: Int) {
-                            findNavController(R.id.myNavHostFragment).navigate(NavGraphDirections.actionGlobalTaskFragment())
-                        }
-                    })
-                    .setNeutralButton("清除紀錄", object : DialogInterface.OnClickListener{
-                        override fun onClick(p0: DialogInterface?, p1: Int) {
-                            viewModel.cleanEventMultiple()
-                        }
-                    })
-                    .show()
-                defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
-                    .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
-                defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
-                    .setTextColor(ContextCompat.getColor(this, R.color.deep_yellow))
+                showDialog2Options(
+                    getString(R.string.challenge_interrupted),
+                    getString(R.string.continue_last_challenge),
+                    positiveFun = { navController.navigate(NavGraphDirections.actionGlobalTaskFragment()) },
+                    negativeFun = { viewModel.cleanEventMultiple() }
+                )
             }
-
         })
     }
 
-    // for Profile Fragment to use
+    /**
+     * Below two functions are designed for profile fragment to control badge display.
+     */
     fun cleanBadge() {
         badge.isVisible = false
     }

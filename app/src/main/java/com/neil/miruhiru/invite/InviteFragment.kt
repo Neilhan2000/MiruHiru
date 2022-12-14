@@ -35,10 +35,7 @@ class InviteFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentInviteBinding.inflate(inflater, container, false)
-
         setupScreen()
-
-
 
         return binding.root
     }

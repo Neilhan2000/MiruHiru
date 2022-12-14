@@ -87,6 +87,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
 
                                 if (challenge?.upload == true) {
                                     _uploadToBeVerified.value = true
+                                    _editingCompleted.value = challenge?.stage == customTaskList.size
                                     _customTaskList.value = customTaskList
                                     loadingCompleted()
                                 } else {
@@ -95,8 +96,11 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                                     loadingCompleted()
                                 }
                             }
+
                     }
+
             }
+
     }
 
     fun updateCustomChallenge() {

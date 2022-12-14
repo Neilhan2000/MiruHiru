@@ -1,12 +1,8 @@
 package com.neil.miruhiru.community
 
-import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +11,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.databinding.ItemCommunityChallengeBinding
-import com.neil.miruhiru.databinding.ItemCommunityTagBinding
-import timber.log.Timber
+import com.neil.miruhiru.util.Util.getString
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.util.*
@@ -30,7 +25,12 @@ class ChallengeAdapter(val onclick: (String) -> Unit) : ListAdapter<Challenge, C
                 RequestOptions().placeholder(R.drawable.image_placeholder).error(R.drawable.image_placeholder)
             ).into(binding.CommunityChallengeImage)
             binding.communityChallnegeName.text = item.name
-            binding.communityChallengeRating.text = "${roundOffDecimal(item.totalRating)} (${item.commentQuantity})"
+            if (item.commentQuantity.toInt() != 0) {
+                binding.communityChallengeRating.text =
+                    "${roundOffDecimal(item.totalRating)} (${item.commentQuantity})"
+            } else {
+                binding.communityChallengeRating.text = getString(R.string.no_comment)
+            }
             val geoCoder = Geocoder(itemView.context, Locale.getDefault())
             val address = geoCoder.getFromLocation(item.location.latitude, item.location.longitude, 1)
             if (address.size > 0) {

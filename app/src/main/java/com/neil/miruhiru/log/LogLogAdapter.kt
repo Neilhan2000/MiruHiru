@@ -1,20 +1,14 @@
 package com.neil.miruhiru.log
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
-import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
-import com.neil.miruhiru.UserManager
 import com.neil.miruhiru.data.Log
-import com.neil.miruhiru.data.Photo
-import com.neil.miruhiru.data.PhotoComment
 import com.neil.miruhiru.databinding.ItemLogPhotoBinding
 import timber.log.Timber
 

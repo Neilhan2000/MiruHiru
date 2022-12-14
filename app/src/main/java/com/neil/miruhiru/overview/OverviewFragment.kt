@@ -57,7 +57,7 @@ class OverviewFragment : Fragment() {
             if (jobInitialized) { job.cancel() }
             recyclerView.adapter?.notifyItemMoved(startPosition, endPosition)
 
-            Timber.i("duration ${recyclerView.itemAnimator?.moveDuration}")
+            Timber.i("animation duration ${recyclerView.itemAnimator?.moveDuration}")
             recyclerView.adapter?.itemCount?.let { itemCount ->
                 scope.launch {
                     job = launch {
@@ -200,6 +200,7 @@ class OverviewFragment : Fragment() {
     }
 
     private fun resetStartButton() {
+        Timber.i("reset ${viewModel.editingCompleted.value}")
         if (viewModel.editingCompleted.value == true) {
             binding.startCustomButton.text = getString(R.string.challenge)
             binding.startCustomButton.setOnClickListener(null)

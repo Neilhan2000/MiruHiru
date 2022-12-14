@@ -10,8 +10,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.databinding.ItemVerifyChallengeBinding
-import com.neil.miruhiru.databinding.ItemVerifyTaskBinding
-import com.neil.miruhiru.verifydetail.VerifyTaskAdapter
 
 class VerifyChallengeAdapter(val onclick: (String) -> Unit) : ListAdapter<Challenge, VerifyChallengeAdapter.ViewHolder>(DiffCallBack()) {
 

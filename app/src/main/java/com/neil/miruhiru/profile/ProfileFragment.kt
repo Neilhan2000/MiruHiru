@@ -67,9 +67,6 @@ class ProfileFragment : Fragment() {
                     count = 0
                     firstClickTime = 0L
                 }
-                Timber.i("judge")
-                Timber.i("interval ${lastClickTime - firstClickTime}")
-                Timber.i("judge count $count")
             }
         }
         binding.signOutButton.setOnClickListener {
@@ -88,7 +85,7 @@ class ProfileFragment : Fragment() {
                     RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
                 ).into(binding.profileIcon)
                 binding.profileName.text = "名稱：" + UserManager.user.name
-                binding.profileCreateChallenges.text = "完成的挑戰數量：" + "${UserManager.user.publicChallenges}"
+                binding.profileCreateChallenges.text = "創造的挑戰數量：" + "${UserManager.user.publicChallenges}"
                 viewModel.cleanCompletedChallengeList()
                 viewModel.loadCompletedChallenge()
             }
@@ -97,7 +94,7 @@ class ProfileFragment : Fragment() {
         viewModel.completedList.observe(viewLifecycleOwner, Observer { completedChallenges ->
             challengeAdapter.submitList(completedChallenges)
             challengeAdapter.notifyItemRangeChanged(0, challengeAdapter.itemCount)
-            binding.profileCompletedChallenges.text = "完成的挑數量：" + "${completedChallenges.size}"
+            binding.profileCompletedChallenges.text = "完成的挑戰數量：" + "${completedChallenges.size}"
         })
 
         // observe sign out and navigate to sign in fragment

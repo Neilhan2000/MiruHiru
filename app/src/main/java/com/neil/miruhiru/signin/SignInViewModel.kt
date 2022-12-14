@@ -82,13 +82,16 @@ class SignInViewModel(application: Application) : AndroidViewModel(application) 
         db.collection("users").whereEqualTo("id", UserManager.userId)
             .get()
             .addOnSuccessListener {
-                val user = it.documents[0].toObject<User>()
-                if (user != null) {
-                    UserManager.user = user
-                }
-                _navigateToExploreFragment.value = true
 
+                if (it.documents.isNotEmpty()) {
+                    val user = it.documents[0].toObject<User>()
+                    if (user != null) {
+                        UserManager.user = user
+                        _navigateToExploreFragment.value = true
+                    }
+                }
             }
+
     }
 
     // register an account and update local account

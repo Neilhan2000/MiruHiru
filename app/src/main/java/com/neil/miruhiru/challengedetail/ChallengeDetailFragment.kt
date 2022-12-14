@@ -10,7 +10,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Button
@@ -30,7 +29,6 @@ import com.google.firebase.firestore.GeoPoint
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
-import com.mapbox.maps.extension.style.expressions.dsl.generated.has
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
 import com.neil.miruhiru.MainActivity
@@ -123,9 +121,7 @@ class ChallengeDetailFragment : Fragment() {
         }
 
         // set recyclerView adapter
-        val adapter = CommentAdapter(
-            viewModel
-        ) { position ->
+        val adapter = CommentAdapter(viewModel) { position ->
             showDialog(position)
         }
         binding.recyclerComment.adapter = adapter
@@ -211,7 +207,6 @@ class ChallengeDetailFragment : Fragment() {
 
         // like or unlike challenge
         challenge.location?.let { calculateAndShowDistance(it) }
-
 
         if (viewModel.isLike(challenge)) {
             like = true
