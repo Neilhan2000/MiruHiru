@@ -6,6 +6,12 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
+
+    Properties properties = new Properties()
+    File MAPBOX_DOWNLOAD_TOKEN = new File(rootDir.getAbsolutePath() + "/local.properties")
+    properties.load(MAPBOX_DOWNLOAD_TOKEN.newDataInputStream())
+    gradle.ext.sourceCommon = properties.getProperty('mapbox.download.token')
+
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
@@ -19,8 +25,8 @@ dependencyResolutionManagement {
                 // Do not change the username below.
                 // This should always be `mapbox` (not your username).
                 username = "mapbox"
-                // Use the secret token you stored in gradle.properties as the password
-                password = MAPBOX_DOWNLOADS_TOKEN
+                // Use the secret token you stored in local.properties as the password
+                password = MAPBOX_DOWNLOAD_TOKEN
             }
         }
         maven { url 'https://jitpack.io' }
