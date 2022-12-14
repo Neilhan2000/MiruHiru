@@ -24,7 +24,7 @@
         android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/image_placeholder" />
+        app:srcCompat="@drawable/ic_user_no_photo" />
 
     <RatingBar
         android:id="@+id/ratingBar"

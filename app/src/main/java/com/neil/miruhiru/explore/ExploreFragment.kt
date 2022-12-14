@@ -39,7 +39,7 @@ import com.neil.miruhiru.ext.glideImageCenter
 class ExploreFragment : Fragment() {
 
     companion object {
-        private const val ZOOM_SIZE = 14.0
+        private const val ZOOM_SIZE = 13.0
         private const val ICON_SIZE = 2.0
         private const val ONE_HOUR = 3600
         private const val REQUEST_LOCATION_CODE = 123

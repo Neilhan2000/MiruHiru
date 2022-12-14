@@ -10,10 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.neil.miruhiru.NavGraphDirections
 import com.neil.miruhiru.R
 import com.neil.miruhiru.databinding.FragmentVerifyDetailBinding
-import timber.log.Timber
 
 class VerifyDetailFragment : Fragment() {
 

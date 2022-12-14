@@ -10,9 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Task
-import com.neil.miruhiru.data.User
 import com.neil.miruhiru.databinding.ItemOverviewTaskBinding
-import com.neil.miruhiru.invite.UserAdapter
 import kotlin.math.roundToInt
 
 class OverViewAdapter(private val viewModel: OverviewViewModel,

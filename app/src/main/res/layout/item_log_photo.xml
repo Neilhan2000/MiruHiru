@@ -40,7 +40,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/taskPhoto"
         app:layout_constraintTop_toBottomOf="@+id/taskPhotoBorder"
-        app:srcCompat="@drawable/image_placeholder" />
+        app:srcCompat="@drawable/ic_user_no_photo" />
 
     <TextView
         android:id="@+id/userText"

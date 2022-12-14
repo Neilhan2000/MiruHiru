@@ -1,12 +1,8 @@
 package com.neil.miruhiru.community
 
-import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,9 +11,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.databinding.ItemCommunityChallengeBinding
-import com.neil.miruhiru.databinding.ItemCommunityTagBinding
 import com.neil.miruhiru.util.Util.getString
-import timber.log.Timber
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.util.*
