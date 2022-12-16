@@ -1,14 +1,19 @@
 # **MiruHiru** <img align="right" src="https://img.shields.io/badge/version-1.0.7-green" /><img align="right" src="https://img.shields.io/badge/platform-Android-green" />
 **MiruHiru** is a multiplayer travel challenge App, users can explore the story and features of attractions through challenges on the MiruHiru map or create their own challenges to share with everyone.
+
 [<img align="center" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="280" />](https://play.google.com/store/apps/details?id=com.neil.miruhiru)
 
 
 ## **Features**
+### (Every feature has a demo GIF, please be patient while it loads)
 
 + ### **Exploere New Challenges**
     You can find different types of challenges on the MiruHiru map, find what you are interested in and play with friends.
 
     ### **>> explore**
+    Click markers on map to see the challege details  
+    Check the challenge description and user comments to see if it's a challenge you're interested in
+    ### 
     <div>
     <img src="assets/explore_record.gif" height="280" />
     <img src="assets/screenshot_explore_card.png" height="280" />
@@ -17,6 +22,10 @@
     </div>
 
     ### **>> start challenge**
+    Click "開始挑戰" and choose the challenge type (single or multiplayer) to start  
+    Answer the task question to go to next stage  
+    Leave record of your challenge
+
     <img src="assets/start_challenge_record.gif" height="280" />
     <!-- <img src="assets/screenshot_multiplayer_challenge.png" height="280" /> -->
     <img src="assets/screenshot_task.png" height="280" />
@@ -28,6 +37,10 @@
     Customize your own challenges to share with friends and you can also re-edit those completed challenges.
 
     ### **>> customize**
+    In custom page, click "開始創造" to create new challenge  
+    Edit and all stage tasks of your challenge  
+    Enjoy it with your friends after finishing editing
+
     <div>
     <img src="assets/my_custom_record2.gif" height="280" />
     <img src="assets/screenshot_custom_create.png" height="280" />
@@ -36,6 +49,9 @@
     </div>
 
     ### **>> re-edit**
+    Check the custom challenge detail, you can re-edit information of every stage  
+    Drag to change order of stage  
+    Click on the map or use the search function to reset the task coordinate
     <div>
     <img src="assets/my_custom_re_edit_record.gif" height="280" />
     <img src="assets/screenshot_custom_move.png" height="280" />
@@ -53,7 +69,7 @@
     <img src="assets/screenshot_custom_in_community.png" height="280" />
     </div>
 + ### **Profile**
-    See everything about your account here, including reviewing the records you left during the challenge, finding your favorite challenges, joining challenge through scanning QR Code and checking notifications.
+    See everything about your account here, including reviewing the records you left during the challenge, finding your favorite challenges, joining challenge through scanning QR Code and checking notifications
 
     <div>
     <img src="assets/profile_feature_record.gif" height="280" />
@@ -91,7 +107,7 @@ sdk.dir=C\:\\Users\\user\\AppData\\Local\\Android\\Sdk
 mapbox.access.token="your mapbox public token"
 mapbox.download.token="your mapbox secret token"
 ```
-## **Requirment**
+## **Requirments**
 
 ### Android SDK 26  
 ### Gradle 7.3.3
