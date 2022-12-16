@@ -1,7 +1,7 @@
 # **MiruHiru** <img align="right" src="https://img.shields.io/badge/version-1.0.7-green" /><img align="right" src="https://img.shields.io/badge/platform-Android-green" />
 **MiruHiru** is a multiplayer travel challenge App, users can explore the story and features of attractions through challenges on the MiruHiru map or create their own challenges to share with everyone.
-[<div style="text-align:center">
-<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="280" /></div>](https://play.google.com/store/apps/details?id=com.neil.miruhiru)
+[<img align="center" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="280" />](https://play.google.com/store/apps/details?id=com.neil.miruhiru)
+
 
 ## **Features**
 
