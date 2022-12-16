@@ -50,25 +50,18 @@ class ProfileFragment : Fragment() {
             (activity as MainActivity).cleanBadge()
             this.findNavController().navigate(NavGraphDirections.actionGlobalNotificationFragment())
         }
-        var lastClickTime = 0L
-        var firstClickTime = 0L
-        var count = 0
-        binding.settings.setOnClickListener {
-            if (firstClickTime == 0L) {
-                firstClickTime = Timestamp.now().seconds
+
+        if (UserManager.userId == getString(R.string.miru_gmail) ||
+            UserManager.userId == getString(R.string.hiru_gmail) ||
+            UserManager.userId == getString(R.string.my_gmail)) {
+            binding.settings.visibility = View.VISIBLE
+            binding.settings.setOnClickListener {
+                this.findNavController().navigate(NavGraphDirections.actionGlobalVerifyFragment())
             }
-            count ++
-            Timber.i("count $count")
-            if (count == 5 && UserManager.userId == "tsaichenghan999@gmail.com") {
-                lastClickTime = Timestamp.now().seconds
-                if (lastClickTime - firstClickTime < 2) {
-                    this.findNavController().navigate(NavGraphDirections.actionGlobalVerifyFragment())
-                } else {
-                    count = 0
-                    firstClickTime = 0L
-                }
-            }
+        } else {
+            binding.settings.visibility = View.GONE
         }
+
         binding.signOutButton.setOnClickListener {
             viewModel.signOut()
         }
@@ -104,23 +97,6 @@ class ProfileFragment : Fragment() {
                 viewModel.navigateToSignInFragmentCompleted()
             }
         })
-
-
-
-        val channel = NotificationChannel("tsai", "tsai", NotificationManager.IMPORTANCE_HIGH)
-        val builder = Notification.Builder(requireContext(), "Day15")
-        builder.setSmallIcon(R.drawable.anya_icon)
-            .setContentTitle("Day15")
-            .setContentText("Day15 Challenge")
-            .setLargeIcon(BitmapFactory.decodeResource(resources,R.mipmap.ic_launcher_foreground))
-            .setAutoCancel(true)
-        val notification = builder.build()
-        val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-
-//        binding.notification.setOnClickListener {
-//            notificationManager.notify(0, notification)
-//        }
 
         // notification icon
         if ((activity as MainActivity).isBadgeVisible()) {

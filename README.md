@@ -75,7 +75,7 @@
     <img src="assets/profile_feature_record.gif" height="280" />
     <img src="assets/screenshot_profile_like.png" height="280" />
     <img src="assets/screenshot_proflie_scan.png" height="280" />
-    <img src="assets/screenshot_profile_notification.png" height="280" />
+    <img src="assets/screenshot_profile_notification2.png" height="280" />
     </div>
 ## **Technical Highlights**
 
@@ -93,7 +93,7 @@ and maintainability
 
 ## **Test Accounts**
 
-General accounts will be limited by the distance of 30 meters to start the stage task when they are in the process of challenges. Using a test account can remove this restriction and has the ability to verify users' custom challenges as well.
+General accounts will be limited by the distance of 30 meters to start the stage task when they are in the process of challenges and need to sumbit correct answer to go to next stage. Using a test account can remove those restrictions and has the ability to verify users' custom challenges as well.
 Account | Password
 --------|---------  
 miru112822@gmail.com | miruhiru112822

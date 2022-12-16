@@ -48,7 +48,7 @@
         android:layout_marginEnd="16dp"
         android:background="@drawable/button_border"
         android:gravity="center"
-        android:text="任務完成"
+        android:text="挑戰完成"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
