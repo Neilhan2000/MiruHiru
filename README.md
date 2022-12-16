@@ -44,7 +44,7 @@
     </div>
 
 + ### **Share to Community**
-    share your perfect challenges to the community for all MiruHiru users to participate
+    Share your perfect challenges to the community for all MiruHiru users to participate
 
     <div>
     <img src="assets/custom_upload_record.gif" height="280" />
