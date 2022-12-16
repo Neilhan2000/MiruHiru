@@ -4,11 +4,11 @@
 <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="280" /></div>](https://play.google.com/store/apps/details?id=com.neil.miruhiru)
 
 ## **Features**
----
+
 + ### **Exploere New Challenges**
     You can find different types of challenges on the MiruHiru map, find what you are interested in and play with friends.
 
-    ### **> explore**
+    ### **>> explore**
     <div>
     <img src="assets/explore_record.gif" height="280" />
     <img src="assets/screenshot_explore_card.png" height="280" />
@@ -16,7 +16,7 @@
     <img src="assets/screenshot_comment_report.png" height="280" />
     </div>
 
-    ### **> start challenge**
+    ### **>> start challenge**
     <img src="assets/start_challenge_record.gif" height="280" />
     <!-- <img src="assets/screenshot_multiplayer_challenge.png" height="280" /> -->
     <img src="assets/screenshot_task.png" height="280" />
@@ -27,7 +27,7 @@
 + ### **Custom Your Challenges**
     Customize your own challenges to share with friends and you can also re-edit those completed challenges.
 
-    ### **> customize**
+    ### **>> customize**
     <div>
     <img src="assets/my_custom_record2.gif" height="280" />
     <img src="assets/screenshot_custom_create.png" height="280" />
@@ -35,7 +35,7 @@
     <img src="assets/screenshot_custom_challenge.png" height="280" />
     </div>
 
-    ### **> re-edit**
+    ### **>> re-edit**
     <div>
     <img src="assets/my_custom_re_edit_record.gif" height="280" />
     <img src="assets/screenshot_custom_move.png" height="280" />
@@ -62,7 +62,7 @@
     <img src="assets/screenshot_profile_notification.png" height="280" />
     </div>
 ## **Technical Highlights**
----
+
 + Implemented the **MVVM** architecture and **Repository Pattern** to improve the readability 
 and maintainability
 + Applied **MapBox Maps SDK** and connected with **MapBox Geocoding API** to realize map presentation and location search
@@ -76,14 +76,14 @@ and maintainability
 + Integrated **Google Sign-In** to achieve quick sign-in flow and increase user experience
 
 ## **Test Accounts**
----
+
 General accounts will be limited by the distance of 30 meters to start the stage task when they are in the process of challenges. Using a test account can remove this restriction and has the ability to verify users' custom challenges as well.
 Account | Password
 --------|---------  
 miru112822@gmail.com | miruhiru112822
 hiru112822@gmail.com | miruhiru112822
 ## **API Keys**
----
+
 To run this project, you will need to add the following tokens to your **local.properties** like below.  
 You can get tokens from Mapbox website, checking [**Mapbox Documents**](https://docs.mapbox.com/android/maps/guides/install/) for more Details.
 ```
@@ -92,11 +92,11 @@ mapbox.access.token="your mapbox public token"
 mapbox.download.token="your mapbox secret token"
 ```
 ## **Requirment**
----
+
 ### Android SDK 26  
-Gradle 7.3.3
-### **Version History**
----
+### Gradle 7.3.3
+## **Version History**
+
 Version | Date
 --------|------------
 1.0.7 | 2022/12/14
@@ -107,6 +107,6 @@ Version | Date
 1.0.1 | 2022/11/7
 
 ## **Contact**
----
+
 Linkedin : https://www.linkedin.com/in/neil-tsai/  
 Email : tsaichenghan999@gmail.com
