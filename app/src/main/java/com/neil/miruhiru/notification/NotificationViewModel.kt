@@ -3,6 +3,7 @@ package com.neil.miruhiru.notification
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -43,6 +44,7 @@ class NotificationViewModel : ViewModel() {
             .addOnSuccessListener {
 
                 it.documents[0].reference.collection("notifications")
+                    .orderBy("sendTime", Query.Direction.DESCENDING)
                     .addSnapshotListener { value, error ->
                         val notificationList = mutableListOf<Notification>()
 

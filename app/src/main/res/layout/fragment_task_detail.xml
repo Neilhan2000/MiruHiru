@@ -16,7 +16,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/deep_yellow"
-        android:text="回答問題"
+        android:text="@string/answer_question"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold"

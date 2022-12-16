@@ -28,6 +28,8 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
     val customTaskList: LiveData<List<Task>>
         get() = _customTaskList
 
+    // set editOrUploadButton text
+    // when the challenge is finish editing, set the startButton text to 挑戰
     private val _editingCompleted = MutableLiveData<Boolean>()
     val editingCompleted: LiveData<Boolean>
         get() = _editingCompleted
@@ -85,16 +87,12 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                                     customTaskList.add(customTask)
                                 }
 
+                                _editingCompleted.value = challenge?.stage == customTaskList.size
+                                _customTaskList.value = customTaskList
                                 if (challenge?.upload == true) {
                                     _uploadToBeVerified.value = true
-                                    _editingCompleted.value = challenge?.stage == customTaskList.size
-                                    _customTaskList.value = customTaskList
-                                    loadingCompleted()
-                                } else {
-                                    _editingCompleted.value = challenge?.stage == customTaskList.size
-                                    _customTaskList.value = customTaskList
-                                    loadingCompleted()
                                 }
+                                loadingCompleted()
                             }
 
                     }

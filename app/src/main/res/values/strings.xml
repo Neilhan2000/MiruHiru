@@ -61,5 +61,15 @@
     <string name="loading_fail">載入失敗 ヽ(゜▽゜　)－C (/;◇;)/~[拖走]</string>
     <string name="error_getting_document">error getting document ｡･ﾟ･(ﾉД`)ヽ(ﾟДﾟ )秀秀</string>
     <string name="no_comment">無評價</string>
+    <string name="miru_gmail">miru112822@gmail.com</string>
+    <string name="hiru_gmail">hiru112822@gmail.com</string>
+    <string name="my_gmail">tsaichenghan999@gmail.com</string>
+    <string name="no_input">你還沒有輸入歐歐歐</string>
+    <string name="not_correct_try_again">不是這個答案歐，再試試看八</string>
+    <string name="need_to_open_gps">要開啟定位才可以使用功能歐</string>
+    <string name="distance_too_far">距離任務點太遠囉，靠近一點在回答八OuO</string>
+    <string name="go_last_page">回上一頁</string>
+    <string name="answer_question">回答問題</string>
+    <string name="distance_to_task">距離任務點 %1$d Ms</string>
 
 </resources>
