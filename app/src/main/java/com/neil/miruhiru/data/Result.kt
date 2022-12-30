@@ -12,7 +12,7 @@ sealed class Result<out R> {
 
     override fun toString(): String {
         return when (this) {
-            is Success<*> -> "$data"
+            is Success<*> -> "Success[data=$data]"
             is Fail -> "Fail[error=$error]"
             is Error -> "Error[exception=${exception.message}]"
             Loading -> "Loading"

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.neil.miruhiru.MainActivity
 import com.neil.miruhiru.MiruHiruApplication
 import com.neil.miruhiru.NavGraphDirections
@@ -81,6 +82,27 @@ object Util {
         defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
             .setTextColor(getColor(R.color.deep_yellow))
         defaultBuilder.getButton(DialogInterface.BUTTON_NEGATIVE)
+            .setTextColor(getColor(R.color.deep_yellow))
+    }
+
+    fun showDialog2OptionsNeu(
+        title: String, message: String,
+        positiveFun: () -> Unit = {},
+        neutralFun: () -> Unit = {}
+    ) {
+        val defaultBuilder = AlertDialog.Builder(MainActivity.getInstanceFromMainActivity())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.confirm)) { _, _ ->
+                positiveFun()
+            }
+            .setNeutralButton(getString(R.string.clean_record)) { _, _ ->
+                neutralFun()
+            }
+            .show()
+        defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
+            .setTextColor(getColor(R.color.deep_yellow))
+        defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
             .setTextColor(getColor(R.color.deep_yellow))
     }
 }

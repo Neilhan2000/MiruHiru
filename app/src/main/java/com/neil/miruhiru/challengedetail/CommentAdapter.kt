@@ -14,11 +14,9 @@ import com.neil.miruhiru.databinding.ItemChallengeCommentBinding
 
 
 class CommentAdapter(
-    viewModel: ChallengeDetailViewModel,
+    private val viewModel: ChallengeDetailViewModel,
     val onClick: (Int) -> Unit
 ): ListAdapter<Comment, CommentAdapter.ViewHolder>(DiffCallBack()) {
-
-    private val viewModel = viewModel
 
     inner class ViewHolder(private val binding: ItemChallengeCommentBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -61,7 +59,7 @@ class CommentAdapter(
 
     class DiffCallBack : DiffUtil.ItemCallback<Comment>() {
         override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean {
-            return oldItem == newItem
+            return oldItem === newItem
         }
 
         override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean {
