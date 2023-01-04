@@ -39,17 +39,21 @@ import com.neil.miruhiru.data.Challenge
 import com.neil.miruhiru.data.ChallengeInfo
 import com.neil.miruhiru.data.Task
 import com.neil.miruhiru.databinding.FragmentChallengeDetailBinding
-import com.neil.miruhiru.factory.ChallengeDetailViewModelFactory
+import com.neil.miruhiru.ext.glideImageCenter
 import com.neil.miruhiru.network.LoadingStatus
+import com.neil.miruhiru.util.Util.showDialog2OptionsNeu
 import timber.log.Timber
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
+private const val RECYCLER_HEIGHT = 450
+private const val ONE_HOUR: Double = 3600.0
+private const val ICON_SIZE = 2.0
+
 class ChallengeDetailFragment : Fragment() {
 
-    private lateinit var factory: ChallengeDetailViewModelFactory
     private val viewModel: ChallengeDetailViewModel by lazy {
-        ViewModelProvider(this, factory).get(ChallengeDetailViewModel::class.java)
+        ViewModelProvider(this).get(ChallengeDetailViewModel::class.java)
     }
 
     private lateinit var binding: FragmentChallengeDetailBinding
@@ -69,7 +73,8 @@ class ChallengeDetailFragment : Fragment() {
 
         // get args from last fragment and pass it to viewModel
         challengeId = ChallengeDetailFragmentArgs.fromBundle(requireArguments()).challengeId
-        factory = ChallengeDetailViewModelFactory(challengeId)
+
+        // show or hide rating system
         val previousFragmentId  = this.findNavController().previousBackStackEntry?.destination?.id
         if (previousFragmentId == R.id.exploreFragment || previousFragmentId == R.id.likeChallengeFragment ||
                 previousFragmentId == R.id.communityFragment) {
@@ -86,12 +91,38 @@ class ChallengeDetailFragment : Fragment() {
             UserManager.isPersonal = true
         }
 
-        // observer challenge data and setup screen
-        viewModel.challenge.observe(viewLifecycleOwner, Observer {
-            setupScreen(it)
+        // go back
+        binding.detailBackArrow.setOnClickListener {
+            this.findNavController().navigateUp()
+        }
+
+        // observe loading status and show progress bar
+        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
+            if (status == LoadingStatus.LOADING) {
+                MainActivity.getInstanceFromMainActivity().window.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.VISIBLE
+            } else if (status == LoadingStatus.DONE) {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                binding.progressBar2.visibility = View.GONE
+            } else {
+                MainActivity.getInstanceFromMainActivity().window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+                Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
+            }
         })
 
-        // observer task data to add annotation to map and setup map camera
+        // observer challenge data and setup screen
+        viewModel.challenge.observe(viewLifecycleOwner, Observer {
+            setupChallenge(it)
+        })
+
+        // observer task data to add annotation to map then setup map camera
         viewModel.taskList.observe(viewLifecycleOwner, Observer {
             it.forEach {
                 addAnnotationToMap(it)
@@ -103,8 +134,8 @@ class ChallengeDetailFragment : Fragment() {
             setLocation()
         })
 
-        // set camera to current location
-        binding.myLocation.setOnClickListener {
+        // set camera to original location
+        binding.originalLocation.setOnClickListener {
             setLocation()
         }
 
@@ -132,7 +163,7 @@ class ChallengeDetailFragment : Fragment() {
             Timber.i("comment List ${viewModel.commentList.value}")
             adapter.notifyDataSetChanged()
             if (adapter.itemCount > 2) {
-                binding.recyclerComment.layoutParams.height = 450
+                binding.recyclerComment.layoutParams.height = RECYCLER_HEIGHT
             } else {
                 binding.recyclerComment.layoutParams.height = RecyclerView.LayoutParams.WRAP_CONTENT
             }
@@ -181,20 +212,24 @@ class ChallengeDetailFragment : Fragment() {
 
     private fun setLocation() {
         if (this::firstStagePoint.isInitialized) {
-            mapView?.getMapboxMap()?.setCamera(CameraOptions.Builder().center(firstStagePoint).build())
+            mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(firstStagePoint).build())
         }
     }
 
-    private fun setupScreen(challenge: Challenge) {
+    private fun setupChallenge(challenge: Challenge) {
         binding.ChallengeTitle.text = challenge.name
-        Glide.with(binding.challengeMainImage.context).load(challenge.image).centerCrop().apply(
-            RequestOptions().placeholder(R.drawable.image_placeholder).error(R.drawable.image_placeholder)
-        ).into(binding.challengeMainImage)
+        binding.challengeMainImage.glideImageCenter(challenge.image, R.drawable.image_placeholder)
         challenge.totalRating?.let { binding.ratingBar.rating  = it }
-        binding.ratingText.text = "${challenge.totalRating?.let { viewModel.roundOffDecimal(it) }} (${challenge.commentQuantity})"
+
+        val totalRating = viewModel.roundOffDecimal(challenge.totalRating).toString()
+        val commentQuantity = challenge.commentQuantity
+        binding.ratingText.text = String.format(getString(R.string.total_rating_and_comment_quantity), totalRating, commentQuantity)
         binding.stageText.text = challenge.stage.toString()
-        binding.timeText.text = "${challenge.timeSpent?.toDouble().toBigDecimal().div(3600.toDouble().toBigDecimal())} Hrs"
+
+        val hours = challenge.timeSpent.toDouble().toBigDecimal().div(ONE_HOUR.toBigDecimal()).toString()
+        binding.timeText.text = getString(R.string.convert_seconds_to_hours_dem, hours)
         binding.challengeDescription.text = challenge.description
+
         binding.typeText.text = challenge.type
         binding.typeText.setBackgroundResource(when (challenge.type) {
             getString(R.string.food) -> R.drawable.type_text_border
@@ -205,8 +240,8 @@ class ChallengeDetailFragment : Fragment() {
             else -> R.drawable.type_text_border
         })
 
-        // like or unlike challenge
         challenge.location?.let { calculateAndShowDistance(it) }
+        // like or unlike challenge
 
         if (viewModel.isLike(challenge)) {
             like = true
@@ -227,59 +262,24 @@ class ChallengeDetailFragment : Fragment() {
             like = !like
         }
 
-        binding.detailBackArrow.setOnClickListener {
-            this.findNavController().navigateUp()
-        }
-
         binding.startButton.setOnClickListener {
             viewModel.checkHasCurrentEvent(challengeId)
         }
         // observe to display author name
         viewModel.authorName.observe(viewLifecycleOwner, Observer {
-            binding.author.text = getString(R.string.created_by) + " $it"
-        })
-
-        // observe loading status and show progress bar
-        viewModel.loadingStatus.observe(viewLifecycleOwner, Observer { status ->
-            if (status == LoadingStatus.LOADING) {
-                MainActivity.getInstanceFromMainActivity().window.setFlags(
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                )
-                binding.progressBar2.visibility = View.VISIBLE
-            } else if (status == LoadingStatus.DONE) {
-                MainActivity.getInstanceFromMainActivity().window.clearFlags(
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                )
-                binding.progressBar2.visibility = View.GONE
-            } else {
-                MainActivity.getInstanceFromMainActivity().window.clearFlags(
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                )
-                Toast.makeText(requireContext(), "loading error", Toast.LENGTH_SHORT).show()
-            }
+            binding.author.text = getString(R.string.created_by, it)
         })
 
         // observe if has uncompleted event
         viewModel.hasCurrentEvent.observe(viewLifecycleOwner, Observer { hasEvent ->
             if (hasEvent == true) {
-                val defaultBuilder = AlertDialog.Builder(requireContext())
-                    .setTitle("發現上次儲存的紀錄")
-                    .setMessage("要繼續上次的挑戰嗎?")
-                    .setPositiveButton("確定", object: DialogInterface.OnClickListener{
-                        override fun onClick(p0: DialogInterface?, p1: Int) {
-                            this@ChallengeDetailFragment.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment())
-                        }
-                    })
-                    .setNeutralButton("清除紀錄", object: DialogInterface.OnClickListener{
-                        override fun onClick(p0: DialogInterface?, p1: Int) {
-                            viewModel.cleanEventSingle()
-                        }
-                    }) .show()
-                defaultBuilder.getButton(DialogInterface.BUTTON_POSITIVE)
-                    .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
-                defaultBuilder.getButton(DialogInterface.BUTTON_NEUTRAL)
-                    .setTextColor(ContextCompat.getColor(requireContext(), R.color.deep_yellow))
+                showDialog2OptionsNeu(
+                    getString(R.string.find_record),
+                    getString(R.string.recover_last_record),
+                    positiveFun = { this@ChallengeDetailFragment.findNavController().navigate(NavGraphDirections.actionGlobalTaskFragment()) },
+                    neutralFun = { viewModel.cleanEventSingle() }
+                )
+
             } else if (hasEvent == false){
                 this.findNavController().navigate(NavGraphDirections.actionGlobalChallengeTypeFragment(
                     ChallengeInfo(challenge.id, challenge.stage)))
@@ -302,7 +302,7 @@ class ChallengeDetailFragment : Fragment() {
                         location.latitude
                     )
                     val distance = viewModel.calculateDistance(currentPoint, destination)
-                    binding.distanceText.text = "距離起點 ${distance.roundToInt()} Ms"
+                    binding.distanceText.text = getString(R.string.convert_distances_to_int, distance.roundToInt())
                 }
             }
 
@@ -314,20 +314,20 @@ class ChallengeDetailFragment : Fragment() {
         // Create an instance of the Annotation API and get the PointAnnotationManager.
         bitmapFromDrawableRes(
             this.requireContext(),
-            determineTaskIcon(task.stage!!)
+            determineTaskIcon(task.stage)
         )?.let {
-            val annotationApi = mapView?.annotations
-            pointAnnotationManager = annotationApi?.createPointAnnotationManager(mapView!!)!!
+            val annotationApi = mapView.annotations
+            pointAnnotationManager = annotationApi.createPointAnnotationManager(mapView)
             // Set options for the resulting symbol layer.
             val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
                 .withPoint(Point.fromLngLat(
-                    task.location?.longitude!!,
-                    task.location?.latitude!!
+                    task.location.longitude,
+                    task.location.latitude
                 ))
                 .withIconImage(it)
-                .withIconSize(2.0)
+                .withIconSize(ICON_SIZE)
 
-            pointAnnotationManager?.create(pointAnnotationOptions)
+            pointAnnotationManager.create(pointAnnotationOptions)
         }
     }
 

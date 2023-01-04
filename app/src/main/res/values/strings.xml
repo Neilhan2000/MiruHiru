@@ -44,9 +44,10 @@
     <string name="challenge_deleted">挑戰已刪除</string>
     <string name="popularity">熱門</string>
     <string name="no_gps">未開啟定位</string>
-    <string name="created_by">created by</string>
+    <string name="created_by">created by %1$s</string>
     <string name="select_to_delete">選取挑戰刪除</string>
     <string name="convert_seconds_to_hours">%1$d Hrs</string>
+    <string name="convert_seconds_to_hours_dem">%1$s Hrs</string>
     <string name="convert_distances_to_int">%1$d Ms</string>
     <string name="total_rating_and_comment_quantity">%1$s (%2$d)</string>
     <string name="challenges">challenges</string>
@@ -71,5 +72,7 @@
     <string name="go_last_page">回上一頁</string>
     <string name="answer_question">回答問題</string>
     <string name="distance_to_task">距離任務點 %1$d Ms</string>
+    <string name="find_record">發現上次儲存的紀錄</string>
+    <string name="recover_last_record">要繼續上次的挑戰嗎?</string>
 
 </resources>

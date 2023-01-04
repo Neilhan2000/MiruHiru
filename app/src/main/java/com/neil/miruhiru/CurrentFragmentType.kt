@@ -14,6 +14,4 @@ enum class CurrentFragmentType(val value: String) {
     NOTIFICATION("通知"),
     INVITE("邀請"),
     CHALLENGETYPE("選擇類型")
-
-
 }

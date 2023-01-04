@@ -21,7 +21,7 @@ import timber.log.Timber
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
-class ChallengeDetailViewModel(challengeId: String) : ViewModel() {
+class ChallengeDetailViewModel() : ViewModel() {
 
     private val _challenge = MutableLiveData<Challenge>()
     val challenge: LiveData<Challenge>
