@@ -84,7 +84,7 @@ class MyCustomFragment : Fragment() {
                 }
                 // delete
                 (activity as MainActivity).binding.deleteText.visibility = View.VISIBLE
-                (activity as MainActivity).binding.toolbar.setOnClickListener {
+                (activity as MainActivity).binding.deleteText.setOnClickListener {
                     viewModel.deleteSelectedItems()
                     viewModel.hideDeleteText()
                 }

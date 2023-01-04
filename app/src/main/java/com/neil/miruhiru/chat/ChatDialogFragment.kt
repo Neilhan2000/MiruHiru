@@ -32,12 +32,15 @@ class ChatDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         binding = FragmetChatDialogBinding.inflate(LayoutInflater.from(context))
+
         val builder = AlertDialog.Builder(requireActivity())
         builder.setView(binding.root)
         dialog = builder.create()
         dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_border)
+
         val messageAdapter = MessageAdapter(viewModel)
         binding.messageRecycler.adapter = messageAdapter
+
         val memberAdapter = ChatMemberAdapter()
         binding.memberRecycler.adapter = memberAdapter
         binding.memberRecycler.addItemDecoration(MemberItemDecorator(-20))
@@ -84,9 +87,12 @@ class ChatDialogFragment : DialogFragment() {
         return dialog
     }
 
-    private fun kickUser() {
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.cancel()
+    }
 
-        val db = Firebase.firestore
+    private fun kickUser() {
 
         val arrayAdapter = ArrayAdapter<String>(requireContext(),
             android.R.layout.select_dialog_singlechoice)

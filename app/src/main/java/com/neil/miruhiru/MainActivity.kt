@@ -106,19 +106,27 @@ class MainActivity : AppCompatActivity() {
         binding.activityMainBottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.exploreFragment -> {
-                    navController.navigate(NavGraphDirections.actionGlobalExploreFragment())
+                    if (navController.currentDestination?.id != R.id.exploreFragment) {
+                        navController.navigate(NavGraphDirections.actionGlobalExploreFragment())
+                    }
                     return@setOnItemSelectedListener true
                 }
                 R.id.customFragment -> {
-                    navController.navigate(NavGraphDirections.actionGlobalCustomFragment())
+                    if (navController.currentDestination?.id != R.id.customFragment) {
+                        navController.navigate(NavGraphDirections.actionGlobalCustomFragment())
+                    }
                     return@setOnItemSelectedListener true
                 }
                 R.id.communityFragment -> {
-                    navController.navigate(NavGraphDirections.actionGlobalCommunityFragment())
+                    if (navController.currentDestination?.id != R.id.communityFragment) {
+                        navController.navigate(NavGraphDirections.actionGlobalCommunityFragment())
+                    }
                     return@setOnItemSelectedListener true
                 }
                 R.id.profileFragment -> {
-                    navController.navigate(NavGraphDirections.actionGlobalProfileFragment())
+                    if (navController.currentDestination?.id != R.id.profileFragment) {
+                        navController.navigate(NavGraphDirections.actionGlobalProfileFragment())
+                    }
                     return@setOnItemSelectedListener true
                 }
             }

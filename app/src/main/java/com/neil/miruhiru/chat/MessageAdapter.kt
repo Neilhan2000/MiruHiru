@@ -11,6 +11,7 @@ import com.neil.miruhiru.R
 import com.neil.miruhiru.data.Message
 import com.neil.miruhiru.databinding.ItemChatOtherMessageBinding
 import com.neil.miruhiru.databinding.ItemMyMessageBinding
+import com.neil.miruhiru.ext.glideImageCircle
 
 class MessageAdapter(viewModel: ChatDialogViewModel) : ListAdapter<MessageAdapter.MessageItem, RecyclerView.ViewHolder>(DiffCallBack()) {
 
@@ -32,9 +33,7 @@ class MessageAdapter(viewModel: ChatDialogViewModel) : ListAdapter<MessageAdapte
 
             viewModel.memberList.forEach {
                 if (it.id == item.senderId) {
-                    Glide.with(binding.userIconMine.context).load(it.icon).circleCrop().apply(
-                        RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
-                    ).into(binding.userIconMine)
+                    binding.userIconMine.glideImageCircle(it.icon, R.drawable.ic_user_no_photo)
                 }
             }
             binding.myMessage.text = item.text
@@ -46,9 +45,7 @@ class MessageAdapter(viewModel: ChatDialogViewModel) : ListAdapter<MessageAdapte
         fun bind(item: Message) {
             viewModel.memberList.forEach {
                 if (it.id == item.senderId) {
-                    Glide.with(binding.userIconOther.context).load(it.icon).circleCrop().apply(
-                        RequestOptions().placeholder(R.drawable.ic_user_no_photo).error(R.drawable.ic_user_no_photo)
-                    ).into(binding.userIconOther)
+                    binding.userIconOther.glideImageCircle(it.icon, R.drawable.ic_user_no_photo)
                 }
             }
             binding.otherMessage.text = item.text
